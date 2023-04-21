@@ -1,8 +1,6 @@
-import React from "react";
 import SideNav from "./components/SideNav";
 import Dashboard from "./components/Dashboard";
-import "./index.css";
-import "./styles.css";
+import "./css/app.css";
 
 function App() {
   return (
