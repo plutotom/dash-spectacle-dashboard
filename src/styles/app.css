@@ -5,8 +5,9 @@
   --clr-accent-100: hsl(13, 100%, 96%);
 
   --clr-primary-400: hsl(228, 39%, 23%);
+  --clr-secondary-400: #2a3239;
 
-  --clr-neutral-900: hsl(232, 12%, 13%);
+  --clr-neutral-900: #222b31;
   --clr-neutral-100: hsl(0 0% 100%);
 
   --ff-primary: "Be Vietnam Pro", sans-serif;
@@ -125,4 +126,18 @@ select {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+/* Starting app page css */
+.main-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100%;
+}
+
+.main-container > * {
+  flex: 1;
+}
+.main-container > :nth-child(2) {
+  flex: 4;
 }
