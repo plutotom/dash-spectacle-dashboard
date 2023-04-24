@@ -1,5 +1,6 @@
 import React from "react";
 import banner from "../assets/codioful-formerly-gradienta-oPC-b39ZuzE-unsplash.jpg";
+import banner2 from "../assets/looking-together.jpg";
 import "./../styles/dashbaord.css";
 import CardSmall from "./CardSmall";
 
@@ -12,7 +13,7 @@ export default function Dashboard() {
         <div
           className="dash-banner"
           // style={{ backgroundImage: "url ('urlhere'" }}
-          style={{ backgroundImage: `url(${banner})` }}
+          style={{ backgroundImage: `url(${banner2})` }}
         >
           <h1>Dashboard banner</h1>
         </div>
@@ -22,9 +23,24 @@ export default function Dashboard() {
             <h1>content here</h1>
           </div>
           <div className="cards">
-            <CardSmall className="card-small" title="Temp" value="30f" icon={faCoffee} />
-            <CardSmall className="card-small" title="Temp" value="30f" icon={faCoffee} />
-            <CardSmall className="card-small" title="Temp" value="30f" icon={faCoffee} />
+            <CardSmall
+              className="card-small"
+              title="Temp"
+              value="30f"
+              icon={faCoffee}
+            />
+            <CardSmall
+              className="card-small"
+              title="Temp"
+              value="30f"
+              icon={faCoffee}
+            />
+            <CardSmall
+              className="card-small"
+              title="Temp"
+              value="30f"
+              icon={faCoffee}
+            />
           </div>
         </div>
       </div>
