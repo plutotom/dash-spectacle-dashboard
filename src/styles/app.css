@@ -141,3 +141,13 @@ select {
 .main-container > :nth-child(2) {
   flex: 4;
 }
+
+.imageFull {
+  /* Full height */
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
