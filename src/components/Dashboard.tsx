@@ -6,6 +6,7 @@ import CardSmall from "./CardSmall";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons";
+import CardMedium from "./cardMedium";
 export default function Dashboard() {
   return (
     <>
@@ -29,18 +30,7 @@ export default function Dashboard() {
               value="30f"
               icon={faCoffee}
             />
-            <CardSmall
-              className="card-small"
-              title="Temp"
-              value="30f"
-              icon={faCoffee}
-            />
-            <CardSmall
-              className="card-small"
-              title="Temp"
-              value="30f"
-              icon={faCoffee}
-            />
+            <CardMedium icon={faCoffee} />
           </div>
         </div>
       </div>

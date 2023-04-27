@@ -1,4 +1,4 @@
-import SideNav from "./components/SideNav";
+// import SideNav from "./components/SideNav";
 import Dashboard from "./components/Dashboard";
 import "./styles/app.css";
 
