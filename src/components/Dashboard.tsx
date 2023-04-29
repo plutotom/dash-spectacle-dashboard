@@ -30,7 +30,17 @@ export default function Dashboard() {
               value="30f"
               icon={faCoffee}
             />
-            <CardMedium icon={faCoffee} />
+            <CardMedium
+              todaysTemp="30f"
+              location="Mason City, IL"
+              todayIcon={faCoffee}
+              tomorrowIcon={faCoffee}
+              tomorrowTemp="30f"
+              tomorrowDescription="sunny"
+              dayAfterTomorrowIcon={faCoffee}
+              dayAfterTomorrowTemp="30f"
+              dayAfterTomorrowDescription="sunny"
+            />
           </div>
         </div>
       </div>
