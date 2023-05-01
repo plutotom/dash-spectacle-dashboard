@@ -11,8 +11,34 @@ import CardMedium from "./cardMedium";
 export default function Dashboard() {
   const [long, setlong] = useState(-89.36973);
   const [lat, setLat] = useState(40.145934);
-  
-  // React.useEffect(() => {
+  // const [location, setLocation]: object{lon, lat} = useState(null)
+  // const [weather, setWeather]: []{object{todayTemp, forcast}} = useState(null)
+
+  // const effect = () => {
+  // we want to call our fetch data route, with access to...
+  //  - The state of the fetch, loading, fail, good etc,
+  //  - This means we should either return what ever state it currently is in in a promise,
+  //  - Or we handle the actual request here.
+
+  // let baseRequest = Geo || Weather || etc.
+  // fetchTool(baseRequest: enum, config: object)
+  // or
+  // fetchTool.Geo(location) || .Weather(location) || etc.()
+
+  //? Both options can have different return types, promise, object data, etc.
+  // fetchTool(baseRequest: enum, config: object).then((res) => {
+  // setState(res.data);
+  // }).catch((err) => {
+  // setLoadingState(err)
+  // })
+  // or
+  // let data = await fetchTool.Geo(location) || .Weather(location) || etc.()
+  //! The problem with this is we do not know the current state, thus we assume it is loading until data is != null.
+  //! Then we have to parse though data to see if it has an error
+  // data.isError ? setError(true), setErrorMessage(data.error.message) : setState(data);
+  // };
+
+  // useEffect(() => {
   //   // console.log("about to run geo lcation request");
   //   let location: String = "213 thomas lincoln Il 62656 united states";
   //   axios
@@ -55,15 +81,15 @@ export default function Dashboard() {
               icon={faCoffee}
             />
             <CardMedium
-              todaysTemp="30f"
+              todaysTemp={weather.today.temp || "30f"}
               location="Mason City, IL"
               todayIcon={faCoffee}
               tomorrowIcon={faCoffee}
-              tomorrowTemp="30f"
-              tomorrowDescription="sunny"
+              tomorrowTemp={weather.tomorrow.temp || "30f"}
+              tomorrowDescription={false || "sunny"}
               dayAfterTomorrowIcon={faCoffee}
               dayAfterTomorrowTemp="30f"
-              dayAfterTomorrowDescription="sunny"
+              dayAfterTomorrowDescription={false || "sunny"}
             />
           </div>
         </div>

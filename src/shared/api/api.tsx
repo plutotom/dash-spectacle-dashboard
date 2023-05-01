@@ -9,3 +9,14 @@ export async function getGeoLocation(
   const res = await axios.get(url);
   return res;
 }
+
+const fetchTool = async () => {
+  const baseConfig = {
+    url: "",
+  };
+
+  let getGeoLocation = (location) => {
+    if location return true 
+    return false;
+  };
+};
