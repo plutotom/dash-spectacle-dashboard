@@ -23,7 +23,7 @@ export default function CardMedium(props: any) {
               icon={props.tomorrowIcon}
             />
             <p className="card-small-title">
-              {props.tomorrowTemp} {props.tomorrowDescription}
+              Tomorrow: {props.tomorrowTemp} {props.tomorrowDescription}
             </p>
           </div>
           <div className="medium-row">
@@ -32,7 +32,8 @@ export default function CardMedium(props: any) {
               icon={props.dayAfterTomorrowIcon}
             />
             <p className="card-small-paragraph">
-              {props.dayAfterTomorrowTemp} {props.dayAfterTomorrowDescription}
+              Day After Tomorrow: {props.dayAfterTomorrowTemp}{" "}
+              {props.dayAfterTomorrowDescription}
             </p>
           </div>
         </div>

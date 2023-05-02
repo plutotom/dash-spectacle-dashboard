@@ -7,12 +7,31 @@ import CardSmall from "./CardSmall";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import CardMedium from "./cardMedium";
+import { getWeather } from "../shared/api/api";
+
+interface weather {
+  today: {
+    temp: string;
+    description: string;
+    icon: any;
+  };
+  tomorrow: {
+    temp: string;
+    description: string;
+    icon: any;
+  };
+  dayAfterTomorrow: {
+    temp: string;
+    description: string;
+    icon: any;
+  };
+}
 
 export default function Dashboard() {
-  const [long, setlong] = useState(-89.36973);
-  const [lat, setLat] = useState(40.145934);
-  // const [location, setLocation]: object{lon, lat} = useState(null)
-  // const [weather, setWeather]: []{object{todayTemp, forcast}} = useState(null)
+  const [lon, setlon] = useState("-89.36973");
+  const [lat, setLat] = useState("40.145934");
+  const [location, setLocation] = useState({});
+  const [weather, setWeather] = useState<weather | undefined>(undefined);
 
   // const effect = () => {
   // we want to call our fetch data route, with access to...
@@ -58,6 +77,36 @@ export default function Dashboard() {
   //     });
   // }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      let [one, two] = await getWeather(lon, lat);
+      return [one, two];
+    };
+
+    fetchData()
+      .then((res) => {
+        console.log("res", res[0].properties.periods[0]);
+        setWeather({
+          today: {
+            temp: res[0].properties.periods[0].temperature,
+            description: res[0].properties.periods[0].shortForecast,
+            icon: faCoffee,
+          },
+          tomorrow: {
+            temp: res[0].properties.periods[1].temperature,
+            description: res[0].properties.periods[1].shortForecast,
+            icon: faCoffee,
+          },
+          dayAfterTomorrow: {
+            temp: res[0].properties.periods[2].temperature,
+            description: res[0].properties.periods[2].shortForecast,
+            icon: faCoffee,
+          },
+        });
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <>
       <div className="dash-container">
@@ -81,15 +130,17 @@ export default function Dashboard() {
               icon={faCoffee}
             />
             <CardMedium
-              todaysTemp={weather.today.temp || "30f"}
+              todaysTemp={weather?.today?.temp || "NA"}
               location="Mason City, IL"
               todayIcon={faCoffee}
               tomorrowIcon={faCoffee}
-              tomorrowTemp={weather.tomorrow.temp || "30f"}
-              tomorrowDescription={false || "sunny"}
+              tomorrowTemp={weather?.tomorrow?.temp || "NA"}
+              tomorrowDescription={weather?.tomorrow?.description || "NA"}
               dayAfterTomorrowIcon={faCoffee}
-              dayAfterTomorrowTemp="30f"
-              dayAfterTomorrowDescription={false || "sunny"}
+              dayAfterTomorrowTemp={weather?.dayAfterTomorrow?.temp || "NA"}
+              dayAfterTomorrowDescription={
+                weather?.dayAfterTomorrow.description || "NA"
+              }
             />
           </div>
         </div>
