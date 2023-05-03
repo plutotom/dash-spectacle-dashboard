@@ -5,10 +5,11 @@ import "./../styles/dashbaord.css";
 import CardSmall from "./CardSmall";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoffee } from "@fortawesome/free-solid-svg-icons";
-import CardMedium from "./cardMedium";
-import { getWeather } from "../shared/api/api";
+import { faCoffee, faSun } from "@fortawesome/free-solid-svg-icons";
 
+import CardMedium from "./cardMedium";
+import CardWeatherForecast from "./cardWeatherForecast";
+import { getWeather } from "../shared/api/api";
 interface weather {
   today: {
     temp: string;
@@ -141,6 +142,24 @@ export default function Dashboard() {
               dayAfterTomorrowDescription={
                 weather?.dayAfterTomorrow.description || "NA"
               }
+            />
+            <CardWeatherForecast
+              weatherForecast={[
+                { dayName: "wed", weatherIcon: faSun, high: "80", low: "20" },
+                { dayName: "thurs", weatherIcon: faSun, high: "70", low: "20" },
+                {
+                  dayName: "friday",
+                  weatherIcon: faSun,
+                  high: "50",
+                  low: "20",
+                },
+                {
+                  dayName: "saturday",
+                  weatherIcon: faSun,
+                  high: "40",
+                  low: "20",
+                },
+              ]}
             />
           </div>
         </div>

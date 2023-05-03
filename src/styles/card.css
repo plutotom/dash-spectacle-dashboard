@@ -10,6 +10,37 @@
   transition: all 0.5s ease-in-out;
 }
 
+.card-weather-forecast {
+  height: 200px;
+  width: 400px;
+  display: flex;
+  flex-direction: row;
+}
+.card-weather-forecast svg {
+  font-size: 2.5rem;
+  padding: 0 5px 0 5px;
+}
+.card-weather-forecast h3 {
+  font-size: var(--fs-600);
+  font-weight: 400;
+  padding: 5px 5px 0 5px;
+  text-transform: capitalize;
+
+  /* border: solid 1px #afafb23c; */
+}
+.card-weather-forecast .forecastDay {
+  min-width: 80px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+/* apply border to all dives in card-weather-forcast but not the last one */
+.card-weather-forecast > :not(:last-child) {
+  border-right: #afafb23c solid 1px;
+}
+
 .card-medium {
   height: 400px;
   width: 320px;
