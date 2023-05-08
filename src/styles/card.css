@@ -10,6 +10,13 @@
   transition: all 0.5s ease-in-out;
 }
 
+.card-image {
+  height: 500px;
+  width: 350px;
+}
+.card-image img {
+}
+
 .card-weather-forecast {
   height: 200px;
   width: 400px;
@@ -36,7 +43,7 @@
   justify-content: space-between;
   align-items: center;
 }
-/* apply border to all dives in card-weather-forcast but not the last one */
+/* apply border to all dives in card-weather-forecast but not the last one */
 .card-weather-forecast > :not(:last-child) {
   border-right: #afafb23c solid 1px;
 }
@@ -70,6 +77,7 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
 .medium-top > :nth-child(1) > :nth-child(2) {
   font-size: var(--fs-300);
   padding: 0 5px 0 5px;

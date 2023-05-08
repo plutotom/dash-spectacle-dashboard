@@ -32,7 +32,13 @@ const CardWeatherForecast: React.FC<weatherForecastProps> = ({
             <h3>{day.dayName}</h3>
             <FontAwesomeIcon icon={day.weatherIcon} />
             <p>
-              {day.high}/{day.low}
+              <span className="border-thin" style={{ textDecoration: "none" }}>
+                {day.high}
+              </span>
+              {"/"}
+              <span className="border-thin" style={{ textDecoration: "none" }}>
+                {day.low}
+              </span>
             </p>
           </div>
         ))}

@@ -143,3 +143,9 @@ select {
 .main-container > :nth-child(2) {
   flex: 4;
 }
+
+.border-thin {
+  font-size: var(--fs-600);
+  padding: 1px;
+  border: solid 1px #afafb23c;
+}

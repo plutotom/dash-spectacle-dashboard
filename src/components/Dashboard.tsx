@@ -10,6 +10,7 @@ import { faCoffee, faSun } from "@fortawesome/free-solid-svg-icons";
 import CardMedium from "./cardMedium";
 import CardWeatherForecast from "./cardWeatherForecast";
 import { getWeather } from "../shared/api/api";
+import CardImage from "./CardImage";
 interface weather {
   today: {
     temp: string;
@@ -120,10 +121,8 @@ export default function Dashboard() {
         </div>
         {/* <img src={`${banner}`} alt="diannal lines background" /> */}
         <div className="dash-content">
-          <div>
-            <h1>content here</h1>
-          </div>
           <div className="cards">
+            <CardImage />
             <CardSmall
               className="card-small"
               title="Temp"
