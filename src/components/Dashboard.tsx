@@ -11,23 +11,29 @@ import CardMedium from "./cardMedium";
 import CardWeatherForecast from "./cardWeatherForecast";
 import { getWeather } from "../shared/api/api";
 import CardImage from "./CardImage";
-interface weather {
-  today: {
-    temp: string;
-    description: string;
-    icon: any;
-  };
-  tomorrow: {
-    temp: string;
-    description: string;
-    icon: any;
-  };
-  dayAfterTomorrow: {
-    temp: string;
-    description: string;
-    icon: any;
-  };
-}
+
+import { weather } from "./../shared/types/types";
+
+// interface weather {
+//   today: {
+//     temp: { high: string; low: string };
+//     day: string;
+//     description: string;
+//     icon: any;
+//   };
+//   tomorrow: {
+//     temp: { high: string; low: string };
+//     day: string;
+//     description: string;
+//     icon: any;
+//   };
+//   dayAfterTomorrow: {
+//     temp: { high: string; low: string };
+//     day: string;
+//     description: string;
+//     icon: any;
+//   };
+// }
 
 export default function Dashboard() {
   const [lon, setlon] = useState("-89.36973");
@@ -81,27 +87,39 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      let [one, two] = await getWeather(lon, lat);
-      return [one, two];
+      let [forecastDay, forecastHourly] = await getWeather(lon, lat);
+      return [forecastDay, forecastHourly];
     };
 
     fetchData()
-      .then((res) => {
-        console.log("res", res[0].properties.periods[0]);
+      .then(([forecastDay, forecastHourly]) => {
+        console.log("res", forecastDay.properties.periods[0]);
         setWeather({
           today: {
-            temp: res[0].properties.periods[0].temperature,
-            description: res[0].properties.periods[0].shortForecast,
+            day: forecastDay.properties.periods[0].name,
+            temp: {
+              high: forecastDay.properties.periods[0].temperature,
+              low: forecastDay.properties.periods[1].temperature,
+            },
+            description: forecastDay.properties.periods[0].shortForecast,
             icon: faCoffee,
           },
           tomorrow: {
-            temp: res[0].properties.periods[1].temperature,
-            description: res[0].properties.periods[1].shortForecast,
+            day: forecastDay.properties.periods[2].name,
+            description: forecastDay.properties.periods[3].shortForecast,
+            temp: {
+              high: forecastDay.properties.periods[2].temperature,
+              low: forecastDay.properties.periods[3].temperature,
+            },
             icon: faCoffee,
           },
           dayAfterTomorrow: {
-            temp: res[0].properties.periods[2].temperature,
-            description: res[0].properties.periods[2].shortForecast,
+            day: forecastDay.properties.periods[4].name,
+            temp: {
+              high: forecastDay.properties.periods[4].temperature,
+              low: forecastDay.properties.periods[5].temperature,
+            },
+            description: forecastDay.properties.periods[4].shortForecast,
             icon: faCoffee,
           },
         });
@@ -130,17 +148,18 @@ export default function Dashboard() {
               icon={faCoffee}
             />
             <CardMedium
-              todaysTemp={weather?.today?.temp || "NA"}
-              location="Mason City, IL"
-              todayIcon={faCoffee}
-              tomorrowIcon={faCoffee}
-              tomorrowTemp={weather?.tomorrow?.temp || "NA"}
-              tomorrowDescription={weather?.tomorrow?.description || "NA"}
-              dayAfterTomorrowIcon={faCoffee}
-              dayAfterTomorrowTemp={weather?.dayAfterTomorrow?.temp || "NA"}
-              dayAfterTomorrowDescription={
-                weather?.dayAfterTomorrow.description || "NA"
-              }
+              weatherForecast={weather}
+              // todaysTemp={weather?.today?.temp || "NA"}
+              // location="Mason City, IL"
+              // todayIcon={faCoffee}
+              // tomorrowIcon={faCoffee}
+              // tomorrowTemp={weather?.tomorrow?.temp || "NA"}
+              // tomorrowDescription={weather?.tomorrow?.description || "NA"}
+              // dayAfterTomorrowIcon={faCoffee}
+              // dayAfterTomorrowTemp={weather?.dayAfterTomorrow?.temp || "NA"}
+              // dayAfterTomorrowDescription={
+              //   weather?.dayAfterTomorrow.description || "NA"
+              // }
             />
             <CardWeatherForecast
               weatherForecast={[
