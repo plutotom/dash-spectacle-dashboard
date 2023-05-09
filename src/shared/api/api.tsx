@@ -1,5 +1,6 @@
 import axios from "axios";
 import urls from "./urls";
+import apiWeatherRes from "./tempHolder";
 
 export async function getGeoLocation(
   location = "213 thomas lincoln Il 62656 united states"
@@ -9,11 +10,17 @@ export async function getGeoLocation(
   const res = await axios.get(url);
   return res;
 }
-
+let cacheHolder: any = [];
 export async function getWeather(lon: String, lat: String) {
+  if (true) return apiWeatherRes;
+  console.log(cacheHolder, "cacheHolder");
+  if (cacheHolder.length !== 0) {
+    return cacheHolder;
+  }
+
   //api.weather.gov/points/40.145934,-89.36973
   const url = urls.getWeatherPoints + "/" + lat + "," + lon;
-  console.log("url", url);
+  // console.log("url", url);
   const [forecastRes, forecastHourlyRes] = await axios
     .get(url)
     .then(async (res) => {
@@ -72,7 +79,7 @@ export async function getWeather(lon: String, lat: String) {
         .then((res) => {
           return res.data;
         });
-
+      cacheHolder = [forecastResTemp, forecastHourlyResTemp];
       return [forecastResTemp, forecastHourlyResTemp];
     });
   return [forecastRes, forecastHourlyRes];

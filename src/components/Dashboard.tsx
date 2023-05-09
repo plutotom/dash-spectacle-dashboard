@@ -1,39 +1,19 @@
 import React, { useState, useEffect } from "react";
+import "./../styles/dashbaord.css";
+
 import banner from "../assets/codioful-formerly-gradienta-oPC-b39ZuzE-unsplash.jpg";
 import banner2 from "../assets/looking-together.jpg";
-import "./../styles/dashbaord.css";
-import CardSmall from "./CardSmall";
+import CardImage from "./CardImage";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoffee, faSun } from "@fortawesome/free-solid-svg-icons";
 
+import CardSmall from "./CardSmall";
 import CardMedium from "./cardMedium";
 import CardWeatherForecast from "./cardWeatherForecast";
+
 import { getWeather } from "../shared/api/api";
-import CardImage from "./CardImage";
-
 import { weather } from "./../shared/types/types";
-
-// interface weather {
-//   today: {
-//     temp: { high: string; low: string };
-//     day: string;
-//     description: string;
-//     icon: any;
-//   };
-//   tomorrow: {
-//     temp: { high: string; low: string };
-//     day: string;
-//     description: string;
-//     icon: any;
-//   };
-//   dayAfterTomorrow: {
-//     temp: { high: string; low: string };
-//     day: string;
-//     description: string;
-//     icon: any;
-//   };
-// }
 
 export default function Dashboard() {
   const [lon, setlon] = useState("-89.36973");
@@ -93,7 +73,7 @@ export default function Dashboard() {
 
     fetchData()
       .then(([forecastDay, forecastHourly]) => {
-        console.log("res", forecastDay.properties.periods[0]);
+        // console.log("res", forecastDay);
         setWeather({
           today: {
             day: forecastDay.properties.periods[0].name,
@@ -126,7 +106,6 @@ export default function Dashboard() {
       })
       .catch((err) => console.log(err));
   }, []);
-
   return (
     <>
       <div className="dash-container">
@@ -147,38 +126,41 @@ export default function Dashboard() {
               value="30f"
               icon={faCoffee}
             />
-            <CardMedium
-              weatherForecast={weather}
-              // todaysTemp={weather?.today?.temp || "NA"}
-              // location="Mason City, IL"
-              // todayIcon={faCoffee}
-              // tomorrowIcon={faCoffee}
-              // tomorrowTemp={weather?.tomorrow?.temp || "NA"}
-              // tomorrowDescription={weather?.tomorrow?.description || "NA"}
-              // dayAfterTomorrowIcon={faCoffee}
-              // dayAfterTomorrowTemp={weather?.dayAfterTomorrow?.temp || "NA"}
-              // dayAfterTomorrowDescription={
-              //   weather?.dayAfterTomorrow.description || "NA"
-              // }
-            />
-            <CardWeatherForecast
-              weatherForecast={[
-                { dayName: "wed", weatherIcon: faSun, high: "80", low: "20" },
-                { dayName: "thurs", weatherIcon: faSun, high: "70", low: "20" },
-                {
-                  dayName: "friday",
-                  weatherIcon: faSun,
-                  high: "50",
-                  low: "20",
-                },
-                {
-                  dayName: "saturday",
-                  weatherIcon: faSun,
-                  high: "40",
-                  low: "20",
-                },
-              ]}
-            />
+            {!weather ? (
+              "null"
+            ) : (
+              <CardMedium
+                weatherForecast={weather}
+                // todaysTemp={weather?.today?.temp || "NA"}
+                // location="Mason City, IL"
+                // todayIcon={faCoffee}
+                // tomorrowIcon={faCoffee}
+                // tomorrowTemp={weather?.tomorrow?.temp || "NA"}
+                // tomorrowDescription={weather?.tomorrow?.description || "NA"}
+                // dayAfterTomorrowIcon={faCoffee}
+                // dayAfterTomorrowTemp={weather?.dayAfterTomorrow?.temp || "NA"}
+                // dayAfterTomorrowDescription={
+                //   weather?.dayAfterTomorrow.description || "NA"
+                // }
+              />
+            )}
+            {/* {!weather ? (
+              "null"
+            ) : (
+              <CardWeatherForecast
+                // weatherForecast={[
+                //   { day: "wed", icon: faSun, temp: { high: "80", low: "20" } },
+                //   { day: "thurs", icon: faSun, temp: { high: "70", low: "20" } },
+                //   { day: "friday", icon: faSun, temp: { high: "50", low: "20" } },
+                //   {
+                //     day: "saturday",
+                //     icon: faSun,
+                //     temp: { high: "40", low: "20" },
+                //   },
+                // ]}
+                weatherForecast={weather}
+              />
+            )} */}
           </div>
         </div>
       </div>

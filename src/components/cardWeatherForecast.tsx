@@ -1,48 +1,67 @@
 import "./../styles/card.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faSun } from "@fortawesome/free-solid-svg-icons";
-
-const tempProps = [
-  { dayName: "wed", weatherIcon: faSun, high: "80", low: "20" },
-  { dayName: "thurs", weatherIcon: faSun, high: "70", low: "20" },
-  { dayName: "friday", weatherIcon: faSun, high: "50", low: "20" },
-  { dayName: "saturday", weatherIcon: faSun, high: "40", low: "20" },
-];
-
-interface weatherForecast {
-  dayName: string;
-  weatherIcon: IconProp;
-  high: string;
-  low: string;
-}
+import { weather } from "./../shared/types/types";
 
 // For this typescript syntax see this link for more info: https://www.pluralsight.com/guides/use-interface-props-in-functional-components-using-typescript-with-react
-interface weatherForecastProps {
-  weatherForecast: weatherForecast[];
-}
-const CardWeatherForecast: React.FC<weatherForecastProps> = ({
-  weatherForecast,
-}: weatherForecastProps) => {
+// interface weatherForecastProps {
+//   weatherForecast: weather[];
+// }
+const CardWeatherForecast = (props: any) => {
+  // const CardWeatherForecast: React.FC<weatherForecastProps> = ({
+  //   weatherForecast,
+  // }: weatherForecastProps) => {
+  const { weatherForecast } = props;
+  console.log(weatherForecast, "forecast here");
   return (
     <>
-      <div className="card card-weather-forecast">
-        {weatherForecast.map((day, index, arr) => (
+      {!weatherForecast ? (
+        <div>Loading</div>
+      ) : (
+        <div className="card card-weather-forecast">
           <div className="forecastDay">
-            <h3>{day.dayName}</h3>
-            <FontAwesomeIcon icon={day.weatherIcon} />
+            <h3>{weatherForecast.today.day}</h3>
+            <FontAwesomeIcon icon={weatherForecast.today.icon} />
+            <p>{weatherForecast.today.description}</p>
             <p>
               <span className="border-thin" style={{ textDecoration: "none" }}>
-                {day.high}
+                {weatherForecast?.today?.temp?.high}
               </span>
               {"/"}
               <span className="border-thin" style={{ textDecoration: "none" }}>
-                {day.low}
+                {weatherForecast?.today?.temp?.low}
               </span>
             </p>
           </div>
-        ))}
-      </div>
+          <div className="forecastDay">
+            <h3>{weatherForecast.tomorrow.day}</h3>
+            <FontAwesomeIcon icon={weatherForecast.tomorrow.icon} />
+            <p>{weatherForecast.tomorrow.description}</p>
+            <p>
+              <span className="border-thin" style={{ textDecoration: "none" }}>
+                {weatherForecast.tomorrow.temp.high}
+              </span>
+              {"/"}
+              <span className="border-thin" style={{ textDecoration: "none" }}>
+                {weatherForecast.tomorrow.temp.low}
+              </span>
+            </p>
+          </div>
+          <div className="forecastDay">
+            <h3>{weatherForecast.dayAfterTomorrow.day}</h3>
+            <FontAwesomeIcon icon={weatherForecast.dayAfterTomorrow.icon} />
+            <p>{weatherForecast.dayAfterTomorrow.description}</p>
+            <p>
+              <span className="border-thin" style={{ textDecoration: "none" }}>
+                {weatherForecast.dayAfterTomorrow.temp.high}
+              </span>
+              {"/"}
+              <span className="border-thin" style={{ textDecoration: "none" }}>
+                {weatherForecast.dayAfterTomorrow.temp.low}
+              </span>
+            </p>
+          </div>
+        </div>
+      )}
     </>
   );
 };
