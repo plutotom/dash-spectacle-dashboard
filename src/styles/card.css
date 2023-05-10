@@ -4,7 +4,7 @@
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
   padding: 12px;
   transition: all 0.5s ease-in-out;
@@ -38,10 +38,14 @@
 .card-weather-forecast .forecastDay {
   min-width: 80px;
   height: 100%;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+.forecastDay p {
+  text-align: center;
 }
 /* apply border to all dives in card-weather-forecast but not the last one */
 .card-weather-forecast > :not(:last-child) {

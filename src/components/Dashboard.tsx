@@ -6,10 +6,16 @@ import banner2 from "../assets/looking-together.jpg";
 import CardImage from "./CardImage";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoffee, faSun } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCloud,
+  faCloudRain,
+  faCoffee,
+  faRainbow,
+  faSun,
+} from "@fortawesome/free-solid-svg-icons";
 
 import CardSmall from "./CardSmall";
-import CardMedium from "./cardMedium";
+import CardTodayWeather from "./cardTodayWeather";
 import CardWeatherForecast from "./cardWeatherForecast";
 
 import { getWeather } from "../shared/api/api";
@@ -82,7 +88,7 @@ export default function Dashboard() {
               low: forecastDay.properties.periods[1].temperature,
             },
             description: forecastDay.properties.periods[0].shortForecast,
-            icon: faCoffee,
+            icon: faCloud,
           },
           tomorrow: {
             day: forecastDay.properties.periods[2].name,
@@ -91,7 +97,7 @@ export default function Dashboard() {
               high: forecastDay.properties.periods[2].temperature,
               low: forecastDay.properties.periods[3].temperature,
             },
-            icon: faCoffee,
+            icon: faSun,
           },
           dayAfterTomorrow: {
             day: forecastDay.properties.periods[4].name,
@@ -100,7 +106,7 @@ export default function Dashboard() {
               low: forecastDay.properties.periods[5].temperature,
             },
             description: forecastDay.properties.periods[4].shortForecast,
-            icon: faCoffee,
+            icon: faCloudRain,
           },
         });
       })
@@ -118,6 +124,13 @@ export default function Dashboard() {
         </div>
         {/* <img src={`${banner}`} alt="diannal lines background" /> */}
         <div className="dash-content">
+          <div className="content-top">
+            <div className="time-date">
+              <h1>12:54</h1> <h3>May 5, 2023</h3>
+            </div>
+            <div className="item1">Item 2</div>
+            <div className="item2">item 3</div>
+          </div>
           <div className="cards">
             <CardImage />
             <CardSmall
@@ -126,42 +139,14 @@ export default function Dashboard() {
               value="30f"
               icon={faCoffee}
             />
+            {!weather ? "null" : <CardTodayWeather weatherForecast={weather} />}
             {!weather ? (
               "null"
             ) : (
-              <CardMedium
-                weatherForecast={weather}
-                // todaysTemp={weather?.today?.temp || "NA"}
-                // location="Mason City, IL"
-                // todayIcon={faCoffee}
-                // tomorrowIcon={faCoffee}
-                // tomorrowTemp={weather?.tomorrow?.temp || "NA"}
-                // tomorrowDescription={weather?.tomorrow?.description || "NA"}
-                // dayAfterTomorrowIcon={faCoffee}
-                // dayAfterTomorrowTemp={weather?.dayAfterTomorrow?.temp || "NA"}
-                // dayAfterTomorrowDescription={
-                //   weather?.dayAfterTomorrow.description || "NA"
-                // }
-              />
+              <CardWeatherForecast weatherForecast={weather} />
             )}
-            {/* {!weather ? (
-              "null"
-            ) : (
-              <CardWeatherForecast
-                // weatherForecast={[
-                //   { day: "wed", icon: faSun, temp: { high: "80", low: "20" } },
-                //   { day: "thurs", icon: faSun, temp: { high: "70", low: "20" } },
-                //   { day: "friday", icon: faSun, temp: { high: "50", low: "20" } },
-                //   {
-                //     day: "saturday",
-                //     icon: faSun,
-                //     temp: { high: "40", low: "20" },
-                //   },
-                // ]}
-                weatherForecast={weather}
-              />
-            )} */}
           </div>
+          <embed src="file:///Users/plutotom/Downloads/qr_code_wedding_svg.html" />
         </div>
       </div>
     </>

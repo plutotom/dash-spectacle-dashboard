@@ -28,7 +28,20 @@
 }
 .dash-content .cards {
   display: flex;
+  flex-wrap: wrap;
 }
 .dash-content .cards .card-small {
   margin: 1em;
+}
+
+.content-top {
+  width: 100%;
+  display: grid;
+  grid-column: 3;
+}
+.content-top h1 {
+  font-size: var(--fs-900);
+}
+.content-top h3 {
+  font-size: var(--fs-700);
 }

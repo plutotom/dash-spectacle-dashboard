@@ -2,8 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../styles/card.css";
 import { weather } from "../shared/types/types";
 
-export default function CardMedium({ weatherForecast }: any) {
-  console.log(weatherForecast, "medumn");
+export default function CardTodayWeather({ weatherForecast }: any) {
   return (
     <>
       <div className="card card-medium">
@@ -31,8 +30,9 @@ export default function CardMedium({ weatherForecast }: any) {
               icon={weatherForecast.tomorrow.icon}
             />
             <p className="card-small-title">
-              Tomorrow: {weatherForecast.tomorrowTemp}{" "}
-              {weatherForecast.tomorrow.description}
+              {weatherForecast.tomorrow.day}:{" "}
+              {weatherForecast.tomorrow.temp.high}°{"/"}
+              {weatherForecast.tomorrow.temp.low}°
             </p>
           </div>
           <div className="medium-row">
@@ -41,10 +41,9 @@ export default function CardMedium({ weatherForecast }: any) {
               icon={weatherForecast.dayAfterTomorrow.icon}
             />
             <p className="card-small-paragraph">
-              Day After Tomorrow: {weatherForecast.dayAfterTomorrow.temp.high}
-              {"/"}
-              {weatherForecast.dayAfterTomorrow.temp.low}
-              {weatherForecast.dayAfterTomorrowDescription}
+              {weatherForecast.dayAfterTomorrow.day}:{" "}
+              {weatherForecast.dayAfterTomorrow.temp.high}°{"/"}
+              {weatherForecast.dayAfterTomorrow.temp.low}°
             </p>
           </div>
         </div>
