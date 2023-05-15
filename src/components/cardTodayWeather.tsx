@@ -8,7 +8,7 @@ export default function CardTodayWeather({ weatherForecast }: any) {
       <div className="card card-medium">
         <div className="medium-top">
           <div>
-            <h3>{weatherForecast.today.temp.high}</h3>
+            <h3>{weatherForecast.today.temp.current || "Na"}</h3>
             <p className="location">
               {weatherForecast.location
                 ? weatherForecast.location

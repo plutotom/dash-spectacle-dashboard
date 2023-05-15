@@ -1,6 +1,6 @@
 interface weather {
   today: {
-    temp: { high: string; low: string };
+    temp: { current: string; high: string; low: string };
     day: string;
     description: string;
     icon: any;

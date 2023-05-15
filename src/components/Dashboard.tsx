@@ -79,11 +79,11 @@ export default function Dashboard() {
 
     fetchData()
       .then(([forecastDay, forecastHourly]) => {
-        // console.log("res", forecastDay);
         setWeather({
           today: {
             day: forecastDay.properties.periods[0].name,
             temp: {
+              current: forecastHourly.properties.periods[0].temperature,
               high: forecastDay.properties.periods[0].temperature,
               low: forecastDay.properties.periods[1].temperature,
             },
@@ -110,10 +110,16 @@ export default function Dashboard() {
           },
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>
+        console.log(
+          err,
+          "There was an error is trying to set the weathers state"
+        )
+      );
   }, []);
   return (
     <>
+      {console.log(weather, "state")}
       <div className="dash-container">
         <div
           className="dash-banner"
@@ -146,7 +152,7 @@ export default function Dashboard() {
               <CardWeatherForecast weatherForecast={weather} />
             )}
           </div>
-          <embed src="file:///Users/plutotom/Downloads/qr_code_wedding_svg.html" />
+          {/* <embed src="file:///Users/plutotom/Downloads/qr_code_wedding_svg.html" /> */}
         </div>
       </div>
     </>
