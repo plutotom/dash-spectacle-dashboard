@@ -17,6 +17,7 @@ import {
 import CardSmall from "./CardSmall";
 import CardTodayWeather from "./cardTodayWeather";
 import CardWeatherForecast from "./cardWeatherForecast";
+import Todoist from "./Todoist";
 
 import { getWeather } from "../shared/api/api";
 import { weather } from "./../shared/types/types";
@@ -137,6 +138,7 @@ export default function Dashboard() {
             <div className="item1">Item 2</div>
             <div className="item2">item 3</div>
           </div>
+          <Todoist />
           <div className="cards">
             <CardImage />
             <CardSmall
