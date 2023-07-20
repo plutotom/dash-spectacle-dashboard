@@ -23,7 +23,7 @@
   align-items: center;
   height: 80vh;
   width: 100%;
-  color: white;
+  color: var(--text);
   background-color: var(--clr-neutral-900);
 }
 .dash-content .cards {

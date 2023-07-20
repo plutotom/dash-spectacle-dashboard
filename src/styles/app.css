@@ -10,6 +10,12 @@
   --clr-neutral-900: #222b31;
   --clr-neutral-100: hsl(0 0% 100%);
 
+  --text: #ffffff;
+  --background: #222b31;
+  --primary: #d47a32;
+  --secondary: #fff6e9;
+  --accent: #d47a32;
+
   /* --ff-primary: "Roboto", sans-serif; */
   --ff-primary: "Roboto Mono", monospace;
 

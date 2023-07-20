@@ -1,0 +1,11 @@
+.time-and-date-card {
+  /* background-color: var(--text); */
+  border: 1px solid var(--primary);
+}
+
+.time-and-date-card .day {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
