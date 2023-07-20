@@ -11,7 +11,7 @@ const CardWeatherForecast = (props: any) => {
   //   weatherForecast,
   // }: weatherForecastProps) => {
   const { weatherForecast } = props;
-  console.log(weatherForecast, "forecast here");
+  // console.log(weatherForecast, "forecast here");
   return (
     <>
       {!weatherForecast ? (

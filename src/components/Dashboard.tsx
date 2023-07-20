@@ -4,7 +4,7 @@ import "./../styles/dashbaord.css";
 import banner from "../assets/codioful-formerly-gradienta-oPC-b39ZuzE-unsplash.jpg";
 import banner2 from "../assets/looking-together.jpg";
 import CardImage from "./CardImage";
-
+import GooglePhotosComponent from "./GooglePhotos";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCloud,
@@ -120,7 +120,7 @@ export default function Dashboard() {
   }, []);
   return (
     <>
-      {console.log(weather, "state")}
+      {/* {console.log(weather, "state")} */}
       <div className="dash-container">
         <div
           className="dash-banner"
@@ -141,6 +141,7 @@ export default function Dashboard() {
           <Todoist />
           <div className="cards">
             <CardImage />
+            <GooglePhotosComponent />
             <CardSmall
               className="card-small"
               title="Temp"
