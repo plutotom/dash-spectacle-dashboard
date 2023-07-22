@@ -1,12 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import "./../styles/dashboard.css";
-import "./../styles/dashboardV2.css";
-
-import banner from "../assets/codioful-formerly-gradienta-oPC-b39ZuzE-unsplash.jpg";
-import banner2 from "../assets/looking-together.jpg";
-import CardImage from "./CardImage";
-import GooglePhotosComponent from "./GooglePhotos";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCloud,
   faCloudRain,
@@ -15,11 +7,21 @@ import {
   faSun,
 } from "@fortawesome/free-solid-svg-icons";
 
+// import "./../styles/dashboard.css";
+import "./../styles/dashboardV2.css";
+
+import banner from "../assets/codioful-formerly-gradienta-oPC-b39ZuzE-unsplash.jpg";
+import banner2 from "../assets/looking-together.jpg";
+import CardImage from "./CardImage";
+import GooglePhotosComponent from "./GooglePhotos";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import CardSmall from "./CardSmall";
 import CardTodayWeather from "./cardTodayWeather";
 import CardWeatherForecast from "./cardWeatherForecast";
 import Todoist from "./Todoist";
 import TimeAndDateCard from "./TimeAndDateCard";
+import ErrorBoundary from "./errorBoundary";
 
 import { getWeather } from "../shared/api/api";
 import { weather } from "./../shared/types/types";
@@ -135,16 +137,15 @@ export default function Dashboard() {
         <div className="dash-content">
           <div className="content-top">
             <div className="time-date">
-              <h1>12:54</h1> <h3>May 5, 2023</h3>
               <TimeAndDateCard />
             </div>
-            <div className="item1">Item 2</div>
-            <div className="item2">item 3</div>
           </div>
           <Todoist />
           <div className="cards">
-            <CardImage />
-            <GooglePhotosComponent />
+            {/* <CardImage /> */}
+            <ErrorBoundary>
+              <GooglePhotosComponent />
+            </ErrorBoundary>
             <CardSmall
               className="card-small"
               title="Temp"

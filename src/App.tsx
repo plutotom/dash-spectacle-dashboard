@@ -1,5 +1,6 @@
 // import SideNav from "./components/SideNav";
-import Dashboard from "./components/Dashboard";
+// import Dashboard from "./components/Dashboard";
+import DashboardV2 from "./components/dashboardV2";
 import "./styles/app.css";
 
 function App() {
@@ -7,7 +8,8 @@ function App() {
     <body>
       <div className="main-container">
         {/* <SideNav /> */}
-        <Dashboard />
+        {/* <Dashboard /> */}
+        <DashboardV2 />
       </div>
     </body>
   );

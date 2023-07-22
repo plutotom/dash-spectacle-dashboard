@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 const GooglePhotosComponent: React.FC = () => {
+  const [maxPhotoCount, setMaxPhotoCount] = useState<number>(25);
   const [photos, setPhotos] = useState<any[]>([]);
   const [accessToken, setAccessToken] = useState<string>("");
   const [AuthorizationAttempt, setAuthorizationAttempt] = useState<number>(0);
+  const [updateImage, setUpdateImage] = useState<number>(0);
+  const [newImageIndex, setNewImageIndex] = useState<number>(
+    Math.floor(Math.random() * maxPhotoCount)
+  );
 
   // Parse the access token from the URL fragment
   const parseAccessToken = () => {
@@ -38,16 +43,68 @@ const GooglePhotosComponent: React.FC = () => {
   };
 
   useEffect(() => {
-    // Call the function to initiate the authorization flow
-    // if (!accessToken) {
-    //   authorize();
-    //   parseAccessToken();
-    // }
-  }, []);
-
-  useEffect(() => {
     const fetchPhotos = async () => {
       try {
+        // POST
+        const search = await fetch(
+          "https://photoslibrary.googleapis.com/v1/mediaItems:search",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              pageSize: maxPhotoCount,
+              filters: {
+                contentFilter: {
+                  includedContentCategories: ["PEOPLE", "SELFIES"],
+                  excludedContentCategories: [
+                    //? is limited to 10 items
+                    // "ANIMALS",
+                    // "FASHION",
+                    // "LANDMARKS",
+                    // "RECEIPTS",
+                    // "FLOWERS",
+                    // "LANDSCAPES",
+                    "SCREENSHOTS",
+                    // "WHITEBOARDS",
+                    // "FOOD",
+                    // "GARDENS",
+                    // "SPORT",
+                    // "CRAFTS",
+                    // "PERFORMANCES",
+                    "DOCUMENTS",
+                    // "HOUSES",
+                    // "PETS",
+                    "UTILITY",
+                  ],
+                },
+                mediaTypeFilter: {
+                  mediaTypes: ["PHOTO"],
+                },
+                // includedFeatures: ["FAVORITES"],
+
+                // dateFilter: {
+                //   ranges: [
+                //     {
+                //       startDate: {
+                //         year: 2014,
+                //         month: 6,
+                //         day: 12,
+                //       },
+                //       endDate: {
+                //         year: 2014,
+                //         month: 7,
+                //         day: 13,
+                //       },
+                //     },
+                //   ],
+                // },
+              },
+            }),
+          }
+        );
         // Make an HTTP request to the Google Photos API endpoint
         const response = await fetch(
           "https://photoslibrary.googleapis.com/v1/mediaItems",
@@ -58,11 +115,14 @@ const GooglePhotosComponent: React.FC = () => {
           }
         );
 
-        if (response.ok) {
-          const data = await response.json();
+        // if (response.ok) {
+        if (search.ok) {
+          const data = await search.json();
+          setMaxPhotoCount(data.mediaItems.length);
+          setNewImageIndex(Math.floor(Math.random() * data.mediaItems.length));
           setPhotos(data.mediaItems);
         } else {
-          console.error("Error fetching photos:", response.statusText);
+          console.error("Error fetching photos:", search.statusText);
         }
       } catch (error) {
         console.error("Error fetching photos:", error);
@@ -74,22 +134,33 @@ const GooglePhotosComponent: React.FC = () => {
     } else {
       parseAccessToken();
     }
-  }, [accessToken]);
+    // }, [accessToken]);
+  }, [accessToken, updateImage]);
+
+  useEffect(() => {
+    let updateImage = setInterval(
+      () => setUpdateImage(Math.floor(Math.random() * maxPhotoCount)),
+      // update every 4 hours
+      // 1000 * 60 * 60 * 4
+      // 10 sec
+      10000
+    );
+    return function cleanup() {
+      clearInterval(updateImage);
+    };
+  });
 
   return (
     <div>
-      <h1>Google Photos Component</h1>
-      {/* <button onClick={authorize}>Authorize</button> */}
       {accessToken ? (
         photos.length > 0 ? (
           <ul>
-            <li key={photos[0].id}>
-              <img src={photos[0].baseUrl} alt={photos[0].filename} />
+            <li key={photos[newImageIndex]?.id}>
+              <img
+                src={photos[newImageIndex]?.baseUrl}
+                alt={photos[newImageIndex]?.filename}
+              />
             </li>
-
-            {/* {photos.map((photo) => ( */}
-            {/* <p>{photo.filename}</p> */}
-            {/* ))} */}
           </ul>
         ) : (
           <p>No photos found.</p>
