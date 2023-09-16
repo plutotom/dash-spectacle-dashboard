@@ -49,6 +49,19 @@
   --size-700: 3rem;
   --size-800: 4rem;
   --size-900: 5rem;
+
+  /* Layout the grid column sizes so we can set cards to be those sizes */
+  --column-1: 125px;
+  --column-2: 250px;
+  --column-3: 500px;
+  --column-4: 750px;
+  --column-5: 1000px;
+
+  --row-1: 100px;
+  --row-2: 200px;
+  --row-3: 300px;
+  --row-4: 400px;
+  --row-5: 500px;
 }
 
 @media (min-width: 50em) {

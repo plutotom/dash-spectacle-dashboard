@@ -6,8 +6,8 @@ export default function CardSmall(props: any) {
   return (
     <div className="card card-small">
       <FontAwesomeIcon icon={props.icon} />
-      <p className="card-small-title">{props.title}</p>
-      <p className="card-small-paragraph">{props.value}</p>
+      <p className="card-title">{props.title}</p>
+      <p className="card-paragraph">{props.value}</p>
     </div>
   );
 }

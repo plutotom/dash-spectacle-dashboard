@@ -1,8 +1,8 @@
 .dash-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center; */
+  /* align-items: center; */
 }
 
 .dash-banner {
@@ -19,29 +19,32 @@
 .dash-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center; */
+  /* align-items: center; */
   height: 80vh;
   width: 100%;
   color: var(--text);
   background-color: var(--clr-neutral-900);
 }
-.dash-content .cards {
-  display: flex;
-  flex-wrap: wrap;
-}
-.dash-content .cards .card-small {
+
+.card-small {
   margin: 1em;
 }
 
-.content-top {
-  width: 100%;
+.dash-content .row {
+  /* display: flex; */
+  /* flex-direction: row; */
   display: grid;
-  grid-column: 3;
+  grid-auto-flow: column;
 }
-.content-top h1 {
+
+.row > div {
+  display: flex;
+}
+
+h1 {
   font-size: var(--fs-900);
 }
-.content-top h3 {
+h3 {
   font-size: var(--fs-700);
 }

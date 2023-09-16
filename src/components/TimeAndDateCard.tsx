@@ -6,7 +6,9 @@ const TimeAndDateCard = () => {
   let [dayOfTheWeek, setDayOfTheWeek] = useState<string>(
     dayOfWeek[new Date().getDay()]
   );
-  let [currentTime, setCurrentTime] = useState<string>("");
+  let [currentTime, setCurrentTime] = useState<string>(
+    `${new Date().getHours()} • ${new Date().getMinutes()} • ${new Date().getSeconds()}`
+  );
   let [date, setDate] = useState<any>(
     `${new Date().getMonth()} • ${new Date().getDate()} • ${new Date().getFullYear()}`
   );
@@ -47,7 +49,8 @@ const TimeAndDateCard = () => {
     <div className="time-and-date-card">
       <div className="day">
         {/* // display what day it is, then the date (ex: Mon 5 • 5 • 23) */}
-        <h4 className="dayOfTheWeek">{dayOfTheWeek}</h4> <p>{date}</p>
+        <h4 className="dayOfTheWeek">{dayOfTheWeek}</h4>
+        <p> {date}</p>
       </div>
       <div className="time">
         {/* // display the time (ex: 12:54) */}

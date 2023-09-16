@@ -1,11 +1,24 @@
 .time-and-date-card {
   /* background-color: var(--text); */
   border: 1px solid var(--primary);
+  /* max-width: fit-content; */
+  max-width: var(--column-2);
+  min-width: var(--column-2);
+  max-height: var(--row-1);
+  min-height: var(--row-1);
+  padding: 10px;
+  letter-spacing: 2px;
+  text-align: center;
 }
 
 .time-and-date-card .day {
   display: flex;
-  flex: 1;
   justify-content: center;
   align-items: center;
+}
+.time-and-date-card .day p {
+  padding-left: 10px;
+}
+.time-and-date-card h4 {
+  text-transform: uppercase;
 }

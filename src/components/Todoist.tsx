@@ -65,7 +65,7 @@ const Todoist: React.FC = () => {
 
   return (
     <div>
-      <h1>Todoist Component</h1>
+      <h4>Todoist Component</h4>
       {todos.length > 0 ? (
         <ul>
           {todos.sort(sortTodoByPriority).map((todo) => (

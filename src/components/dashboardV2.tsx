@@ -12,6 +12,7 @@ import "./../styles/dashboardV2.css";
 import banner2 from "../assets/looking-together.jpg";
 import GooglePhotosComponent from "./GooglePhotos";
 import CardSmall from "./CardSmall";
+import CardMedium from "./CardMedium";
 import CardTodayWeather from "./cardTodayWeather";
 import CardWeatherForecast from "./cardWeatherForecast";
 import Todoist from "./Todoist";
@@ -32,19 +33,24 @@ const dashboardV2 = () => {
         </div>
         {/* <img src={`${banner}`} alt="diannal lines background" /> */}
         <div className="dash-content">
-          <div className="content-top">
-            <div className="time-date">
+          <div className="row">
+            <div>
               <TimeAndDateCard />
             </div>
+
+            <ErrorBoundary>{/* <GooglePhotosComponent /> */}</ErrorBoundary>
           </div>
-          <Todoist />
-          <div className="cards">
-            {/* <CardImage /> */}
-            <ErrorBoundary>
-              <GooglePhotosComponent />
-            </ErrorBoundary>
+          <div className="row">
+            <div>
+              <TimeAndDateCard />
+            </div>
+            <div>
+              <Todoist />
+            </div>
+            <div>
+              <CardMedium />
+            </div>
           </div>
-          {/* <embed src="file:///Users/plutotom/Downloads/qr_code_wedding_svg.html" /> */}
         </div>
       </div>
     </>
