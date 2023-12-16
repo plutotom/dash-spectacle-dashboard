@@ -3,7 +3,6 @@ import {
   faCloud,
   faCloudRain,
   faCoffee,
-  faRainbow,
   faSun,
 } from "@fortawesome/free-solid-svg-icons";
 
