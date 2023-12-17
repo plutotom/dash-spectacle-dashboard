@@ -5,13 +5,11 @@ import "./styles/app.css";
 
 function App() {
   return (
-    <body>
-      <div className="main-container">
-        {/* <SideNav /> */}
-        {/* <Dashboard /> */}
-        <DashboardV2 />
-      </div>
-    </body>
+    <div className="main-container">
+      {/* <SideNav /> */}
+      {/* <Dashboard /> */}
+      <DashboardV2 />
+    </div>
   );
 }
 

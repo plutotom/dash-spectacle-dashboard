@@ -151,7 +151,7 @@ export default function Dashboard() {
               value="30f"
               icon={faCoffee}
             />
-            {!weather ? "null" : <CardTodayWeather weatherForecast={weather} />}
+            {/* {!weather ? "null" : <CardTodayWeather weatherForecast={weather} />} */}
             {!weather ? (
               "null"
             ) : (

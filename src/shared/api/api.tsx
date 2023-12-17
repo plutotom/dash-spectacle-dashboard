@@ -1,19 +1,41 @@
 import axios from "axios";
 import urls from "./urls";
 import apiWeatherRes from "./tempHolder";
-import { promises } from "dns";
+import { getFromCache, saveToCache } from "../utils/cache";
 
 export async function getGeoLocation(
-  location = "213 thomas lincoln Il 62656 united states"
+  // location = "213 thomas lincoln Il 62656 united states"
+  location = "8 N state st Elgin Il 60123, United States"
 ) {
+  const cacheKey = "getGeoLocation" + location;
+  const cacheData = getFromCache(cacheKey);
+  if (cacheData) {
+    console.log("Retrieved from cache for location");
+    return cacheData;
+  }
+
   // https://api.geoapify.com/v1/geocode/search?text=38%20Upper%20Montagu%20Street%2C%20Westminster%20W1H%201LJ%2C%20United%20Kingdom&apiKey=65852197164442b5b2322b285de696b1
-  const url = urls.getGeoLocation + "json?address=" + location;
-  const res = await axios.get(url);
-  return res;
+  const params = new URLSearchParams({
+    text: location,
+    apiKey: process.env.REACT_APP_GEOAPIFY_API_KEY || "",
+  });
+  const paramString = params.toString();
+  const url = `https://api.geoapify.com/v1/geocode/search?${paramString}`;
+  await axios
+    .get(url)
+    .then((res) => {
+      console.log("Touched API for location");
+      saveToCache(cacheKey, res.data);
+      return res.data;
+    })
+    .catch((err) => {
+      return err;
+    });
 }
+
 let cacheHolder: any = [];
 export async function getWeather(lon: String, lat: String) {
-  if (true) return apiWeatherRes;
+  if (false) return apiWeatherRes;
   console.log(cacheHolder, "cacheHolder");
   if (cacheHolder.length !== 0) {
     return cacheHolder;
@@ -21,10 +43,20 @@ export async function getWeather(lon: String, lat: String) {
 
   //api.weather.gov/points/40.145934,-89.36973
   const url = urls.getWeatherPoints + "/" + lat + "," + lon;
-  // console.log("url", url);
+
+  const cacheKey = "getGeoLocation" + url;
+  const cachedWeatherData = getFromCache(cacheKey);
+  if (cachedWeatherData) {
+    console.log("Retrieved from cache for weather");
+    let [forecastRes, forecastHourlyRes] = cachedWeatherData;
+    return [forecastRes, forecastHourlyRes];
+  }
+
   const [forecastRes, forecastHourlyRes] = await axios
     .get(url)
     .then(async (res) => {
+      console.log("Touched API for weather");
+      console.log(res);
       // res.data.properties.forecast -> Object forecast data
       // res.data.properties.forecastHourly
       // res.data.properties.relativeLocation.city = Lincoln
@@ -84,5 +116,7 @@ export async function getWeather(lon: String, lat: String) {
       console.log(cacheHolder, "cacheHolder");
       return [forecastResTemp, forecastHourlyResTemp];
     });
+
+  saveToCache(cacheKey, [forecastRes, forecastHourlyRes]);
   return [forecastRes, forecastHourlyRes];
 }
