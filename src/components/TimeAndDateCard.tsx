@@ -47,15 +47,34 @@ const TimeAndDateCard = () => {
 
   return (
     <div className="time-and-date-card">
-      <div className="day">
-        {/* // display what day it is, then the date (ex: Mon 5 • 5 • 23) */}
+      {/* <div className="day">
+      
         <h4 className="dayOfTheWeek">{dayOfTheWeek}</h4>
         <p> {date}</p>
       </div>
       <div className="time">
-        {/* // display the time (ex: 12 * 54 * 28) */}
-        {/* <h4>12 * 54 * 28</h4> */}
         <h4>{currentTime}</h4>
+      </div> */}
+      <div className="timer">
+        <div className="time-unit">
+          <span id="days">FR</span>
+          <label>DAY</label>
+        </div>
+        :
+        <div className="time-unit">
+          <span id="hours">13</span>
+          <label>HOURS</label>
+        </div>
+        :
+        <div className="time-unit">
+          <span id="minutes">47</span>
+          <label>MINUTES</label>
+        </div>
+        :
+        <div className="time-unit">
+          <span id="seconds">18</span>
+          <label>SECONDS</label>
+        </div>
       </div>
     </div>
   );
