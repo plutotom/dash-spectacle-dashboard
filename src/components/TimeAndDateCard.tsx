@@ -53,8 +53,9 @@ const TimeAndDateCard = () => {
         <p> {date}</p>
       </div>
       <div className="time">
-        {/* // display the time (ex: 12:54) */}
-        <h3>{currentTime}</h3>
+        {/* // display the time (ex: 12 * 54 * 28) */}
+        {/* <h4>12 * 54 * 28</h4> */}
+        <h4>{currentTime}</h4>
       </div>
     </div>
   );

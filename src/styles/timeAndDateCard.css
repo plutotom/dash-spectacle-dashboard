@@ -22,3 +22,11 @@
 .time-and-date-card h4 {
   text-transform: uppercase;
 }
+.time-and-date-card .time {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.time-and-date-card .time h4 {
+  font-size: var(--fs-650);
+}
