@@ -18,6 +18,7 @@ import CardWeatherForecast from "./cardWeatherForecast";
 // import Todoist from "./Todoist";
 import TimeAndDateCard from "./TimeAndDateCard";
 import ErrorBoundary from "./errorBoundary";
+import { SpotifyNowPlaying } from "./spotify/SpotifyNowPlaying";
 // import ErrorBoundary from "./errorBoundary";
 
 const DashboardV2 = () => {
@@ -31,10 +32,19 @@ const DashboardV2 = () => {
           </div>
           <div className="row">
             <div>
-              <CardMedium
+              {/* <CardMedium
                 title="Md Card"
                 icon={faCoffee}
                 cardText="Dummy data"
+              /> */}
+              <SpotifyNowPlaying
+                client_id={process.env.REACT_APP_SPOTIFY_CLIENT_ID || ""}
+                client_secret={
+                  process.env.REACT_APP_SPOTIFY_CLIENT_SECRET || ""
+                }
+                refresh_token={
+                  process.env.REACT_APP_SPOTIFY_REFRESH_TOKEN || ""
+                }
               />
             </div>
             <div>
