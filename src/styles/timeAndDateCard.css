@@ -1,9 +1,9 @@
 .time-and-date-card {
   /* background-color: var(--text); */
-  border: 1px solid var(--primary);
+  /* border: 1px solid var(--primary); */
   /* max-width: fit-content; */
-  max-width: var(--column-2);
-  min-width: var(--column-2);
+  /* max-width: var(--column-2); */
+  /* min-width: var(--column-2); */
   max-height: var(--row-1);
   min-height: var(--row-1);
   padding: 10px;
@@ -44,10 +44,18 @@
   margin: 0px 5px;
 }
 
-.time-unit span {
-  font-size: 10px;
+.time-unit p {
+  font-size: 40px;
+}
+.time-unit label {
+  font-size: 12px;
+  display: block;
 }
 
-.time-unit label {
-  display: block;
+.time-underline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  width: 100%;
 }

@@ -34,7 +34,7 @@
   display: flex;
   flex-direction: row;
 
-  width: 90%;
+  /* width: var(--md-widget-width * 2); */
   /* margin: 1em; */
   margin: 10px 20px 10px 20px;
   padding: 1em;
@@ -57,4 +57,13 @@ h3 {
 }
 .card-small {
   margin: 1em;
+}
+.headerTime {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 8vh;
+  width: 100%;
+  background-color: var(--clr-neutral-900);
+  background-size: cover;
 }

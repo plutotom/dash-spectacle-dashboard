@@ -13,9 +13,11 @@ import "./../styles/dashboardV2.css";
 // import CardSmall from "./CardSmall";
 import CardMedium from "./CardMedium";
 import CardTodayWeather from "./cardTodayWeather";
-// import CardWeatherForecast from "./cardWeatherForecast";
+import TimeAndDateCardOld from "./oldComponents/timeDate";
+import CardWeatherForecast from "./cardWeatherForecast";
 // import Todoist from "./Todoist";
 import TimeAndDateCard from "./TimeAndDateCard";
+import ErrorBoundary from "./errorBoundary";
 // import ErrorBoundary from "./errorBoundary";
 
 const DashboardV2 = () => {
@@ -24,10 +26,10 @@ const DashboardV2 = () => {
       {/* {console.log(weather, "state")} */}
       <div className="dash-container">
         <div className="dash-content">
+          <div className="headerTime">
+            <TimeAndDateCard />
+          </div>
           <div className="row">
-            <div>
-              <TimeAndDateCard />
-            </div>
             <div>
               <CardMedium
                 title="Md Card"
@@ -42,10 +44,13 @@ const DashboardV2 = () => {
           </div>
           <div className="row">
             <div>
-              <TimeAndDateCard />
+              <TimeAndDateCardOld />
             </div>
             <div>
-              <CardMedium title="title" icon={faCloud} cardText="Dummy data" />
+              {/* <CardMedium title="title" icon={faCloud} cardText="Dummy data" /> */}
+              <ErrorBoundary>
+                <CardWeatherForecast />
+              </ErrorBoundary>
             </div>
             <div className="cards">
               {/* <CardImage /> */}

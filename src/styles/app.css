@@ -63,6 +63,18 @@
   --row-3: 300px;
   --row-4: 400px;
   --row-5: 500px;
+
+  --md-widget-width: 375px;
+  --md-widget-height: 250px;
+  --md-widget-margin: 10px;
+  --md-widget-padding: 10px;
+  --md-widget-border-radius: 10px;
+
+  --sm-widget-width: 175px;
+  --sm-widget-height: 175px;
+  --sm-widget-margin: 5px;
+  --sm-widget-padding: 5px;
+  --sm-widget-border-radius: 5px;
 }
 
 @media (min-width: 50em) {
