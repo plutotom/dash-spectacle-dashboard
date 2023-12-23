@@ -10,7 +10,7 @@ export async function getGeoLocation(
   const cacheKey = "getGeoLocation" + location;
   const cacheData = getFromCache(cacheKey);
   if (cacheData) {
-    console.log("Retrieved from cache for location");
+    // console.log("Retrieved from cache for location");
     return cacheData;
   }
 
@@ -24,7 +24,7 @@ export async function getGeoLocation(
   await axios
     .get(url)
     .then((res) => {
-      console.log("Touched API for location");
+      // console.log("Touched API for location");
       saveToCache(cacheKey, res.data);
       return res.data;
     })
@@ -36,7 +36,7 @@ export async function getGeoLocation(
 let cacheHolder: any = [];
 export async function getWeather(lon: String, lat: String) {
   if (false) return apiWeatherRes;
-  console.log(cacheHolder, "cacheHolder");
+  // console.log(cacheHolder, "cacheHolder");
   if (cacheHolder.length !== 0) {
     return cacheHolder;
   }
@@ -47,7 +47,7 @@ export async function getWeather(lon: String, lat: String) {
   const cacheKey = "getGeoLocation" + url;
   const cachedWeatherData = getFromCache(cacheKey);
   if (cachedWeatherData) {
-    console.log("Retrieved from cache for weather");
+    // console.log("Retrieved from cache for weather");
     let [forecastRes, forecastHourlyRes] = cachedWeatherData;
     return [forecastRes, forecastHourlyRes];
   }

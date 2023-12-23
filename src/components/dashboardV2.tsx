@@ -32,11 +32,6 @@ const DashboardV2 = () => {
           </div>
           <div className="row">
             <div>
-              {/* <CardMedium
-                title="Md Card"
-                icon={faCoffee}
-                cardText="Dummy data"
-              /> */}
               <SpotifyNowPlaying
                 client_id={process.env.REACT_APP_SPOTIFY_CLIENT_ID || ""}
                 client_secret={

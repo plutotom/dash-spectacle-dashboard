@@ -40,6 +40,7 @@
   padding: 1em;
   background-color: var(--clr-secondary-400);
   border-radius: 15px;
+  /* min-width: calc(var(--md-widget-width) + var(--md-widget-width) + 60px); */
 
   /* display: grid;
   grid-auto-flow: column; */

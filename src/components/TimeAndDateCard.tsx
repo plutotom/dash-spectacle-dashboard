@@ -10,7 +10,7 @@ const TimeAndDateCard = () => {
   let [currentTime, setCurrentTime] = useState<any>(
     // `${new Date().getHours()} • ${new Date().getMinutes()} • ${new Date().getSeconds()}`
     {
-      hour: new Date().getHours(),
+      hour: new Date().getHours() % 12 || 12,
       minute: new Date().getMinutes(),
       second: new Date().getSeconds(),
     }
@@ -41,7 +41,9 @@ const TimeAndDateCard = () => {
         setCurrentTime(
           // `${new Date().getHours()} • ${new Date().getMinutes()} • ${new Date().getSeconds()}`
           {
-            hour: new Date().getHours(),
+            hour: (new Date().getHours() % 12 || 12)
+              .toString()
+              .padStart(2, "0"),
             minute: new Date().getMinutes(),
             second: new Date().getSeconds(),
           }

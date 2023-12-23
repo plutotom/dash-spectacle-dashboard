@@ -2,6 +2,13 @@
   "name": "dack-board-dashboard",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "xps-start": "react-scripts start --port 3008"
+  },
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@doist/todoist-api-typescript": "^2.1.2",
@@ -16,6 +23,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "axios": "^1.4.0",
+    "buffer": "^6.0.3",
     "date-fns": "^2.30.0",
     "querystring": "^0.2.1",
     "react": "^18.2.0",
@@ -24,19 +32,6 @@
     "spotify-web-api-js": "^1.5.2",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "xps-start": "react-scripts start --port 3008"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -49,5 +44,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1"
   }
 }

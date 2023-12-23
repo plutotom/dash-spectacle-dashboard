@@ -54,7 +54,7 @@ const Todoist: React.FC = () => {
     const fetchTodos = async () => {
       try {
         const allTodos = await api.getTasks();
-        setTodos(allTodos as TodoType[]);
+        setTodos(allTodos as unknown as TodoType[]);
       } catch (error) {
         console.error("Error fetching todos:", error);
       }
