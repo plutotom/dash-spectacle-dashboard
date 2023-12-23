@@ -113,8 +113,8 @@
   padding: 4px 0 0 0;
   border-top: 1px solid;
   border-color: #afafb23c;
-  justify-content: end;
-  align-items: start;
+  justify-content: flex-end;
+  align-items: flex-start;
 }
 
 .card-medium .medium-row {

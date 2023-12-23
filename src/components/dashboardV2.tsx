@@ -19,6 +19,8 @@ import CardWeatherForecast from "./cardWeatherForecast";
 import TimeAndDateCard from "./TimeAndDateCard";
 import ErrorBoundary from "./errorBoundary";
 import { SpotifyNowPlaying } from "./spotify/SpotifyNowPlaying";
+// import ProgressCircleSVG from "./ProgressCircleSVG";
+import ProgressCircle from "./ProgressCircle";
 // import ErrorBoundary from "./errorBoundary";
 
 const DashboardV2 = () => {
@@ -31,8 +33,8 @@ const DashboardV2 = () => {
             <TimeAndDateCard />
           </div>
           <div className="row">
-            <div>
-              <SpotifyNowPlaying
+            {/* <div> */}
+            {/* <SpotifyNowPlaying
                 client_id={process.env.REACT_APP_SPOTIFY_CLIENT_ID || ""}
                 client_secret={
                   process.env.REACT_APP_SPOTIFY_CLIENT_SECRET || ""
@@ -40,7 +42,11 @@ const DashboardV2 = () => {
                 refresh_token={
                   process.env.REACT_APP_SPOTIFY_REFRESH_TOKEN || ""
                 }
-              />
+              /> */}
+            {/* </div> */}
+            <div className="card card-medium">
+              {/* <ProgressCircleSVG /> */}
+              <ProgressCircle />
             </div>
             <div>
               <CardTodayWeather />
