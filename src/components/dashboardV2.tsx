@@ -19,7 +19,11 @@ import CardWeatherForecast from "./cardWeatherForecast";
 import TimeAndDateCard from "./TimeAndDateCard";
 import ErrorBoundary from "./errorBoundary";
 import { SpotifyNowPlaying } from "./spotify/SpotifyNowPlaying";
+
 import NotionPage from "./notion/NotionPage";
+
+// import ProgressCircleSVG from "./ProgressCircleSVG";
+import ProgressCircle from "./ProgressCircle";
 // import ErrorBoundary from "./errorBoundary";
 
 const DashboardV2 = () => {
