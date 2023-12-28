@@ -19,6 +19,7 @@ import CardWeatherForecast from "./cardWeatherForecast";
 import TimeAndDateCard from "./TimeAndDateCard";
 import ErrorBoundary from "./errorBoundary";
 import { SpotifyNowPlaying } from "./spotify/SpotifyNowPlaying";
+import NotionPage from "./notion/NotionPage";
 // import ErrorBoundary from "./errorBoundary";
 
 const DashboardV2 = () => {
@@ -31,8 +32,9 @@ const DashboardV2 = () => {
             <TimeAndDateCard />
           </div>
           <div className="row">
-            <div>
-              <SpotifyNowPlaying
+            <div className="card card-medium">
+              <NotionPage />
+              {/* <SpotifyNowPlaying
                 client_id={process.env.REACT_APP_SPOTIFY_CLIENT_ID || ""}
                 client_secret={
                   process.env.REACT_APP_SPOTIFY_CLIENT_SECRET || ""
@@ -40,7 +42,7 @@ const DashboardV2 = () => {
                 refresh_token={
                   process.env.REACT_APP_SPOTIFY_REFRESH_TOKEN || ""
                 }
-              />
+              /> */}
             </div>
             <div>
               <CardTodayWeather />
