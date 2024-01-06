@@ -1,41 +1,21 @@
 const { Client, LogLevel } = require("@notionhq/client");
 const notion_token = process.env.REACT_APP_NOTION_SECRET || "";
+// get the env for the hono base url
+const HONO_BASE_URL = process.env.REACT_APP_HONO_BASE_URL || "";
+const HONO_BASE_URL_DEV = process.env.REACT_APP_HONO_BASE_URL_DEV || "";
+const REACT_APP_MODE = process.env.REACT_APP_MODE || "";
 
-// const getNotionClient = async () => {
-//   // Initializing a client
-//   const notion = new Client({
-//     auth: notion_token,
-//     logLevel: LogLevel.DEBUG,
-//     agent: "https://cors-anywhere.herokuapp.com/",
-//   });
-//   return notion;
-// };
-
-// const listUsers = async () => {
-//   const notion = await getNotionClient();
-//   console.log(notion);
-//   const listUsersResponse = await notion.users.list({});
-//   console.log(listUsersResponse);
-// };
-
-const listUsers = async () => {
-  const notionAccessToken = process.env.NOTION_ACCESS_TOKEN || "";
-  const url = "https://api.notion.com/v1/users";
-
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${notionAccessToken}`,
-      "Notion-Version": "2022-06-28",
-    },
-  });
-
-  if (response.ok) {
-    const users = await response.json();
-    console.log(users);
-    return users;
+const listUsers = async (): Promise<any> => {
+  let url: string = "";
+  if (REACT_APP_MODE === "dev") {
+    url = HONO_BASE_URL_DEV + "api/notion/users";
   } else {
-    throw new Error("Failed to fetch users");
+    url = HONO_BASE_URL + "api/notion/users";
   }
+
+  return await fetch("http://127.0.0.1:5005/notion/users").then(
+    (res: Response) => res.json()
+  );
 };
 
 export { listUsers };
