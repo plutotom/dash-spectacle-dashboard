@@ -5,28 +5,31 @@ const REACT_APP_MODE = process.env.REACT_APP_MODE || "";
 const listUsers = async (): Promise<any> => {
   let url: string = "";
   if (REACT_APP_MODE === "dev") {
-    url = HONO_BASE_URL_DEV + "api/notion/users";
+    url = HONO_BASE_URL_DEV + "notion/users";
   } else {
-    url = HONO_BASE_URL + "api/notion/users";
+    url = HONO_BASE_URL + "notion/users";
   }
 
-  return await fetch("http://127.0.0.1:5005/notion/users").then(
-    (res: Response) => res.json()
-  );
+  console.log(url);
+
+  return await fetch("/api/notion/users", {
+    headers: {
+      accept: "application/json",
+      "User-agent": "learning app",
+    },
+  })
+    .then((res: Response) => res.json())
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 const getDashboard = async (): Promise<any> => {
-  let url: string = "";
-  if (REACT_APP_MODE === "dev") {
-    url = HONO_BASE_URL_DEV + "api/notion/dashboard";
-  } else {
-    url = HONO_BASE_URL + "api/notion/dashboard";
-  }
+  let url: string = "api/notion/dashboard-todos";
+
   console.log(url);
 
-  return await fetch("http://127.0.0.1:5005/notion/dashboard").then(
-    (res: Response) => res.json()
-  );
+  return await fetch(url).then((res: Response) => res.json());
 };
 
 export { listUsers, getDashboard };

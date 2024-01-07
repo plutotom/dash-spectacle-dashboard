@@ -7,12 +7,11 @@ export default function NotionPage() {
   const [dashboardTodos, setDashboardTodos] = useState([]);
 
   useEffect(() => {
-    // listUsers().then((res) => {
-    //   console.log(res);
-    //   setUsers(res);
-    // });
-    getDashboard().then((res) => {
+    listUsers().then((res) => {
       console.log(res);
+    });
+    getDashboard().then((res) => {
+      // console.log(res);
       // res is a object.
       let todos: any = [];
       todos = res.results.filter((item: any) => item.type === "to_do");
