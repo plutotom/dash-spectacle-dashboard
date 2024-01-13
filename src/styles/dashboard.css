@@ -39,9 +39,3 @@
   display: grid;
   grid-column: 3;
 }
-.content-top h1 {
-  font-size: var(--fs-900);
-}
-.content-top h3 {
-  font-size: var(--fs-700);
-}

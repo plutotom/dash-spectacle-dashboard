@@ -148,6 +148,12 @@ textarea,
 select {
   font: inherit;
 }
+h1 {
+  font-size: var(--fs-900);
+}
+h3 {
+  font-size: var(--fs-700);
+}
 
 /* Remove all animations, transitions and smooth scroll for people that prefer not to see them */
 @media (prefers-reduced-motion: reduce) {
