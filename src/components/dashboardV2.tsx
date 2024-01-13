@@ -37,7 +37,9 @@ const DashboardV2 = () => {
           </div>
           <div className="row">
             <div className="card card-medium">
-              <NotionPage />
+              {/* <NotionPage /> */}
+
+              <h1 className="">Here is an h1</h1>
               {/* <SpotifyNowPlaying
                 client_id={process.env.REACT_APP_SPOTIFY_CLIENT_ID || ""}
                 client_secret={
