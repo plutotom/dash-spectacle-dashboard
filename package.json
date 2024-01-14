@@ -49,6 +49,8 @@
   },
   "devDependencies": {
     "dotenv": "^16.3.1",
+    "prettier": "^3.2.1",
+    "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.1"
   }
 }

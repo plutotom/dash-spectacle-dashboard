@@ -9,7 +9,7 @@ import {
 import "./../styles/dashboardV2.css";
 
 // import banner2 from "../assets/looking-together.jpg";
-// import GooglePhotosComponent from "./GooglePhotos";
+import GooglePhotosComponent from "./GooglePhotos";
 // import CardSmall from "./CardSmall";
 import CardMedium from "./CardMedium";
 import CardTodayWeather from "./cardTodayWeather";
@@ -52,11 +52,14 @@ const DashboardV2 = () => {
             <div>
               <CardTodayWeather />
             </div>
-            {/* <ErrorBoundary> <GooglePhotosComponent /> </ErrorBoundary> */}
           </div>
           <div className="row">
             <div>
-              <TimeAndDateCardOld />
+              {/* <TimeAndDateCardOld /> */}
+              <ErrorBoundary>
+                {" "}
+                <GooglePhotosComponent />{" "}
+              </ErrorBoundary>
             </div>
             <div>
               {/* <CardMedium title="title" icon={faCloud} cardText="Dummy data" /> */}

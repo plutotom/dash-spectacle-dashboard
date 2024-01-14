@@ -7,7 +7,7 @@ const GooglePhotosComponent: React.FC = () => {
   const [AuthorizationAttempt, setAuthorizationAttempt] = useState<number>(0);
   const [updateImage, setUpdateImage] = useState<number>(0);
   const [newImageIndex, setNewImageIndex] = useState<number>(
-    Math.floor(Math.random() * maxPhotoCount)
+    Math.floor(Math.random() * maxPhotoCount),
   );
 
   // Parse the access token from the URL fragment
@@ -103,7 +103,7 @@ const GooglePhotosComponent: React.FC = () => {
                 // },
               },
             }),
-          }
+          },
         );
         // Make an HTTP request to the Google Photos API endpoint
         const response = await fetch(
@@ -112,7 +112,7 @@ const GooglePhotosComponent: React.FC = () => {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
-          }
+          },
         );
 
         // if (response.ok) {
@@ -143,7 +143,7 @@ const GooglePhotosComponent: React.FC = () => {
       // update every 4 hours
       // 1000 * 60 * 60 * 4
       // 10 sec
-      10000
+      100000,
     );
     return function cleanup() {
       clearInterval(updateImage);
