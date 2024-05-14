@@ -117,8 +117,8 @@ export default function Dashboard() {
       .catch((err) =>
         console.log(
           err,
-          "There was an error is trying to set the weathers state"
-        )
+          "There was an error is trying to set the weathers state",
+        ),
       );
   }, []);
   return (
