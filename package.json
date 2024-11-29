@@ -1,56 +1,46 @@
 {
-  "name": "dack-board-dashboard",
-  "version": "0.1.0",
-  "private": true,
-  "proxy": "http://127.0.0.1:5005",
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "xps-start": "react-scripts start --port 3008"
-  },
-  "dependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
-    "@doist/todoist-api-typescript": "^2.1.2",
-    "@fortawesome/fontawesome-svg-core": "^6.4.0",
-    "@fortawesome/free-solid-svg-icons": "^6.4.0",
-    "@fortawesome/react-fontawesome": "^0.2.0",
-    "@notionhq/client": "^2.2.14",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.16",
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "axios": "^1.4.0",
-    "buffer": "^6.0.3",
-    "date-fns": "^2.30.0",
-    "querystring": "^0.2.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "spotify-web-api-js": "^1.5.2",
-    "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "dotenv": "^16.3.1",
-    "prettier": "^3.2.1",
-    "prettier-plugin-tailwindcss": "^0.5.11",
-    "tailwindcss": "^3.4.1"
-  }
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "tsc && vite build",
+        "dev": "vite",
+        "lint": "eslint resources/js --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --fix"
+    },
+    "devDependencies": {
+        "@headlessui/react": "^2.0.0",
+        "@inertiajs/react": "^1.0.0",
+        "@tailwindcss/forms": "^0.5.3",
+        "@types/node": "^18.13.0",
+        "@types/react": "^18.0.28",
+        "@types/react-dom": "^18.0.10",
+        "@typescript-eslint/eslint-plugin": "^7.16.0",
+        "@typescript-eslint/parser": "^7.16.0",
+        "@vitejs/plugin-react": "^4.2.0",
+        "autoprefixer": "^10.4.12",
+        "axios": "^1.7.4",
+        "concurrently": "^9.0.1",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.1.3",
+        "eslint-plugin-react": "^7.34.4",
+        "eslint-plugin-react-hooks": "^4.6.2",
+        "laravel-vite-plugin": "^1.0",
+        "postcss": "^8.4.31",
+        "prettier": "^3.3.0",
+        "prettier-plugin-organize-imports": "^4.0.0",
+        "prettier-plugin-tailwindcss": "^0.6.5",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "tailwindcss": "^3.2.1",
+        "typescript": "^5.0.2",
+        "vite": "^5.0"
+    },
+    "dependencies": {
+        "@radix-ui/react-slot": "^1.1.0",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.462.0",
+        "tailwind-merge": "^2.5.5",
+        "tailwindcss-animate": "^1.0.7"
+    }
 }
