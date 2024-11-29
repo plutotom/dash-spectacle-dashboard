@@ -19,5 +19,13 @@ yarn-error.log
 /.fleet
 /.idea
 /.nova
-/.vscode
 /.zed
+
+.pnpm-store/*
+.pnpm-store/
+!.pnpm-store/v3/files/*
+# Ignore everything in .vscode
+.vscode/*
+# But include settings.json
+!.vscode/settings.json
+
