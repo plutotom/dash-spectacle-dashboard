@@ -20,7 +20,7 @@ yarn-error.log
 /.idea
 /.nova
 /.zed
-
+/.env
 .pnpm-store/*
 .pnpm-store/
 !.pnpm-store/v3/files/*
@@ -28,4 +28,6 @@ yarn-error.log
 .vscode/*
 # But include settings.json
 !.vscode/settings.json
+
+/storage/app/google-calendar-credentials.json
 
