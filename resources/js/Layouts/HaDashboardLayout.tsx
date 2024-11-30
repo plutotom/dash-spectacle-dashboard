@@ -1,13 +1,10 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 
-export default function Authenticated({ header, children }: PropsWithChildren<{ header?: ReactNode }>) {
-    const user = usePage().props.auth.user;
-
+export default function HaDashboardLayout({ header, children }: PropsWithChildren<{ header?: ReactNode }>) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
     return (
@@ -32,7 +29,7 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                             </div>
                         </div>
 
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
+                        {/* <div className="hidden sm:ms-6 sm:flex sm:items-center">
                             <div className="relative ms-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -41,8 +38,6 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                                 type="button"
                                                 className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
                                             >
-                                                {user.name}
-
                                                 <svg
                                                     className="-me-0.5 ms-2 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +62,7 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="-me-2 flex items-center sm:hidden">
                             <button
@@ -107,12 +102,8 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
 
                     <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
                         <div className="px-4">
-                            {user && (
-                                <>
-                                    <div className="text-base font-medium text-gray-800 dark:text-gray-200">{user.name}</div>
-                                    <div className="text-sm font-medium text-gray-500">{user.email}</div>
-                                </>
-                            )}
+                            {/* <div className="text-base font-medium text-gray-800 dark:text-gray-200">{user.name}</div> */}
+                            {/* <div className="text-sm font-medium text-gray-500">{user.email}</div> */}
                         </div>
 
                         <div className="mt-3 space-y-1">

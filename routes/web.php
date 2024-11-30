@@ -15,7 +15,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/HaDashboard', [HaDashboardController::class, 'index'])->name('HaDashboard');
+Route::get('/haDashboard', [HaDashboardController::class, 'index'])->name('ha.dashboard');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

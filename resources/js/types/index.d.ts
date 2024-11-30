@@ -12,9 +12,16 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
 };
 
 export interface Event {
-    id: number;
+    id: string;
     name: string;
     startDateTime: string;
     endDateTime: string;
-    description: string;
+    description?: string;
+}
+
+export interface PageProps {
+    flash: {
+        success?: string;
+        error?: string;
+    };
 }
