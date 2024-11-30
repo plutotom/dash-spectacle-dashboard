@@ -10,3 +10,11 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
         user: User;
     };
 };
+
+export interface Event {
+    id: number;
+    name: string;
+    startDateTime: string;
+    endDateTime: string;
+    description: string;
+}

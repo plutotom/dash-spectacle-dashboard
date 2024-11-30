@@ -1,4 +1,3 @@
-import { Calendar } from '@/Components/Calendar/Calendar';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
@@ -14,7 +13,7 @@ export default function Dashboard() {
                     </div>
                 </div>
                 <div className="p-6">
-                    <Calendar className="mx-auto max-w-3xl" />
+                    <h1>here</h1>
                 </div>
             </div>
         </AuthenticatedLayout>

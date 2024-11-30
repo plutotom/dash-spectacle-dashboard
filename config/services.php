@@ -36,10 +36,15 @@ return [
     ],
 
     'google' => [
-        'calendar_id' => env('GOOGLE_CALENDAR_ID', 'primary'),
         'project_id' => env('GOOGLE_PROJECT_ID'),
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'calendars' => [
+            'primary' => env('GOOGLE_CALENDAR_ID', 'primary'),
+            'work' => env('GOOGLE_WORK_CALENDAR_ID'),
+            'personal' => env('GOOGLE_PERSONAL_CALENDAR_ID'),
+            // Add more calendars as needed
+        ],
     ],
 
 ];
