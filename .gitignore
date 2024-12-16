@@ -23,6 +23,7 @@ yarn-error.log
 /.env
 .pnpm-store/*
 .pnpm-store/
+.pnpm-store/v3/files/*
 # !.pnpm-store/v3/files/*
 # Ignore everything in .vscode
 .vscode/*
