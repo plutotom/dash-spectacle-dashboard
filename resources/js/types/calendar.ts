@@ -7,9 +7,6 @@
 //     "description": "<i>This event was created by <a href=\"https://app.reclaim.ai/landing/about?name=Isaiah+proctor&utm_source=calendar&utm_campaign=calendar-referral&utm_medium=buffer-event&utm_term=kPQYz\">Reclaim</a>.</i><p>Isaiah is traveling at this time and may not be available for calls or meetings. You may book over it, but we encourage you to find another time to avoid scheduling conflicts.</p>"
 //     },
 
-export interface CalendarEventsResponse {
-    events: CalendarEvent[];
-}
 export interface CalendarEvent {
     id: string;
     name: string;

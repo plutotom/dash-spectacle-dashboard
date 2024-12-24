@@ -18,66 +18,30 @@ class HaDashboardController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $calendarEvents = [];
-        $calendarError = null;
-
-        try {
-            $calendarEvents = CalendarController::getEvents();
-        } catch (Exception $e) {
-            $calendarError = $e->getMessage();
-            // Log the error
-            \Log::error('Dashboard Calendar Error: ' . $e->getMessage());
-        }
-
-        // Check if there are any flash messages to pass
-        $flashMessages = Session::get('flash', collect())->toArray();
-
         return Inertia::render('HaDashboard/HaDashboard', [
-            'user' => $user,
-            'calendar' => [
-                'events' => $calendarEvents,
-                'error' => $calendarError,
-            ],
-            'can' => [
-                // 'viewCalendar' => Auth::user()->can('viewCalendar'),
-            ],
-            'flash' => $flashMessages, // Pass the flash messages to the view
         ]);
     }
+    
+    // TODO: add preferences update to manage Dashboard settings
+    // public function updatePreferences(Request $request)
+    // {
+    //     try {
+    //         $validated = $request->validate([
+    //             'preferences' => 'required|array',
+    //         ]);
 
-    public function someAction()
-    {
-        // Success flash message
-        return redirect()
-            ->back()
-            ->with('success', 'Operation completed successfully');
+    //         Auth::user()->update([
+    //             'dashboard_preferences' => $validated['preferences']
+    //         ]);
 
-        // Error flash message
-        return redirect()
-            ->back()
-            ->with('error', 'Something went wrong');
-    }
+    //         return redirect()
+    //             ->back()
+    //             ->with('success', 'Preferences updated successfully');
 
-    public function updatePreferences(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'preferences' => 'required|array',
-            ]);
-
-            Auth::user()->update([
-                'dashboard_preferences' => $validated['preferences']
-            ]);
-
-            return redirect()
-                ->back()
-                ->with('success', 'Preferences updated successfully');
-
-        } catch (Exception $e) {
-            return redirect()
-                ->back()
-                ->with('error', 'Failed to update preferences');
-        }
-    }
+    //     } catch (Exception $e) {
+    //         return redirect()
+    //             ->back()
+    //             ->with('error', 'Failed to update preferences');
+    //     }
+    // }
 } 

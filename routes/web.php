@@ -4,7 +4,6 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\HaDashboardController;
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -15,13 +14,11 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/haDashboard', [HaDashboardController::class, 'index'])->name('ha.dashboard');
-
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/calendar', [CalendarController::class, 'getEvents'])->name('calendar.events');
+Route::get('/haDashboard', [HaDashboardController::class, 'index'])->name('ha.dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

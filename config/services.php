@@ -47,4 +47,8 @@ return [
         ],
     ],
 
+    'weather' => [
+        'api_key' => env('WEATHER_API_KEY', '64a59248de284a5a9c9183623242412'),
+    ],
+
 ];
