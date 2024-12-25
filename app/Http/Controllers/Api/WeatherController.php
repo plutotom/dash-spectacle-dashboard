@@ -35,6 +35,7 @@ class WeatherController extends Controller
     {
         $cacheKey = 'weather_current_60120';
         $response = Cache::remember($cacheKey, now()->addMinutes(15), function () {
+            \Log::info("getting new current weather data");
             return Http::get('http://api.weatherapi.com/v1/current.json', [
                 'key' => config('services.weather.api_key'),
                 'q' => '60120',
@@ -49,6 +50,7 @@ class WeatherController extends Controller
 
         $cacheKey = 'weather_forecast_60120';
         $response = Cache::remember($cacheKey, now()->addMinutes(15), function(){
+            \Log::info("getting new forcast weather data");
             return Http::get('http://api.weatherapi.com/v1//forecast.json', [
                 'key' => config('services.weather.api_key'),
                 'q' => '60120',

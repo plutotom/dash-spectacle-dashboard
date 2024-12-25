@@ -1,18 +1,18 @@
-import Echo from 'laravel-echo';
+// import Echo from 'laravel-echo';
 
-import Pusher from 'pusher-js';
-window.Pusher = Pusher;
+// import Pusher from 'pusher-js';
+// window.Pusher = Pusher;
 
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: 'randomekey',
-    cluster: 'mt1',
-    wsHost: '127.0.0.1',
-    wsPort: 6001,
-    wssPort: 6002,
-    forceTLS: false,
-    enabledTransports: ['ws', 'wss'],
-});
+// window.Echo = new Echo({
+//     broadcaster: 'pusher',
+//     key: 'randomekey',
+//     cluster: 'mt1',
+//     wsHost: '127.0.0.1',
+//     wsPort: 6001,
+//     wssPort: 6002,
+//     forceTLS: false,
+//     enabledTransports: ['ws', 'wss'],
+// });
 
 
 // // Add these debug listeners

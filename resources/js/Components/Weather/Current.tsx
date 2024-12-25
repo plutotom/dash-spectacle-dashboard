@@ -43,7 +43,7 @@ export function CurrentWeather() {
     }
 
     return (
-        <div className="p-4">
+        <div className="">
             <div className="inline-block rounded-md bg-white bg-opacity-10 p-4 backdrop-blur-sm transition-colors">
                 <div className="flex flex-col justify-between">
                     <div className="flex items-end">
