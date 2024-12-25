@@ -43,5 +43,22 @@ class WeatherController extends Controller
 
         return new WeatherResource($response);
     }
+
+
+    public function forecast() {
+
+        $cacheKey = 'weather_forecast_60120';
+        $response = Cache::remember($cacheKey, now()->addMinutes(15), function(){
+            return Http::get('http://api.weatherapi.com/v1//forecast.json', [
+                'key' => config('services.weather.api_key'),
+                'q' => '60120',
+                'days' => '5'
+            ])->json();
+        });
+
+        // dd($response);
+
+        return new WeatherResource($response);
+    }
 }
 

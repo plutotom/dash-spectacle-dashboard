@@ -1,4 +1,4 @@
-import { CurrentWeather } from '@/Components/Weather/Current';
+import CustomMessage from '@/Components/CustomMessage/CustomMessage';
 import HaDashboardLayout from '@/Layouts/HaDashboardLayout';
 import { Head } from '@inertiajs/react';
 
@@ -8,14 +8,13 @@ export default function HaDashboard() {
             <Head title="HA Dashboard" />
 
             <div className="flex h-screen flex-col">
-                <div className="flex-1 p-4">
-                    <h1 className="text-2xl font-bold">Dashboard</h1>
-                </div>
+                <h1 className="text-2xl font-bold">Dashboard</h1>
 
-                <div>
-                    {/* <Calendar /> */}
-                    <CurrentWeather />
-                </div>
+                {/* <CurrentWeather /> */}
+                {/* <ForecastWeather /> */}
+                <CustomMessage />
+
+                {/* <Calendar /> */}
             </div>
         </HaDashboardLayout>
     );

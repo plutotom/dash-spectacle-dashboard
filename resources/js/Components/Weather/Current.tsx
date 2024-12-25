@@ -2,11 +2,7 @@ import { weatherService } from '@/services/weatherService';
 import { Weather } from '@/types/weather';
 import { useEffect, useState } from 'react';
 
-interface CurrentWeatherProps {
-    className?: string;
-}
-
-export function CurrentWeather({ className }: CurrentWeatherProps) {
+export function CurrentWeather() {
     const [weather, setWeather] = useState<Weather | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -24,7 +20,14 @@ export function CurrentWeather({ className }: CurrentWeatherProps) {
             }
         };
 
+        // Initial fetch
         fetchWeather();
+
+        // Set up interval for subsequent fetches (15 minutes = 15 * 60 * 1000 milliseconds)
+        const intervalId = setInterval(fetchWeather, 15 * 60 * 1000);
+
+        // Cleanup function to clear the interval when component unmounts
+        return () => clearInterval(intervalId);
     }, []);
 
     if (loading) {
@@ -40,14 +43,16 @@ export function CurrentWeather({ className }: CurrentWeatherProps) {
     }
 
     return (
-        <div className={`rounded-lg shadow-sm ${className}`}>
-            <div className="p-4">
-                <h2 className="mb-4 text-xl font-semibold">Current Weather</h2>
-                <div className="space-y-4">
-                    <div className="rounded-md border border-border p-4 transition-colors hover:bg-accent">
-                        <h3 className="font-medium text-foreground">{weather?.location.name}</h3>
-                        <div className="mt-1 text-sm text-muted-foreground">{weather?.current.temp_f}°F</div>
-                        <div className="mt-2 text-sm text-muted-foreground">{weather?.current.condition.text}</div>
+        <div className="p-4">
+            <div className="inline-block rounded-md bg-white bg-opacity-10 p-4 backdrop-blur-sm transition-colors">
+                <div className="flex flex-col justify-between">
+                    <div className="flex items-end">
+                        <h1 className="text-3xl">{weather?.current.temp_f}°</h1>
+                        <span className="ml-2 pr-1">But Feels like</span>
+                        <h1 className="text-xl">{weather.current.feelslike_f}°</h1>
+                    </div>
+                    <div>
+                        Wind: {weather.current.wind_dir} {weather.current.wind_mph}MPH and a wind chill of {weather.current.windchill_f}°
                     </div>
                 </div>
             </div>

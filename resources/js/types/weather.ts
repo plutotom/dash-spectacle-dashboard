@@ -49,8 +49,38 @@ interface Current {
 }
 
 interface Weather {
-    current: Current;
     location: Location;
+    current: Current;
 }
 
-export type { Weather };
+interface WeatherForecast extends Weather {
+    forecast: ForecastDay[];
+}
+
+interface ForecastDay {
+    date: string;
+    date_epoch: number;
+    day: {
+        maxtemp_f: number;
+        mintemp_f: number;
+        avgtemp_f: number;
+        maxwind_mph: number;
+        totalprecip_in: number;
+        avghumidity: number;
+        condition: {
+            text: string;
+            icon: string;
+            code: number;
+        };
+        daily_chance_of_rain: number;
+    };
+    astro: {
+        sunrise: string;
+        sunset: string;
+        moonrise: string;
+        moonset: string;
+        moon_phase: string;
+    };
+}
+
+export type { Weather, WeatherForecast };

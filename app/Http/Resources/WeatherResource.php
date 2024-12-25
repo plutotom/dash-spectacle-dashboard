@@ -9,7 +9,7 @@ class WeatherResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        return [
+        $data = [
             'location' => [
                 'name' => $this->resource['location']['name'] ?? null,
                 'region' => $this->resource['location']['region'] ?? null,
@@ -45,5 +45,38 @@ class WeatherResource extends JsonResource
                 'gust_mph' => $this->resource['current']['gust_mph'] ?? null,
             ],
         ];
+
+        // Add forecast data if it exists
+        if (isset($this->resource['forecast']['forecastday'])) {
+            $data['forecast'] = array_map(function ($day) {
+                return [
+                    'date' => $day['date'] ?? null,
+                    'date_epoch' => $day['date_epoch'] ?? null,
+                    'day' => [
+                        'maxtemp_f' => $day['day']['maxtemp_f'] ?? null,
+                        'mintemp_f' => $day['day']['mintemp_f'] ?? null,
+                        'avgtemp_f' => $day['day']['avgtemp_f'] ?? null,
+                        'maxwind_mph' => $day['day']['maxwind_mph'] ?? null,
+                        'totalprecip_in' => $day['day']['totalprecip_in'] ?? null,
+                        'avghumidity' => $day['day']['avghumidity'] ?? null,
+                        'condition' => [
+                            'text' => $day['day']['condition']['text'] ?? null,
+                            'icon' => $day['day']['condition']['icon'] ?? null,
+                            'code' => $day['day']['condition']['code'] ?? null,
+                        ],
+                        'daily_chance_of_rain' => $day['day']['daily_chance_of_rain'] ?? null,
+                    ],
+                    'astro' => [
+                        'sunrise' => $day['astro']['sunrise'] ?? null,
+                        'sunset' => $day['astro']['sunset'] ?? null,
+                        'moonrise' => $day['astro']['moonrise'] ?? null,
+                        'moonset' => $day['astro']['moonset'] ?? null,
+                        'moon_phase' => $day['astro']['moon_phase'] ?? null,
+                    ],
+                ];
+            }, $this->resource['forecast']['forecastday']);
+        }
+
+        return $data;
     }
 } 

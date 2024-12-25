@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\MessageCreated;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/test-broadcast', function () {
+    // Create a test message
+    $message = \App\Models\Message::create([
+        'content' => 'Test Message from Broadcast' . rand(1000,9999)
+    ]);
+    
+    // Broadcast the message
+    broadcast(new MessageCreated($message))->toOthers();
+    
+    return 'Event broadcasted with message: ' . $message->content;
 });
 
 require __DIR__.'/auth.php';

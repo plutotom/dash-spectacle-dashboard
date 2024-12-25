@@ -7,6 +7,7 @@ use App\Http\Resources\CalendarEventResource;
 use Spatie\GoogleCalendar\Event;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 
 class CalendarEventController extends Controller
 {
@@ -14,10 +15,12 @@ class CalendarEventController extends Controller
     public function index()
     {
         try {
-            $startDate = Carbon::now();
-            $endDate = Carbon::now()->addMonth();
-            
-            $events = Event::get($startDate, $endDate);
+            $cacheKey = 'calendar_events_' . Carbon::now()->format('Y-m-d_H-i-s');
+            $events = Cache::remember($cacheKey, now()->addMinutes(15), function () {
+                $startDate = Carbon::now();
+                $endDate = Carbon::now()->addMonth();
+                return Event::get($startDate, $endDate);
+            });
 
             return CalendarEventResource::collection($events);
 
