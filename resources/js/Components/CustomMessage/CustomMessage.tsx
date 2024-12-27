@@ -27,29 +27,16 @@ export default function CustomMessage() {
 
         fetchMessages();
 
-        // window.Pusher.logToConsole = true;
+        const channel = window.Echo.channel('messages');
+        channel.listen('.message.created', (data: any) => {
+            console.log('Received message:', data);
+            setMessages((prevMessages) => [data.message, ...prevMessages]);
+        });
 
-        // window.Echo = new Echo({
-        //     broadcaster: 'pusher',
-        //     key: import.meta.env.VITE_PUSHER_APP_KEY,
-        //     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
-        //     forceTLS: true,
-        //     wsHost: import.meta.env.VITE_PUSHER_HOST ?? `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
-        //     wsPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
-        //     enabledTransports: ['ws', 'wss'],
-        // });
-
-        // const channel = window.Echo.channel('messages');
-
-        // channel.listen('.messages', (data: any) => {
-        //     console.log('Received message:', data);
-        //     setMessages((prevMessages) => [data.message, ...prevMessages]);
-        // });
-
-        // return () => {
-        //     channel.unbind('.messages');
-        //     window.Echo.disconnect();
-        // };
+        return () => {
+            channel.unbind('.message.created');
+            window.Echo.disconnect();
+        };
     }, []);
 
     if (loading) return <div>Loading messages...</div>;

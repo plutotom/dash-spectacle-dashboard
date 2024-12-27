@@ -19,14 +19,15 @@ class CalendarEventController extends Controller
             $events = Cache::remember($cacheKey, now()->addMinutes(15), function () {
                 $startDate = Carbon::now();
                 $endDate = Carbon::now()->addMonth();
-                return Event::get($startDate, $endDate);
+                $event = Event::get($startDate, $endDate);
+                return $event;
             });
 
             return CalendarEventResource::collection($events);
 
         } catch (Exception $e) {
             \Log::error('Calendar Error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to fetch calendar events'], 500);
+            return response()->json(['error' => 'Failed to fetch calendar events' . $e->getMessage(), 'error_code' => $e->getCode()], 500);
         }
     }
-} 
+}

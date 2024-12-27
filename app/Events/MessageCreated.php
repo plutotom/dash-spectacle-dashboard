@@ -26,4 +26,9 @@ class MessageCreated implements ShouldBroadcast
     {
         return new Channel('messages');
     }
+
+    public function broadcastAs()
+    {
+        return 'message.created';
+    }
 }

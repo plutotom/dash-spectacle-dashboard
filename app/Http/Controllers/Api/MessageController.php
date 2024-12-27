@@ -27,14 +27,14 @@ class MessageController extends Controller
             'content' => $request->content,
         ]);
 
-
-
         broadcast(new MessageCreated($message))->toOthers();
-        Log::info('Message created', [
-            'id' => $message->id,
-            'content' => $message->content,
-            'created_at' => $message->created_at,
+        
+        Log::info('Broadcasting message', [
+            'channel' => 'messages',
+            'event' => 'message.created',
+            'message' => $message
         ]);
+
         return new MessageResource($message);
     }
 } 

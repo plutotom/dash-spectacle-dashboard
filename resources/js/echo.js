@@ -1,41 +1,33 @@
-// import Echo from 'laravel-echo';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';  // Add this import
 
-// import Pusher from 'pusher-js';
-// window.Pusher = Pusher;
+// Add this line before Echo initialization
+window.Pusher = Pusher;
 
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: 'randomekey',
-//     cluster: 'mt1',
-//     wsHost: '127.0.0.1',
-//     wsPort: 6001,
-//     wssPort: 6002,
-//     forceTLS: false,
-//     enabledTransports: ['ws', 'wss'],
+window.Echo = new Echo({
+    broadcaster: 'reverb',
+    key: 'local',
+    wsHost: '127.0.0.1',
+    wsPort: 8080,
+    forceTLS: false,
+    enabledTransports: ['ws', 'wss'],
+    disableStats: true,
+});
+
+
+// window.Echo.channel('messages').listen('PackageSent', (event) => {
+//     console.log(event);
 // });
 
-
-// // Add these debug listeners
-// window.Echo.connector.pusher.connection.bind('connected', () => {
-//     console.log('Pusher Connected! 🎉');
+// window.Echo.channel('.messages').listen('PackageSent', (event) => {
+//     console.log(event);
 // });
 
-// window.Echo.connector.pusher.connection.bind('error', (err) => {
-//     console.log('Pusher Error 😢', err);
+// window.Echo.channel('.messages').listen('.messages', (data) => {
+//     console.log('Received message:', data);
 // });
 
-// window.Echo.connector.pusher.connection.bind('disconnected', () => {
-//     console.log('Pusher Disconnected! ⚡');
+// window.Echo.channel('messages').listen('messages', (data) => {
+//     console.log('Received message:', data);
 // });
 
-// // Test subscription
-// window.Echo.private('test-channel')
-//     .listen('TestEvent', (e) => {
-//         console.log('Received test event:', e);
-//     })
-//     .error((error) => {
-//         console.error('Error subscribing to channel:', error);
-//     });
-
-// console.log("in echo file");
-// console.log(window.Echo);
