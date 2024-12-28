@@ -7,24 +7,20 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Message;
 
-class MessageCreated implements ShouldBroadcast, ShouldBroadcastNow
+class orderCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $message;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Message $message)
+    public function __construct()
     {
-        $this->message = $message;
-        \Log::info('MessageCreated event constructed', ['message' => $message]);
+
     }
 
     /**
@@ -32,14 +28,22 @@ class MessageCreated implements ShouldBroadcast, ShouldBroadcastNow
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn(): Channel
+    public function broadcastOn(): array
     {
-        \Log::info('Broadcasting message', [
-            'channel' => 'messages',
-            'event' => 'MessageCreated',
-            'message' => $this->message
-        ]);
-        return new Channel('messages');
+        return [
+            new PrivateChannel('orders'),
+        ];
     }
- 
+
+    public function broadcastWith()
+    {
+        return [
+            'message' => 'Order created',
+        ];
+    }
+
+    public function broadcastAs()
+    {
+        return 'OrderCreated';
+    }
 }

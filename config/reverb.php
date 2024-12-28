@@ -48,8 +48,8 @@ return [
                     'database' => env('REDIS_DB', '0'),
                 ],
             ],
-            'pulse_ingest_interval' => env('REVERB_PULSE_INGEST_INTERVAL', 15),
-            'telescope_ingest_interval' => env('REVERB_TELESCOPE_INGEST_INTERVAL', 15),
+            'pulse_ingest_interval' => env('REVERB_PULSE_INGEST_INTERVAL', 5),
+            'telescope_ingest_interval' => env('REVERB_TELESCOPE_INGEST_INTERVAL', 5),
         ],
 
     ],

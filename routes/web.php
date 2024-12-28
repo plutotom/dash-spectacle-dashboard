@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\HaDashboardController;
+use Illuminate\Support\Facades\Broadcast;
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -27,16 +28,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/test-broadcast', function () {
-    // Create a test message
-    $message = \App\Models\Message::create([
-        'content' => 'Test Message from Broadcast' . rand(1000,9999)
-    ]);
-    
-    // Broadcast the message
-    broadcast(new MessageCreated($message))->toOthers();
-    
-    return 'Event broadcasted with message: ' . $message->content;
+
+
+Route::get('/test-broadcast', [App\Http\Controllers\Api\MessageController::class, 'testBroadcast']);
+
+// need to make a example page that has the event listener that shows the real time mesages as they are broadcasted
+Route::get('/example', function () {
+    // create a blade here that has the event listener that shows the real time mesages as they are broadcasted
+    return view('example');
 });
 
 require __DIR__.'/auth.php';
