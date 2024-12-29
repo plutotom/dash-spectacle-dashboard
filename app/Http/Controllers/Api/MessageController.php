@@ -48,13 +48,13 @@ class MessageController extends Controller
             'content' => 'Test Message from Broadcast' . rand(1000,9999)
         ]);
         
-        Log::debug('About to broadcast message', ['message' => $message->toArray()]);
+        // Log::debug('About to broadcast message', ['message' => $message->toArray()]);
         
         // log out the details of laravels brodcast status and connection 
-        Log::debug('Laravel Broadcast Status', ['status' => config('broadcasting.default')]);
-        Log::debug('Laravel Broadcast Connection', ['connection' => config('broadcasting.connections.reverb')]);
-        Log::debug('Laravel Broadcast Connection v2', ['connection' => Broadcast::connection()]);
-        Log::debug('Laravel Broadcast Connection v3', ['connection' => Broadcast::connection('reverb')]);
+        // Log::debug('Laravel Broadcast Status', ['status' => config('broadcasting.default')]);
+        // Log::debug('Laravel Broadcast Connection', ['connection' => config('broadcasting.connections.reverb')]);
+        // Log::debug('Laravel Broadcast Connection v2', ['connection' => Broadcast::connection()]);
+        // Log::debug('Laravel Broadcast Connection v3', ['connection' => Broadcast::connection('reverb')]);
         try {
             broadcast(new MessageCreated($message))->toOthers();
             broadcast(new orderCreated())->toOthers();
