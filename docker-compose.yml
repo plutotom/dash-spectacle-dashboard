@@ -2,7 +2,7 @@ services:
     laravel.test:
         container_name: 'spectral-dashboard'
         # restart: unless-stopped
-        labels:
+        # labels:
             # - "traefik.enable=true"
             # - "traefik.http.routers.laravel.rule=Host(`spectral.plutotom.com`)"
             # - "traefik.http.routers.laravel.rule=Host(`debianserverIp:port this is running on, because that is waht nginx reverse proxy does.`)"
