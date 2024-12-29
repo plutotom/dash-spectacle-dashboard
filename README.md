@@ -17,7 +17,9 @@ DB_DATABASE=/var/www/html/database/database.sqlite
 make sure to run `cp .env.example .env`
 then run 
 ```
+
 # Build and start containers
+cp example.env .env
 docker compose up -d --build
 
 # Install dependencies
