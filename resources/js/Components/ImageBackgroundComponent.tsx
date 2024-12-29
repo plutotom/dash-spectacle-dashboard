@@ -213,14 +213,14 @@ export default function ImageBackgroundComponent({ children }: PropsWithChildren
     return (
         <>
             <div
-            // className="relative min-h-screen"
-            // style={{
-            //     backgroundImage: `url(${backgroundImages[currentBackgroundIndex]})`,
-            //     backgroundSize: 'cover',
-            //     backgroundPosition: 'center',
-            //     backgroundRepeat: 'no-repeat',
-            //     transition: 'background-image 1s ease-in-out',
-            // }}
+                className="relative min-h-screen"
+                style={{
+                    backgroundImage: `url(${backgroundImages[currentBackgroundIndex]})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    transition: 'background-image 1s ease-in-out',
+                }}
             >
                 {children}
             </div>

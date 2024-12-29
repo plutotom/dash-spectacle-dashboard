@@ -27,22 +27,14 @@ export default function CustomMessage() {
 
         fetchMessages();
 
-        const channel = window.Echo.channel('messages');
+        const interval = setInterval(
+            () => {
+                fetchMessages();
+            },
+            1000 * 60 * 1 // 1 minute
+        );
 
-        channel.listen('MessageCreated', (data: any) => {
-            console.log('Received message:', data);
-            setMessages((prevMessages) => [data.message, ...prevMessages]);
-        });
-
-        channel.subscribed(() => {
-            console.log('✅ Successfully subscribed to messages channel');
-        });
-
-        return () => {
-            channel.unbind('messages');
-            channel.unbind('message.created');
-            window.Echo.disconnect();
-        };
+        return () => clearInterval(interval);
     }, []);
 
     if (loading) return <div>Loading messages...</div>;

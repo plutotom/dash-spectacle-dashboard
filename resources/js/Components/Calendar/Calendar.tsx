@@ -25,7 +25,7 @@ export function Calendar({ className }: CalendarProps) {
         };
 
         fetchEvents();
-        const intervalId = setInterval(fetchEvents, 20 * 60 * 1000); // fetch only every 20 minuetns
+        const intervalId = setInterval(fetchEvents, 20 * 60 * 1000); // fetch only every 20 minuets
         return () => clearInterval(intervalId);
     }, []);
 

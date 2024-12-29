@@ -12,8 +12,30 @@ export default function HaDashboard() {
 
                 <div className="flex items-start justify-between">
                     <div className="flex flex-col">
-                        <div className="text-2xl font-semibold">12:00 PM</div>
-                        <div className="text-xl font-semibold">Monday, Jan 1</div>
+                        <div className="text-5xl text-primary-foreground">
+                            {new Date()
+                                .toLocaleTimeString('en-US', {
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    hour12: true,
+                                })
+                                .replace('AM', '')
+                                .replace('PM', '')}
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-3xl text-primary-foreground">
+                                {new Date().toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                })}
+                            </span>
+                            <span className="text-lg text-primary-foreground">
+                                {new Date().toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                })}
+                            </span>
+                        </div>
                     </div>
                     <div className="w-1/4">
                         <CurrentWeather />
