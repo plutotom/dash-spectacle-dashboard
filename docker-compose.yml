@@ -1,6 +1,6 @@
 services:
     laravel.test:
-        container_name: 'spectral-dashboard'
+        container_name: 'dash-spectral-dashboard'
         # restart: unless-stopped
         # labels:
             # - "traefik.enable=true"
