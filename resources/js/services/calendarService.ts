@@ -1,10 +1,9 @@
-import { CalendarEvent } from '@/types/calendar';
+import { GroupedCalendarEvents } from '@/types/calendar';
 import axios from 'axios';
 
 export const calendarService = {
-    async getEvents(): Promise<CalendarEvent[]> {
-        const response = await axios.get<{ data: CalendarEvent[] }>('/api/calendar-events');
-
+    async getEvents(): Promise<GroupedCalendarEvents> {
+        const response = await axios.get<{ data: GroupedCalendarEvents }>('/api/calendar-events');
         return response.data.data;
     },
 };

@@ -16,10 +16,18 @@ class CalendarEventResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'startDateTime' => $this->startDateTime,
-            'endDateTime' => $this->endDateTime,
+            'summary' => $this->summary,
             'description' => $this->description,
+            'start' => [
+                'dateTime' => $this->start['dateTime'],
+                'timeZone' => $this->start['timeZone']
+            ],
+            'end' => [
+                'dateTime' => $this->end['dateTime'],
+                'timeZone' => $this->end['timeZone']
+            ],
+            'status' => $this->status,
+            'htmlLink' => $this->htmlLink
         ];
     }
 }

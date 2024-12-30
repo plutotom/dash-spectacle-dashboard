@@ -8,6 +8,7 @@ use Spatie\GoogleCalendar\Event;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Resources\CalendarEventCollection;
 
 class CalendarEventController extends Controller
 {
@@ -19,11 +20,10 @@ class CalendarEventController extends Controller
             $events = Cache::remember($cacheKey, now()->addMinutes(15), function () {
                 $startDate = Carbon::now();
                 $endDate = Carbon::now()->addMonth();
-                $event = Event::get($startDate, $endDate);
-                return $event;
+                return Event::get($startDate, $endDate);
             });
-
-            return CalendarEventResource::collection($events);
+            
+            return new CalendarEventCollection($events);
 
         } catch (Exception $e) {
             \Log::error('Calendar Error: ' . $e->getMessage());

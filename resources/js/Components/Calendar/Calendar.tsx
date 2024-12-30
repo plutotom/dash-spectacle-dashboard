@@ -1,13 +1,14 @@
 import { calendarService } from '@/services/calendarService';
-import { CalendarEvent } from '@/types/calendar';
+import { GroupedCalendarEvents } from '@/types/calendar';
 import { useEffect, useState } from 'react';
+import CalendarDay from './Partial/CalendarDay';
 
 interface CalendarProps {
     className?: string;
 }
 
 export function Calendar({ className }: CalendarProps) {
-    const [events, setEvents] = useState<CalendarEvent[]>([]);
+    const [events, setEvents] = useState<GroupedCalendarEvents>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -41,24 +42,16 @@ export function Calendar({ className }: CalendarProps) {
         return <div className="p-4 text-destructive">Error loading calendar: {error}</div>;
     }
 
-    const formatDate = (date: string) => {
-        return new Date(date).toLocaleString();
-    };
-
     return (
         <div className={`rounded-lg shadow-sm ${className}`}>
             <div className="p-4">
-                <h2 className="mb-4 text-xl font-semibold">Upcoming Events</h2>
-                <div className="space-y-4">
-                    {events.map((event) => (
-                        <div key={event.id} className="rounded-md border border-border p-4 transition-colors hover:bg-accent">
-                            <h3 className="font-medium text-foreground">{event.name}</h3>
-                            <div className="mt-1 text-sm text-muted-foreground">
-                                {formatDate(event.startDateTime)} - {formatDate(event.endDateTime)}
-                            </div>
-                            {event.description && <div className="mt-2 text-sm text-muted-foreground">{event.description}</div>}
-                        </div>
-                    ))}
+                <h2 className="mb-4 text-xl font-semibold text-primary-foreground">Upcoming Events</h2>
+                <div className="flex space-y-4">
+                    {Object.values(events)
+                        .slice(0, 4)
+                        .map((dayEvents, index) => (
+                            <CalendarDay key={index} dayEvents={dayEvents} dayDate={Object.keys(events)[index]} />
+                        ))}
                 </div>
             </div>
         </div>
