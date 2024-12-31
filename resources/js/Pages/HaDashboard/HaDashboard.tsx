@@ -48,8 +48,7 @@ export default function HaDashboard() {
                     </div>
                 </div>
                 <div className="flex justify-center gap-4">
-                    <div className="">
-                        <h1>Messages</h1>
+                    <div className="w-full max-w-7xl">
                         <CustomMessage />
                     </div>
                 </div>

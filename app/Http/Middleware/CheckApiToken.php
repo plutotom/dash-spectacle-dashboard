@@ -13,7 +13,7 @@ class CheckApiToken
         'noah-is-kinda-sexy-and-has-a-good-body-and-is-a-good-person-and-is-a-good-friend-but-hes-a-bit-of-a-dumb-dumb',
         'who-is-this?-it-seems-you-got-the-extra-key-for-non-as-importent-ppl',
         'hey-chloe,-your-dope-and-i-love-you',
-        'isaiah-test-token'
+        'isaiah-test-token',
     ];
 
     public function handle(Request $request, Closure $next)
@@ -23,12 +23,12 @@ class CheckApiToken
         $token = str_replace('Bearer ', '', $token);
 
         // \Log::info('Token: ' . $token . ' - ' . in_array($token, $this->validTokens) . ' - ' . $request->all());
-        if (!in_array($token, $this->validTokens)) {
+        if (! in_array($token, $this->validTokens)) {
             return response()->json([
-                'error' => 'Invalid token'
+                'error' => 'Invalid token',
             ], 401);
         }
 
         return $next($request);
     }
-} 
+}

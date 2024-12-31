@@ -27,9 +27,9 @@ const ForecastWeather = () => {
 
     return (
         <div className="p-4">
-            <div className="grid grid-cols-5 gap-4 rounded-md p-4 backdrop-blur-[2px] transition-colors">
+            <div className="grid grid-cols-5 gap-4 p-4 transition-colors">
                 {forecast.forecast.map((day) => (
-                    <div key={day.date_epoch} className="flex flex-col justify-around rounded-lg p-4 shadow">
+                    <div key={day.date_epoch} className="flex flex-col justify-around p-4 text-primary-foreground">
                         <div className="text-lg font-semibold">{formatDateToHumanReadable(new Date(day.date))}</div>
                         <div>
                             <img src={day.day.condition.icon} alt={day.day.condition.text} className="mx-auto h-16 w-16" />

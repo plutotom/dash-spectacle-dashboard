@@ -41,12 +41,11 @@ export default function CustomMessage() {
     if (error) return <div className="text-red-500">{error}</div>;
 
     return (
-        <div className="rounded-lg p-4 shadow dark:bg-gray-800">
-            <div className="space-y-3">
+        <div className="">
+            <div className="max-h-[30vh] overflow-y-auto">
                 {messages.map((message) => (
-                    <div key={message.id} className="p-3">
-                        <p className="text-white">{message.content} - dummy message</p>
-                        <span className="text-sm text-gray-500">{new Date(message.created_at).toLocaleDateString()}</span>
+                    <div key={message.id} className="my-1 flex w-1/3 flex-col rounded-xl bg-white bg-opacity-10 p-1 backdrop-blur-sm transition-colors">
+                        <p className="text-lg text-white">{message.content}</p>
                     </div>
                 ))}
             </div>

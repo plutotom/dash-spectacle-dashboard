@@ -45,7 +45,7 @@ export function CurrentWeather() {
     return (
         <div className="">
             <div className="inline-block rounded-md bg-white bg-opacity-10 p-4 backdrop-blur-sm transition-colors">
-                <div className="flex flex-col justify-between">
+                <div className="flex flex-col justify-between text-primary-foreground">
                     <div className="flex items-end">
                         <h1 className="text-3xl">{weather?.current.temp_f}°</h1>
                         <span className="ml-2 pr-1">But Feels like</span>
