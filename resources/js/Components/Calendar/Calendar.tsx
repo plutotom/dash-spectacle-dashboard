@@ -44,13 +44,15 @@ export function Calendar({ className }: CalendarProps) {
 
     return (
         <div className={`rounded-lg shadow-sm ${className}`}>
-            <div className="p-4">
+            <div className="">
                 <h2 className="mb-4 text-xl font-semibold text-primary-foreground">Upcoming Events</h2>
-                <div className="flex space-y-4">
+                <div className="flex space-x-2">
                     {Object.values(events)
                         .slice(0, 4)
                         .map((dayEvents, index) => (
-                            <CalendarDay key={index} dayEvents={dayEvents} dayDate={Object.keys(events)[index]} />
+                            <div className="w-1/4">
+                                <CalendarDay key={index} dayEvents={dayEvents} dayDate={Object.keys(events)[index]} />
+                            </div>
                         ))}
                 </div>
             </div>

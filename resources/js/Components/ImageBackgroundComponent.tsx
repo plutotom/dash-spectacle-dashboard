@@ -1,6 +1,7 @@
 import { PropsWithChildren, useState } from 'react';
 
 import { useEffect } from 'react';
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 // ? this list of images is from google drive and is generated from this web site: https://www.publicalbum.org/blog/embedding-google-photos-albums
 const backgroundImages = [
@@ -215,7 +216,9 @@ export default function ImageBackgroundComponent({ children }: PropsWithChildren
             <div
                 className="relative min-h-screen"
                 style={{
-                    backgroundImage: `url(${backgroundImages[currentBackgroundIndex]})`,
+                    backgroundImage: isDevelopment
+                        ? `url(https://ucarecdn.com/05f649bf-b70b-4cf8-90f7-2588ce404a08/)`
+                        : `url(${backgroundImages[currentBackgroundIndex]})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
