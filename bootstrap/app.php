@@ -18,7 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        //
+        // Trust all proxies with '*'
+        $middleware->trustProxies(at: '*');
+
+        // Trust your specific domain and its subdomains
+        $middleware->trustHosts(at: [
+            'spectral-dashboard.plutotom.com',
+            '192.168.86.102',
+            'https://192.168.86.102',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
