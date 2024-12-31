@@ -9,10 +9,10 @@ export default function CalendarDay({ dayEvents, dayDate }: CalendarDayProps) {
     return (
         <div className="flex flex-col text-primary-foreground">
             <span>{new Date(dayDate).toDateString()}</span>
-            {/* <hr /> */}
+            <hr className="border-l-2 border-l-secondary" />
 
             {dayEvents.map((event) => (
-                <div key={event.id} className="my-1 border-l-4 border-l-black p-1">
+                <div key={event.id} className="my-1 border-l-4 border-l-primary ps-1">
                     <Event event={event} />
                     {/* <hr /> */}
                 </div>
@@ -26,7 +26,17 @@ function Event({ event }: { event: CalendarEvent }) {
         <div>
             <div className="flex flex-col justify-between">
                 <span>
-                    {new Date(event.start.dateTime).toLocaleTimeString()} - {new Date(event.end.dateTime).toLocaleTimeString()}
+                    {new Date(event.start.dateTime).toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true,
+                    })}
+                    {' - '}
+                    {new Date(event.end.dateTime).toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true,
+                    })}
                 </span>
                 <span>{event.summary}</span>
             </div>

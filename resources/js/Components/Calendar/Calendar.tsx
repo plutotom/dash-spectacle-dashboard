@@ -45,7 +45,6 @@ export function Calendar({ className }: CalendarProps) {
     return (
         <div className={`rounded-lg shadow-sm ${className}`}>
             <div className="">
-                <h2 className="mb-4 text-xl font-semibold text-primary-foreground">Upcoming Events</h2>
                 <div className="flex space-x-2">
                     {Object.values(events)
                         .slice(0, 4)

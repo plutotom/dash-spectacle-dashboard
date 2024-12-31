@@ -212,9 +212,9 @@ export default function ImageBackgroundComponent({ children }: PropsWithChildren
         return () => clearInterval(interval);
     }, []);
     return (
-        <>
+        <div>
             <div
-                className="relative min-h-screen"
+                className="min-h-screen bg-gray-900"
                 style={{
                     backgroundImage: isDevelopment
                         ? `url(https://ucarecdn.com/05f649bf-b70b-4cf8-90f7-2588ce404a08/)`
@@ -225,8 +225,27 @@ export default function ImageBackgroundComponent({ children }: PropsWithChildren
                     transition: 'background-image 1s ease-in-out',
                 }}
             >
-                {children}
+                <BackgroundGradient>{children}</BackgroundGradient>
             </div>
-        </>
+        </div>
+    );
+}
+function BackgroundGradient({ children }: PropsWithChildren) {
+    return (
+        <div
+            className=""
+            style={{
+                background: `
+        linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.2) 50%,
+            rgba(0, 0, 0, 0) 20%,
+            rgba(0, 0, 0, 0) 30%,
+            rgba(0, 0, 0, .2) 50%
+        )
+    `,
+            }}
+        >
+            {children}
+        </div>
     );
 }
