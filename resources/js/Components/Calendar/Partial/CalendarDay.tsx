@@ -9,12 +9,11 @@ export default function CalendarDay({ dayEvents, dayDate }: CalendarDayProps) {
     return (
         <div className="flex flex-col text-primary-foreground">
             <span>{new Date(dayDate).toDateString()}</span>
-            <hr className="border-l-2 border-l-secondary" />
+            <hr className="border-[0.5px] border-gray-400" />
 
             {dayEvents.map((event) => (
                 <div key={event.id} className="my-1 border-l-4 border-l-primary ps-1">
                     <Event event={event} />
-                    {/* <hr /> */}
                 </div>
             ))}
         </div>
