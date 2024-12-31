@@ -7,9 +7,7 @@ docker compose up -d
 
 
 docker compose exec -t laravel.test composer install
-# may want to remove later
-docker compose exec -t laravel.test php artisan migrate:fresh --seed
-
+# docker compose exec -t laravel.test php artisan migrate:fresh --seed
 docker compose exec -t laravel.test php artisan migrate
 docker compose exec -t laravel.test php artisan db:seed
 docker compose exec -t laravel.test php artisan key:generate
