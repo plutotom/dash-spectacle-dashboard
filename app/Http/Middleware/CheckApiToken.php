@@ -10,7 +10,7 @@ class CheckApiToken
     // You could move these to your .env file
     private $validTokens = [
         'levi-rocks-only-sometimes-but-hes-good-at-5-player-solatary',
-        'noah-is-kinda-sexy-and-has-a-good-body-and-is-a-good-person-and-is-a-good-friend-but-hes-a-bit-of-a-dumb-dumb-this-is-half-AI-generated-lol',
+        'noah-is-kinda-sexy-and-has-a-good-body-and-is-a-good-person-and-is-a-good-friend-but-he-better-stay-alive-longer-then-he-plans-of-his-like-27-years-so-he-better-be-a-good-boy',
         'who-is-this?-it-seems-you-got-the-extra-key-for-non-as-importent-ppl',
         'hey-chloe,-your-dope-and-i-love-you',
         'isaiah-test-token',
