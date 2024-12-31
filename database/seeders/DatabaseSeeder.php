@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Hash;
 use Illuminate\Database\Seeder;
 
@@ -16,14 +15,24 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-        User::factory()->create([
-            'name' => 'Isaiah',
-            'email' => 'plutotom@Live.com',
-            'password' => Hash::make('isaiah-test-token'),
-        ]);
+        $users = [
+            [
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+                'password' => Hash::make('test-user-password'),
+            ],
+            [
+                'name' => 'Isaiah',
+                'email' => 'plutotom@Live.com',
+                'password' => Hash::make('isaiah-test-token'),
+            ],
+        ];
+
+        foreach ($users as $userData) {
+            User::firstOrCreate(
+                ['email' => $userData['email']],
+                $userData
+            );
+        }
     }
 }
