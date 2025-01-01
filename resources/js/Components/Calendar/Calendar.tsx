@@ -49,7 +49,7 @@ export function Calendar({ className }: CalendarProps) {
                     {Object.values(events)
                         .slice(0, 4)
                         .map((dayEvents, index) => (
-                            <div className="w-1/4">
+                            <div className="w-1/4" key={index}>
                                 <CalendarDay key={index} dayEvents={dayEvents} dayDate={Object.keys(events)[index]} />
                             </div>
                         ))}
