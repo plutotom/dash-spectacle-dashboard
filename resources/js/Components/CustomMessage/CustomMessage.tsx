@@ -5,6 +5,7 @@ interface Message {
     id: number;
     content: string;
     created_at: string;
+    name: string;
 }
 
 export default function CustomMessage() {
@@ -16,7 +17,7 @@ export default function CustomMessage() {
         const fetchMessages = async () => {
             try {
                 const response = await axios.get('/api/messages');
-
+                console.log(response.data.data);
                 setMessages(response.data.data);
                 setLoading(false);
             } catch (err) {
@@ -45,6 +46,10 @@ export default function CustomMessage() {
             <div className="max-h-[30vh] overflow-y-auto">
                 {messages.map((message) => (
                     <div key={message.id} className="my-1 flex w-1/3 flex-col rounded-xl bg-white bg-opacity-10 p-1 backdrop-blur-sm transition-colors">
+                        <div className="mb-1 flex items-center justify-between text-sm text-gray-300">
+                            <span className="font-medium">{message.name}</span>
+                            <span>{new Date(message.created_at).toLocaleTimeString()}</span>
+                        </div>
                         <p className="text-lg text-white">{message.content}</p>
                     </div>
                 ))}
