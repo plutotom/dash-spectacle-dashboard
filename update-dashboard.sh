@@ -18,4 +18,6 @@ docker compose exec -t laravel.test php artisan config:cache
 docker compose exec -t laravel.test php artisan route:cache
 docker compose exec -t laravel.test php artisan view:cache
 
+ssh plutotom@spectral-dashboard "sudo reboot"
+
 echo "done"
