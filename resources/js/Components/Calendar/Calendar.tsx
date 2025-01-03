@@ -11,12 +11,14 @@ export function Calendar({ className }: CalendarProps) {
     const [events, setEvents] = useState<GroupedCalendarEvents>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
     useEffect(() => {
         const fetchEvents = async () => {
             try {
                 const data = await calendarService.getEvents();
                 setEvents(data);
+                setLastUpdated(new Date());
             } catch (err) {
                 setError('Failed to fetch calendar events');
                 console.error(err);
@@ -54,6 +56,7 @@ export function Calendar({ className }: CalendarProps) {
                             </div>
                         ))}
                 </div>
+                <div className="mt-2 text-sm text-gray-400">Last updated: {lastUpdated?.toLocaleTimeString()}</div>
             </div>
         </div>
     );

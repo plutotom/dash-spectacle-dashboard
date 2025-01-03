@@ -6,12 +6,14 @@ export function CurrentWeather() {
     const [weather, setWeather] = useState<Weather | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
     useEffect(() => {
         const fetchWeather = async () => {
             try {
                 const data = await weatherService.getCurrentWeather();
                 setWeather(data);
+                setLastUpdated(new Date());
             } catch (err) {
                 setError('Failed to fetch current weather');
                 console.error(err);
@@ -54,6 +56,7 @@ export function CurrentWeather() {
                     <div>
                         Wind: {weather.current.wind_dir} {weather.current.wind_mph}MPH and a wind chill of {weather.current.windchill_f}°
                     </div>
+                    <div className="mt-2 text-sm text-gray-400">Last updated: {lastUpdated?.toLocaleTimeString()}</div>
                 </div>
             </div>
         </div>
