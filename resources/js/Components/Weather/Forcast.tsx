@@ -40,9 +40,9 @@ const ForecastWeather = () => {
                             <div className="text-center align-baseline">
                                 {/* <div className="font-medium">{day.day.condition.text}</div> */}
                                 <div className="text-sm">
-                                    <span className="text-red-500">{Math.round(day.day.maxtemp_f)}°</span>
+                                    <span className="">{Math.round(day.day.maxtemp_f)}°</span>
                                     {' / '}
-                                    <span className="text-blue-500">{Math.round(day.day.mintemp_f)}°</span>
+                                    <span className="">{Math.round(day.day.mintemp_f)}°</span>
                                 </div>
                                 <div className="text text-sm text-gray-400">{day.day.daily_chance_of_rain}%</div>
                             </div>

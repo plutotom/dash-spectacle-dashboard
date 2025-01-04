@@ -50,13 +50,13 @@ export function CurrentWeather() {
                 <div className="flex flex-col justify-between text-primary-foreground">
                     <div className="flex items-end">
                         <h1 className="text-3xl">{weather?.current.temp_f}°</h1>
-                        <span className="ml-2 pr-1">But Feels like</span>
+                        <span className="ml-2 pr-1 text-sm">But Feels like</span>
                         <h1 className="text-xl">{weather.current.feelslike_f}°</h1>
                     </div>
-                    <div>
-                        Wind: {weather.current.wind_dir} {weather.current.wind_mph}MPH and a wind chill of {weather.current.windchill_f}°
+                    <div className="text-sm">
+                        Wind: {weather.current.wind_dir} {weather.current.wind_mph}MPH
                     </div>
-                    <div className="mt-2 text-sm text-gray-400">Last updated: {lastUpdated?.toLocaleTimeString()}</div>
+                    <div className="text-2xs mt-2 text-gray-400">Last updated: {lastUpdated?.toLocaleTimeString()}</div>
                 </div>
             </div>
         </div>

@@ -17,6 +17,7 @@ export function Calendar({ className }: CalendarProps) {
         const fetchEvents = async () => {
             try {
                 const data = await calendarService.getEvents();
+                console.log(data);
                 setEvents(data);
                 setLastUpdated(new Date());
             } catch (err) {
@@ -46,7 +47,7 @@ export function Calendar({ className }: CalendarProps) {
 
     return (
         <div className={`rounded-lg shadow-sm ${className}`}>
-            <div className="">
+            <div>
                 <div className="flex space-x-2">
                     {Object.values(events)
                         .slice(0, 4)

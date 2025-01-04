@@ -3,13 +3,17 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Support\Collection;
 
 class CalendarEventCollection extends ResourceCollection
 {
     public function toArray($request)
     {
-        $groupedEvents = $this->collection->groupBy(function ($event) {
+        //todo it seems that some all day events do not have a startdateTime. need to look into this to handle them, but for now this will work.
+        $filteredEvents = $this->collection->filter(function ($event) {
+            return gettype($event->start->dateTime) === 'string';
+        });
+
+        $groupedEvents = $filteredEvents->groupBy(function ($event) {
             return date('Y-m-d', strtotime($event->start->dateTime));
         });
 
@@ -17,4 +21,4 @@ class CalendarEventCollection extends ResourceCollection
             return CalendarEventResource::collection($dayEvents);
         });
     }
-} 
+}

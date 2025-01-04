@@ -3,15 +3,31 @@ import CustomMessage from '@/Components/CustomMessage/CustomMessage';
 import { CurrentWeather } from '@/Components/Weather/Current';
 import ForecastWeather from '@/Components/Weather/Forcast';
 import HaDashboardLayout from '@/Layouts/HaDashboardLayout';
+import { useEffect, useState } from 'react';
 
 export default function HaDashboard() {
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    useEffect(() => {
+        // Update time immediately
+        setCurrentTime(new Date());
+
+        // Set up interval to update every minute
+        const interval = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000 * 6); // 60000ms = 1 minute
+
+        // Cleanup interval on component unmount
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <HaDashboardLayout header={<h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">HA Dashboard</h2>}>
             <div className="relative flex h-screen flex-col gap-1 p-4">
                 <div className="flex items-start justify-between">
                     <div className="flex flex-col">
                         <div className="text-5xl text-primary-foreground">
-                            {new Date()
+                            {currentTime
                                 .toLocaleTimeString('en-US', {
                                     hour: 'numeric',
                                     minute: 'numeric',
@@ -22,12 +38,12 @@ export default function HaDashboard() {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-3xl text-primary-foreground">
-                                {new Date().toLocaleDateString('en-US', {
+                                {currentTime.toLocaleDateString('en-US', {
                                     weekday: 'long',
                                 })}
                             </span>
                             <span className="text-lg text-primary-foreground">
-                                {new Date().toLocaleDateString('en-US', {
+                                {currentTime.toLocaleDateString('en-US', {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric',
