@@ -64,6 +64,7 @@ export default {
                 },
             },
             fontSize: {
+                // to small
                 '2xs': ['0.375rem', { lineHeight: '0.5rem' }],
                 xs: ['0.875rem', { lineHeight: '1.25rem' }],
                 sm: ['1rem', { lineHeight: '1.5rem' }],
@@ -78,7 +79,7 @@ export default {
                 '7xl': ['5rem', { lineHeight: '1' }],
                 '8xl': ['6rem', { lineHeight: '1' }],
                 '9xl': ['7rem', { lineHeight: '1' }],
-
+                // to big
                 // '2xs': ['0.75rem', { lineHeight: '1rem' }],
                 // xs: ['1.75rem', { lineHeight: '2.5rem' }],
                 // sm: ['2rem', { lineHeight: '3rem' }],

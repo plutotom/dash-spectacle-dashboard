@@ -6,10 +6,9 @@ interface CalendarDayProps {
 }
 
 export default function CalendarDay({ dayEvents, dayDate }: CalendarDayProps) {
-    console.log(dayEvents);
     return (
         <div className="flex flex-col text-primary-foreground">
-            <span className="text-sm">
+            <span className="text-lg">
                 {new Date(dayEvents[0].start.dateTime).toLocaleDateString('en-US', {
                     weekday: 'long',
                     // year: 'numeric',
@@ -32,7 +31,7 @@ export default function CalendarDay({ dayEvents, dayDate }: CalendarDayProps) {
 function Event({ event }: { event: CalendarEvent }) {
     return (
         <div>
-            <div className="flex flex-col justify-between text-sm">
+            <div className="flex flex-col justify-between text-lg">
                 <span>
                     {new Date(event.start.dateTime).toLocaleTimeString('en-US', {
                         hour: 'numeric',

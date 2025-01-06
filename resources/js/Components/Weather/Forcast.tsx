@@ -39,7 +39,7 @@ const ForecastWeather = () => {
                             <img src={day.day.condition.icon} alt={day.day.condition.text} className="mx-auto h-16 w-16" />
                             <div className="text-center align-baseline">
                                 {/* <div className="font-medium">{day.day.condition.text}</div> */}
-                                <div className="text-sm">
+                                <div className="text-lg">
                                     <span className="">{Math.round(day.day.maxtemp_f)}°</span>
                                     {' / '}
                                     <span className="">{Math.round(day.day.mintemp_f)}°</span>

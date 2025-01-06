@@ -17,7 +17,6 @@ export function Calendar({ className }: CalendarProps) {
         const fetchEvents = async () => {
             try {
                 const data = await calendarService.getEvents();
-                console.log(data);
                 setEvents(data);
                 setLastUpdated(new Date());
             } catch (err) {
@@ -50,7 +49,7 @@ export function Calendar({ className }: CalendarProps) {
             <div>
                 <div className="flex space-x-2">
                     {Object.values(events)
-                        .slice(0, 4)
+                        .slice(0, 3)
                         .map((dayEvents, index) => (
                             <div className="w-1/4" key={index}>
                                 <CalendarDay key={index} dayEvents={dayEvents} dayDate={Object.keys(events)[index]} />

@@ -26,7 +26,7 @@ export default function HaDashboard() {
             <div className="relative flex h-screen flex-col gap-1 p-4">
                 <div className="flex items-start justify-between">
                     <div className="flex flex-col">
-                        <div className="text-5xl text-primary-foreground">
+                        <div className="text-8xl text-primary-foreground">
                             {currentTime
                                 .toLocaleTimeString('en-US', {
                                     hour: 'numeric',

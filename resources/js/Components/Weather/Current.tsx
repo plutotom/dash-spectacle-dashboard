@@ -49,14 +49,14 @@ export function CurrentWeather() {
             <div className="inline-block rounded-md bg-white bg-opacity-10 p-4 backdrop-blur-sm transition-colors">
                 <div className="flex flex-col justify-between text-primary-foreground">
                     <div className="flex items-end">
-                        <h1 className="text-3xl">{weather?.current.temp_f}°</h1>
-                        <span className="ml-2 pr-1 text-sm">But Feels like</span>
+                        <h1 className="text-5xl">{weather?.current.temp_f}°</h1>
+                        <span className="ml-2 pr-1 text-base">But Feels like</span>
                         <h1 className="text-xl">{weather.current.feelslike_f}°</h1>
                     </div>
-                    <div className="text-sm">
+                    <div className="text-base">
                         Wind: {weather.current.wind_dir} {weather.current.wind_mph}MPH
                     </div>
-                    <div className="text-2xs mt-2 text-gray-400">Last updated: {lastUpdated?.toLocaleTimeString()}</div>
+                    <div className="mt-2 text-2xs text-gray-400">Last updated: {lastUpdated?.toLocaleTimeString()}</div>
                 </div>
             </div>
         </div>
