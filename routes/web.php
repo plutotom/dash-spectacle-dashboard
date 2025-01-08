@@ -21,6 +21,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/haDashboard', [HaDashboardController::class, 'index'])->name('ha.dashboard');
+Route::get('my-wife/thesis', function () {
+    return Inertia::render('my-wife/Thesis');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

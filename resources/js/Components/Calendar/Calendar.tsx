@@ -56,7 +56,6 @@ export function Calendar({ className }: CalendarProps) {
                             </div>
                         ))}
                 </div>
-                <div className="mt-2 text-sm text-gray-400">Last updated: {lastUpdated?.toLocaleTimeString()}</div>
             </div>
         </div>
     );

@@ -45,8 +45,8 @@ export function CurrentWeather() {
     }
 
     return (
-        <div className="">
-            <div className="inline-block rounded-md bg-white bg-opacity-10 p-4 backdrop-blur-sm transition-colors">
+        <div className="h-40">
+            <div className="inline-block h-40 rounded-md bg-white bg-opacity-10 p-4 backdrop-blur-sm transition-colors">
                 <div className="flex flex-col justify-between text-primary-foreground">
                     <div className="flex items-end">
                         <h1 className="text-5xl">{weather?.current.temp_f}°</h1>
@@ -56,7 +56,6 @@ export function CurrentWeather() {
                     <div className="text-base">
                         Wind: {weather.current.wind_dir} {weather.current.wind_mph}MPH
                     </div>
-                    <div className="mt-2 text-2xs text-gray-400">Last updated: {lastUpdated?.toLocaleTimeString()}</div>
                 </div>
             </div>
         </div>
