@@ -50,7 +50,6 @@ const ForecastWeather = () => {
                     </div>
                 ))}
             </div>
-            <div className="text-sm text-gray-400">Last updated: {lastUpdated?.toLocaleTimeString()}</div>
         </div>
     );
 };

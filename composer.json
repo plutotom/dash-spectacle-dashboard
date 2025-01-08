@@ -16,6 +16,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "rakibdevs/openweather-laravel-api": "^1.9",
+        "revolution/laravel-google-photos": "^6.1",
         "spatie/laravel-google-calendar": "^3.8",
         "tightenco/ziggy": "^2.0"
     },

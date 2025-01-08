@@ -56,7 +56,6 @@ export function CurrentWeather() {
                     <div className="text-base">
                         Wind: {weather.current.wind_dir} {weather.current.wind_mph}MPH
                     </div>
-                    <div className="mt-2 text-2xs text-gray-400">Last updated: {lastUpdated?.toLocaleTimeString()}</div>
                 </div>
             </div>
         </div>
