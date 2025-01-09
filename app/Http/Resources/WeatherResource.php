@@ -79,4 +79,4 @@ class WeatherResource extends JsonResource
 
         return $data;
     }
-} 
+}

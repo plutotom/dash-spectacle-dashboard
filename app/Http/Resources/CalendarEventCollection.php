@@ -2,23 +2,36 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CalendarEventCollection extends ResourceCollection
 {
     public function toArray($request)
     {
-        //todo it seems that some all day events do not have a startdateTime. need to look into this to handle them, but for now this will work.
-        $filteredEvents = $this->collection->filter(function ($event) {
-            return gettype($event->start->dateTime) === 'string';
-        });
+        $groupedEvents = [];
 
-        $groupedEvents = $filteredEvents->groupBy(function ($event) {
-            return date('Y-m-d', strtotime($event->start->dateTime));
-        });
+        foreach ($this->collection as $event) {
+            // Parse the date with timezone consideration
+            $startDateTime = $event->start?->dateTime;
+            $startDate = $event->start?->date;
 
-        return $groupedEvents->map(function ($dayEvents) {
-            return CalendarEventResource::collection($dayEvents);
-        });
+            if ($startDateTime) {
+                $date = Carbon::parse($startDateTime, $event->start?->timeZone)
+                    ->format('Y-m-d');
+            } else {
+                $date = Carbon::parse($startDate)->format('Y-m-d');
+            }
+
+            if (! isset($groupedEvents[$date])) {
+                $groupedEvents[$date] = [];
+            }
+
+            $groupedEvents[$date][] = new CalendarEventResource($event);
+        }
+
+        ksort($groupedEvents);
+
+        return $groupedEvents;
     }
 }

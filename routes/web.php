@@ -50,12 +50,12 @@ Route::middleware('auth')->group(function () {
 
 });
 
-Route::get('/test-broadcast', [App\Http\Controllers\Api\MessageController::class, 'testBroadcast']);
+// Route::get('/test-broadcast', [App\Http\Controllers\Api\MessageController::class, 'testBroadcast']);
 
 // need to make a example page that has the event listener that shows the real time mesages as they are broadcasted
-Route::get('/example', function () {
-    // create a blade here that has the event listener that shows the real time mesages as they are broadcasted
-    return view('example');
-});
+// Route::get('/example', function () {
+//     // create a blade here that has the event listener that shows the real time mesages as they are broadcasted
+//     return view('example');
+// })->name('example');
 
 require __DIR__.'/auth.php';

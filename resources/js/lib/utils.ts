@@ -10,6 +10,7 @@ export function formatDateToHumanReadable(date: Date): string {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize time to midnight
     const targetDate = new Date(date);
+
     targetDate.setHours(0, 0, 0, 0); // Normalize time to midnight
 
     const dayDifference = (targetDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
