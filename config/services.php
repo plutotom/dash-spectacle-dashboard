@@ -43,11 +43,13 @@ return [
         'photo_picker' => [
             'client_id' => env('GOOGLE_PHOTOS_CLIENT_ID'),
             'client_secret' => env('GOOGLE_PHOTOS_CLIENT_SECRET'),
+            'redirect_uri' => env('GOOGLE_PHOTOS_REDIRECT_URI'),
         ],
 
         'project_id' => env('GOOGLE_PROJECT_ID'),
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect_uri' => env('GOOGLE_REDIRECT_URI'),
 
         'calendars' => [
             'primary' => env('GOOGLE_CALENDAR_ID', 'primary'),
