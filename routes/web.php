@@ -41,14 +41,13 @@ Route::middleware('auth')->group(function () {
         ->name('google.redirect');
     Route::get('/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])
         ->name('google.callback');
-    Route::get('/api/random-photo', [GooglePhotosController::class, 'getRandomPhoto'])
-        ->name('api.random-photo');
-    Route::get('/api/albums', [GooglePhotosController::class, 'listAlbums'])
-        ->name('api.albums');
-    Route::get('/api/random-photo-from-dashboard-album', [GooglePhotosController::class, 'getRandomPhotoFromDashboardAlbum'])
-        ->name('api.random-photo-from-dashboard-album');
-
 });
+Route::get('/api/random-photo', [GooglePhotosController::class, 'getRandomPhoto'])
+    ->name('api.random-photo');
+Route::get('/api/albums', [GooglePhotosController::class, 'listAlbums'])
+    ->name('api.albums');
+Route::get('/api/random-photo-from-dashboard-album', [GooglePhotosController::class, 'getRandomPhotoFromDashboardAlbum'])
+    ->name('api.random-photo-from-dashboard-album');
 
 // Route::get('/test-broadcast', [App\Http\Controllers\Api\MessageController::class, 'testBroadcast']);
 

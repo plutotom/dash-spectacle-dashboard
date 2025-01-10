@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Revolution\Google\Photos\Facades\Photos;
 
@@ -10,8 +11,8 @@ class GooglePhotosController extends Controller
     public function getRandomPhoto(): JsonResponse
     {
         try {
-            // Get token from your user's stored refresh token
-            $token = auth()->user()->google_refresh_token;
+
+            $token = User::whereNotNull('google_refresh_token')->first()->google_refresh_token;
 
             // Initialize Photos with token
             $photos = Photos::withToken($token);
@@ -44,7 +45,8 @@ class GooglePhotosController extends Controller
     {
         try {
             // Get token from your user's stored refresh token
-            $token = auth()->user()->google_refresh_token;
+            // $token = auth()->user()->google_refresh_token;
+            $token = User::whereNotNull('google_refresh_token')->first()->google_refresh_token;
 
             // Initialize Photos with token
             $photos = Photos::withToken($token);
