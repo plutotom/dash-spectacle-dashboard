@@ -1,5 +1,20 @@
 git pull origin main
-cp .env.example .env
+# Instead of direct copy, we'll use a safer env file update approach
+if [ ! -f .env ]; then
+    cp .env.example .env
+else
+    # Read .env.example and update .env while preserving existing values
+    while IFS='=' read -r key value; do
+        # Skip comments and empty lines
+        [[ $key =~ ^# ]] || [ -z "$key" ] && continue
+
+        # Check if the key exists in .env
+        if ! grep -q "^${key}=" .env; then
+            # If key doesn't exist, append it
+            echo "${key}=${value}" >> .env
+        fi
+    done < .env.example
+fi
 
 docker compose build
 docker compose up -d

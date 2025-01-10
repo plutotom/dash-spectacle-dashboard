@@ -1,14 +1,15 @@
-import ImageBackgroundComponent from '@/Components/ImageBackgroundComponent';
+import ImageBackgroundComponentGooglePhotos from '@/Components/ImageBackgroundComponentGooglePhotos';
 import { PropsWithChildren, ReactNode } from 'react';
-
 function HaDashboardLayout({ children }: PropsWithChildren<{ header?: ReactNode }>) {
     return (
         <>
-            <ImageBackgroundComponent>
+            {/* <ImageBackgroundComponent> */}
+            <ImageBackgroundComponentGooglePhotos>
                 <div className="relative">
                     <main>{children}</main>
                 </div>
-            </ImageBackgroundComponent>
+            </ImageBackgroundComponentGooglePhotos>
+            {/* </ImageBackgroundComponent> */}
         </>
     );
 }

@@ -11,6 +11,7 @@ export interface CalendarEvent {
     end: DateTime;
     status: string;
     htmlLink: string;
+    isAllDay: boolean;
 }
 
 // Type for the grouped events response

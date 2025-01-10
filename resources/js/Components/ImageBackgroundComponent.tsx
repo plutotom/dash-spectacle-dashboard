@@ -1,9 +1,10 @@
+import axios from 'axios';
 import { PropsWithChildren, useState } from 'react';
 
 import { useEffect } from 'react';
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-// ? this list of images is from google drive and is generated from this web site: https://www.publicalbum.org/blog/embedding-google-photos-albums
+// Remove or keep your existing backgroundImages array as fallback
 const backgroundImages = [
     'https://lh3.googleusercontent.com/pw/AP1GczNDmOKrkt0kQOLWzajtOcRdhoBkxdfPAxDCWU5CygBWfTKTmGwGxR2J8bQt_GUjLffR_NxgZT_4dsA0qonvBHd3NuOSXEwaW0k0lsLHt8f0LaWCts4G=w1920-h1080',
     'https://lh3.googleusercontent.com/pw/AP1GczPyfi2aQPTXVzZnkInFI0mAKzFbxYy5Kn-IupsHErmNk99rWsVrooNIf7iWfcQRgkym3Qhr5HY_5VhrLB4jqbOFpQaU9WL2YZAwNoctuj2LTLJcIzmX=w1920-h1080',
@@ -200,17 +201,31 @@ const backgroundImages = [
  * @returns {JSX.Element} The component JSX.
  */
 export default function ImageBackgroundComponent({ children }: PropsWithChildren) {
-    const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(Math.floor(Math.random() * backgroundImages.length));
+    const [currentBackground, setCurrentBackground] = useState<string | null>(null);
+    const [error, setError] = useState<boolean>(false);
+
+    const fetchRandomPhoto = async () => {
+        try {
+            const response = await axios.get('/api/random-photo');
+            if (response.data.success) {
+                setCurrentBackground(response.data.url);
+                setError(false);
+            }
+        } catch (err) {
+            console.error('Failed to fetch photo:', err);
+            setError(true);
+            // Fallback to local images if Google Photos fails
+            setCurrentBackground(backgroundImages[Math.floor(Math.random() * backgroundImages.length)]);
+        }
+    };
+
     useEffect(() => {
-        const interval = setInterval(
-            () => {
-                setCurrentBackgroundIndex(Math.floor(Math.random() * backgroundImages.length));
-            },
-            1000 * 60 * 10 // 10 minutes
-        );
+        fetchRandomPhoto();
+        const interval = setInterval(fetchRandomPhoto, 1000 * 60 * 10); // 10 minutes
 
         return () => clearInterval(interval);
     }, []);
+
     return (
         <div>
             <div
@@ -218,7 +233,7 @@ export default function ImageBackgroundComponent({ children }: PropsWithChildren
                 style={{
                     backgroundImage: isDevelopment
                         ? `url(https://ucarecdn.com/05f649bf-b70b-4cf8-90f7-2588ce404a08/)`
-                        : `url(${backgroundImages[currentBackgroundIndex]})`,
+                        : `url(${currentBackground || backgroundImages[0]})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',

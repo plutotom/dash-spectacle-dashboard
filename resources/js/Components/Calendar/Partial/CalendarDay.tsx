@@ -6,15 +6,16 @@ interface CalendarDayProps {
 }
 
 export default function CalendarDay({ dayEvents, dayDate }: CalendarDayProps) {
+    if (!dayEvents.length) return null;
+
     return (
         <div className="flex flex-col text-primary-foreground">
             <span className="text-lg">
-                {new Date(dayEvents[0].start.dateTime).toLocaleDateString('en-US', {
+                {new Date(dayDate).toLocaleDateString('en-US', {
                     weekday: 'long',
-                    // year: 'numeric',
-                    month: 'long',
+                    month: 'short',
                     day: 'numeric',
-                    timeZone: dayEvents[0].start.timeZone,
+                    timeZone: dayEvents[0].start.timeZone || 'UTC',
                 })}
             </span>
             <hr className="border-[0.5px] border-gray-400" />
@@ -29,20 +30,33 @@ export default function CalendarDay({ dayEvents, dayDate }: CalendarDayProps) {
 }
 
 function Event({ event }: { event: CalendarEvent }) {
+    if (event.isAllDay) {
+        return (
+            <div>
+                <div className="flex flex-col justify-between text-lg">
+                    <span className="text-sm text-[#A9A9A9]">All day</span>
+                    <span>{event.summary}</span>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div>
             <div className="flex flex-col justify-between text-lg">
                 <span>
-                    {new Date(event.start.dateTime).toLocaleTimeString('en-US', {
+                    {new Date(event.start.dateTime!).toLocaleTimeString('en-US', {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true,
+                        timeZone: event.start.timeZone ?? 'UTC',
                     })}
                     {' - '}
-                    {new Date(event.end.dateTime).toLocaleTimeString('en-US', {
+                    {new Date(event.end.dateTime!).toLocaleTimeString('en-US', {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true,
+                        timeZone: event.end.timeZone ?? 'UTC',
                     })}
                 </span>
                 <span>{event.summary}</span>

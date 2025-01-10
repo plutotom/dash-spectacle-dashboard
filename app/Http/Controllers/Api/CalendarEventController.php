@@ -15,6 +15,7 @@ class CalendarEventController extends Controller
     {
         try {
             $cacheKey = 'calendar_events_'.Carbon::now()->format('Y-m-d');
+            Cache::forget($cacheKey);
             $events = Cache::remember($cacheKey, now()->addMinutes(15), function () {
                 $startDate = Carbon::now();
                 $endDate = Carbon::now()->addMonth();
