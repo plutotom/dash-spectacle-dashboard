@@ -1,6 +1,6 @@
 import arrowHeart from '@/assets/images/arrow-heart.svg';
 
-import qrCode from '@/assets/images/chloe-thesis-qr-code.png';
+import qrCode2 from '@/assets/images/Chleo Grad QR Code.svg';
 import { Calendar } from '@/Components/Calendar/Calendar';
 import CustomMessage from '@/Components/CustomMessage/CustomMessage';
 import { CurrentWeather } from '@/Components/Weather/Current';
@@ -20,7 +20,7 @@ export default function HaDashboard() {
                         <div className="flex items-center">
                             <img src={arrowHeart} className="h-20 pe-3"></img>
                             {/* <img src={arrowLoop} className="h-40"></img> */}
-                            <img onClick={() => (window.location.href = '/my-wife/thesis')} src={qrCode} className="h-40"></img>
+                            <img onClick={() => (window.location.href = '/my-wife/thesis')} src={qrCode2} className="h-40"></img>
                             <CurrentWeather />
                         </div>
                     </div>

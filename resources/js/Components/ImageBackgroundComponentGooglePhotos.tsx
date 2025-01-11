@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { PropsWithChildren, useState } from 'react';
 
 import { useEffect } from 'react';
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = process.env.NODE_ENV !== 'development';
 
 interface RandomPhotoResponse extends AxiosResponse {
     data: {
