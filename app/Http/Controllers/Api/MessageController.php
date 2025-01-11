@@ -12,7 +12,7 @@ class MessageController extends Controller
 {
     public function index()
     {
-        $messages = Message::latest()->take(3)->get();
+        $messages = Message::latest()->take(8)->get();
 
         return MessageResource::collection($messages);
     }
