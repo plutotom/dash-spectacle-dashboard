@@ -25,3 +25,10 @@ export interface PageProps {
         error?: string;
     };
 }
+
+interface Message {
+    id: number;
+    content: string;
+    created_at: string;
+    name: string;
+}

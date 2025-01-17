@@ -4,6 +4,7 @@ use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\GooglePhotosController;
 use App\Http\Controllers\HaDashboardController;
+use App\Http\Controllers\MessageManagementController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,10 @@ Route::middleware('auth')->group(function () {
         ->name('google.redirect');
     Route::get('/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])
         ->name('google.callback');
+
+    Route::get('/messages', [MessageManagementController::class, 'index'])->name('messages.index');
+    Route::delete('/messages/{message}', [MessageManagementController::class, 'destroy'])->name('messages.destroy');
+    Route::put('/messages/{message}', [MessageManagementController::class, 'update'])->name('messages.update');
 });
 Route::get('/api/random-photo', [GooglePhotosController::class, 'getRandomPhoto'])
     ->name('api.random-photo');

@@ -34,6 +34,9 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                 <NavLink href={route('google.setup')} active={route().current('google.setup')}>
                                     Google setup
                                 </NavLink>
+                                <NavLink href={route('messages.index')} active={route().current('messages.index')}>
+                                    Messages
+                                </NavLink>
                             </div>
                         </div>
 
