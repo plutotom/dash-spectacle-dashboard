@@ -10,11 +10,27 @@ use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
-    public function index()
+    // Route::get('/messages/{count?}', [MessageController::class, 'index']);
+    public function index($count = 8)
     {
-        $messages = Message::latest()->take(8)->get();
+        try {
+            // Validate count parameter
+            if ($count > 100) {
+                return response()->json([
+                    'error' => 'Maximum count limit is 100',
+                ], 400);
+            }
 
-        return MessageResource::collection($messages);
+            $messages = Message::latest()
+                ->take(max(1, min(100, $count)))
+                ->get();
+
+            return MessageResource::collection($messages);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch messages',
+            ], 500);
+        }
     }
 
     public function store(Request $request)

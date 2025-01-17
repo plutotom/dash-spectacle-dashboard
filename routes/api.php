@@ -12,7 +12,7 @@ Route::get('/calendar-events', [CalendarEventController::class, 'index']);
 Route::get('/weather/current', [WeatherController::class, 'current']);
 Route::get('/weather/forecast', [WeatherController::class, 'forecast']);
 
-Route::get('/messages', [MessageController::class, 'index']);
+Route::get('/messages/{count?}', [MessageController::class, 'index']);
 Route::post('/messages', [MessageController::class, 'store'])->middleware(CheckApiToken::class);
 
 // Route::get('/random-photo', [GooglePhotosController::class, 'getRandomPhoto'])

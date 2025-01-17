@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Message;
 use App\Models\User;
 use Hash;
 use Illuminate\Database\Seeder;
@@ -32,5 +33,56 @@ class DatabaseSeeder extends Seeder
                 $userData
             );
         }
+
+        Message::create([
+            'name' => 'Test User',
+            'content' => 'This is a test message',
+        ]);
+
+        $user = User::where('email', 'plutotom@Live.com')->first();
+        $user->apiTokens()->create([
+            'name' => 'Noah',
+            'token' => 'noah-is-kinda-sexy-and-has-a-good-body-and-is-a-good-person-and-is-a-good-friend-but-he-better-stay-alive-longer-then-he-plans-of-his-like-27-years-so-he-better-be-a-good-boy',
+        ]);
+
+        $user->apiTokens()->create([
+            'name' => 'Chloe',
+            'token' => 'chloe-is-sexy-and-i-love you very much!',
+        ]);
+
+        $user->apiTokens()->create([
+            'name' => 'Isaiah',
+            'token' => 'isaiah-test-token',
+        ]);
+
+        $user->apiTokens()->create([
+            'name' => 'Levi',
+            'token' => 'levi-rocks-only-sometimes-but-hes-good-at-5-player-solatary',
+        ]);
+
+        $user->apiTokens()->create([
+            'name' => 'Michael',
+            'token' => 'Michael-is-gay-but-thats-ok',
+        ]);
+
+        $user->apiTokens()->create([
+            'name' => 'Linden',
+            'token' => 'London or linden what meat did you eat last',
+        ]);
+
+        $user->apiTokens()->create([
+            'name' => 'Mis. A',
+            'token' => 'The father in law……..',
+        ]);
+
+        $user->apiTokens()->create([
+            'name' => 'Maddie',
+            'token' => 'The pro pdf reader',
+        ]);
+
+        $user->apiTokens()->create([
+            'name' => 'Mother mother',
+            'token' => 'Sharpie or shary or sheriey who knows',
+        ]);
     }
 }
