@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class MessageController extends Controller
 {
     // Route::get('/messages/{count?}', [MessageController::class, 'index']);
-    public function index($count = 8)
+    public function index($count = 5)
     {
         try {
             // Validate count parameter

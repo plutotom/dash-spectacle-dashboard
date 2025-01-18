@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CalendarEventCollection extends ResourceCollection
@@ -12,15 +11,13 @@ class CalendarEventCollection extends ResourceCollection
         $groupedEvents = [];
 
         foreach ($this->collection as $event) {
-            // Parse the date with timezone consideration
             $startDateTime = $event->start?->dateTime;
             $startDate = $event->start?->date;
 
             if ($startDateTime) {
-                $date = Carbon::parse($startDateTime, $event->start?->timeZone)
-                    ->format('Y-m-d');
+                $date = $startDateTime;
             } else {
-                $date = Carbon::parse($startDate)->format('Y-m-d');
+                $date = $startDate;
             }
 
             if (! isset($groupedEvents[$date])) {

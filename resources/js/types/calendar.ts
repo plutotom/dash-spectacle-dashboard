@@ -1,6 +1,5 @@
 interface DateTime {
     dateTime: string | null;
-    timeZone: string | null;
 }
 
 export interface CalendarEvent {

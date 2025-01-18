@@ -15,7 +15,6 @@ export default function CalendarDay({ dayEvents, dayDate }: CalendarDayProps) {
                     weekday: 'long',
                     month: 'short',
                     day: 'numeric',
-                    timeZone: dayEvents[0].start.timeZone || 'UTC',
                 })}
             </span>
             <hr className="border-[0.5px] border-gray-400" />
@@ -49,14 +48,12 @@ function Event({ event }: { event: CalendarEvent }) {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true,
-                        timeZone: event.start.timeZone ?? 'UTC',
                     })}
                     {' - '}
                     {new Date(event.end.dateTime!).toLocaleTimeString('en-US', {
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: true,
-                        timeZone: event.end.timeZone ?? 'UTC',
                     })}
                 </span>
                 <span>{event.summary}</span>

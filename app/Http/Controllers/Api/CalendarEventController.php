@@ -15,15 +15,17 @@ class CalendarEventController extends Controller
     {
         try {
             $cacheKey = 'calendar_events_'.Carbon::now()->format('Y-m-d');
-            Cache::forget($cacheKey);
+            // Cache::forget($cacheKey); // force forget for testing
             $events = Cache::remember($cacheKey, now()->addMinutes(15), function () {
                 $startDate = Carbon::now();
                 $endDate = Carbon::now()->addMonth();
 
-                return Event::get($startDate, $endDate);
+                $events = Event::get($startDate, $endDate);
+
+                return new CalendarEventCollection($events);
             });
 
-            return new CalendarEventCollection($events);
+            return $events;
 
         } catch (Exception $e) {
             \Log::error('Calendar Error: '.$e->getMessage());

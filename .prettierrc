@@ -3,9 +3,5 @@
     "tabWidth": 4,
     "trailingComma": "es5",
     "printWidth": 160,
-    "plugins": [
-        "prettier-plugin-organize-imports",
-        "prettier-plugin-tailwindcss"
-    ]
-    
+    "plugins": ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"]
 }

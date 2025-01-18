@@ -3,9 +3,9 @@ services:
         container_name: 'dash-spectral-dashboard'
         # restart: unless-stopped
         # labels:
-            # - "traefik.enable=true"
-            # - "traefik.http.routers.laravel.rule=Host(`spectral.plutotom.com`)"
-            # - "traefik.http.routers.laravel.rule=Host(`debianserverIp:port this is running on, because that is waht nginx reverse proxy does.`)"
+        # - "traefik.enable=true"
+        # - "traefik.http.routers.laravel.rule=Host(`spectral.plutotom.com`)"
+        # - "traefik.http.routers.laravel.rule=Host(`debianserverIp:port this is running on, because that is waht nginx reverse proxy does.`)"
         build:
             context: './docker/8.4'
             dockerfile: Dockerfile
@@ -73,6 +73,13 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+    mailpit:
+        image: 'axllent/mailpit:latest'
+        ports:
+            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
