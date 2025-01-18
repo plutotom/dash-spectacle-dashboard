@@ -111,6 +111,12 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                         <ResponsiveNavLink href={route('ha.dashboard')} active={route().current('ha.dashboard')}>
                             HA Dashboard
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('google.setup')} active={route().current('google.setup')}>
+                            Google setup
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('messages.index')} active={route().current('messages.index')}>
+                            Messages
+                        </ResponsiveNavLink>
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
