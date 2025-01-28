@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Message;
 use App\Models\User;
 use Hash;
 use Illuminate\Database\Seeder;
@@ -33,11 +32,6 @@ class DatabaseSeeder extends Seeder
                 $userData
             );
         }
-
-        Message::create([
-            'name' => 'Test User',
-            'content' => 'This is a test message',
-        ]);
 
         $user = User::where('email', 'plutotom@Live.com')->first();
         $user->apiTokens()->create([
