@@ -17,6 +17,7 @@ export default function CustomMessage() {
         const fetchMessages = async () => {
             try {
                 const response = await axios.get('/api/messages');
+                setError(null);
                 setMessages(response.data.data);
                 setLoading(false);
             } catch (err) {
