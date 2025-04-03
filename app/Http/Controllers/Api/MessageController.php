@@ -27,8 +27,11 @@ class MessageController extends Controller
 
             return MessageResource::collection($messages);
         } catch (\Exception $e) {
+            \Log::error('Failed to fetch messages: '.$e->getMessage());
+
             return response()->json([
                 'error' => 'Failed to fetch messages',
+                'message' => $e->getMessage(),
             ], 500);
         }
     }

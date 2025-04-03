@@ -20,7 +20,7 @@ export default function CustomMessage() {
                 setMessages(response.data.data);
                 setLoading(false);
             } catch (err) {
-                setError('Failed to load messages');
+                setError('Failed' + JSON.stringify(err));
                 setLoading(false);
             }
         };
