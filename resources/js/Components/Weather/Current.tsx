@@ -11,6 +11,7 @@ export function CurrentWeather() {
     useEffect(() => {
         const fetchWeather = async () => {
             try {
+                setError(null);
                 const data = await weatherService.getCurrentWeather();
                 setWeather(data);
                 setLastUpdated(new Date());
@@ -56,6 +57,7 @@ export function CurrentWeather() {
                     <div className="text-base">
                         Wind: {weather.current.wind_dir} {weather.current.wind_mph}MPH
                     </div>
+                    <div className="text-base">{lastUpdated?.toLocaleString()}</div>
                 </div>
             </div>
         </div>
