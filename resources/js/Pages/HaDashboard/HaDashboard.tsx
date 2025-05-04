@@ -1,4 +1,3 @@
-import qrCode2 from '@/assets/images/Chleo Grad QR Code.svg';
 import { Calendar } from '@/Components/Calendar/Calendar';
 import CustomMessage from '@/Components/CustomMessage/CustomMessage';
 import { CurrentWeather } from '@/Components/Weather/Current';
@@ -16,7 +15,7 @@ export default function HaDashboard() {
                     </div>
                     <div className="h-40 w-1/3 justify-end">
                         <div className="flex items-center">
-                            <img onClick={() => (window.location.href = '/my-wife/thesis')} src={qrCode2} className="h-40"></img>
+                            {/* <img onClick={() => (window.location.href = '/my-wife/thesis')} src={qrCode2} className="h-40"></img> */}
                             <CurrentWeather />
                         </div>
                     </div>

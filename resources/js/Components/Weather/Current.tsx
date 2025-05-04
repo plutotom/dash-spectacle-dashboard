@@ -46,18 +46,20 @@ export function CurrentWeather() {
     }
 
     return (
-        <div className="h-40">
-            <div className="inline-block h-40 rounded-md bg-white bg-opacity-10 p-4 backdrop-blur-sm transition-colors">
+        <div className="h-40 w-full">
+            <div className="inline-block h-40 w-full rounded-md bg-white bg-opacity-10 p-4 backdrop-blur-sm transition-colors">
                 <div className="flex flex-col justify-between text-primary-foreground">
                     <div className="flex items-end">
                         <h1 className="text-5xl">{weather?.current.temp_f}°</h1>
-                        <span className="ml-2 pr-1 text-base">But Feels like</span>
-                        <h1 className="text-xl">{weather.current.feelslike_f}°</h1>
+                        {/* <span className="ml-2 pr-1 text-base">But Feels like</span> */}
                     </div>
-                    <div className="text-base">
+                    <div className="flex items-center">
+                        <h3 className="text-base">Feels Like: {weather.current.feelslike_f}°</h3>
+                    </div>
+                    {/* <div className="text-base">
                         Wind: {weather.current.wind_dir} {weather.current.wind_mph}MPH
-                    </div>
-                    <div className="text-base">{lastUpdated?.toLocaleString()}</div>
+                    </div> */}
+                    <div className="text-small text-muted-foreground">{lastUpdated?.toLocaleString()}</div>
                 </div>
             </div>
         </div>

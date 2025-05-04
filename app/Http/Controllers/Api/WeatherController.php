@@ -7,7 +7,7 @@ use App\Http\Resources\WeatherResource;
 use Cache;
 use Http;
 use RakibDevs\Weather\Weather;
-
+use App\Http\Controllers\HomeassistentController;
 class WeatherController extends Controller
 {
     private Weather $weatherService;
@@ -15,13 +15,14 @@ class WeatherController extends Controller
     public function __construct()
     {
         $this->weatherService = new Weather;
+        $this->homeassistentController = new HomeassistentController;
     }
 
     // By Zip Code - string with country code
     public function OpenWeatherCurrent($zip, $countryCode = 'us')
     {
-        $cacheKey = 'weather_current_'.$zip.'_'.$countryCode;
-        $weather = $this->weatherService->getCurrentByZip($zip, $countryCode);
+        $cacheKey = 'weather_current_' . $zip . '_' . $countryCode;
+        // $weather = $this->weatherService->getCurrentByZip($zip, $countryCode);
 
         $info = Cache::remember($cacheKey, now()->addHour(), function () use ($zip, $countryCode) {
             return $this->weatherService->getCurrentByZip($zip, $countryCode);
@@ -41,6 +42,10 @@ class WeatherController extends Controller
                 'q' => '60120',
             ])->json();
         });
+
+        //? getting local temperature from home assistant
+        $response['current']['temp_f'] = $this->homeassistentController->getLocalCurrentWeather()['state'];
+        $response['current']['last_updated'] = $this->homeassistentController->getLocalCurrentWeather()['last_updated'];
 
         return new WeatherResource($response);
     }

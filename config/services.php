@@ -58,6 +58,12 @@ return [
         ],
     ],
 
+    'homeassistant' => [
+        'url' => env('HOMEASSISTANT_URL'),
+        'token' => env('HOMEASSISTANT_TOKEN'),
+        'local_temperature_entity_id' => env('HOMEASSISTANT_LOCAL_TEMPERATURE_ENTITY_ID'),
+    ],
+
     'weather' => [
         'api_key' => env('WEATHER_API_KEY', '64a59248de284a5a9c9183623242412'),
     ],
