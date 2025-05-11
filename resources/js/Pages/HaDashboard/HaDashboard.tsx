@@ -4,6 +4,7 @@ import { CurrentWeather } from '@/Components/Weather/Current';
 import ForecastWeather from '@/Components/Weather/Forcast';
 import HaDashboardLayout from '@/Layouts/HaDashboardLayout';
 import { useEffect, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export default function HaDashboard() {
     return (
@@ -16,24 +17,32 @@ export default function HaDashboard() {
                     <div className="h-40 w-1/3 justify-end">
                         <div className="flex items-center">
                             {/* <img onClick={() => (window.location.href = '/my-wife/thesis')} src={qrCode2} className="h-40"></img> */}
-                            <CurrentWeather />
+                            <ErrorBoundary fallback={<div>Error loading current weather</div>}>
+                                <CurrentWeather />
+                            </ErrorBoundary>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-1 gap-4">
                     <div className="w-full">
-                        <ForecastWeather />
+                        <ErrorBoundary fallback={<div>Error loading forecast weather</div>}>
+                            <ForecastWeather />
+                        </ErrorBoundary>
                     </div>
                 </div>
                 <div className="flex gap-4">
                     <div className="w-full max-w-7xl">
-                        <CustomMessage />
+                        <ErrorBoundary fallback={<div>Error loading custom messages</div>}>
+                            <CustomMessage />
+                        </ErrorBoundary>
                     </div>
                 </div>
 
                 <div className="h-1/3">
-                    <Calendar />
+                    <ErrorBoundary fallback={<div>Error loading calendar</div>}>
+                        <Calendar />
+                    </ErrorBoundary>
                 </div>
             </div>
         </HaDashboardLayout>
