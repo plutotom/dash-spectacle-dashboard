@@ -48,7 +48,9 @@ export function Calendar({ className }: CalendarProps) {
         <div className={`rounded-lg shadow-sm ${className}`}>
             <div>
                 <div className="flex space-x-2">
-                    <span className="text-sm text-muted-foreground">Last updated: {lastUpdated?.toLocaleString()}</span>
+                    <span className="text-sm text-muted-foreground" style={{ display: 'none' }}>
+                        Last updated: {lastUpdated?.toLocaleString()}
+                    </span>
                     {events && Object.keys(events).length > 0 ? (
                         Object.values(events)
                             .slice(0, 4)
