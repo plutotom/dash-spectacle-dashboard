@@ -10,6 +10,9 @@ export default defineConfig({
         }),
         react(),
     ],
+    build: {
+        sourcemap: true,
+    },
     // server: {
     //     https: true,
     //     host: 'spectral-dashboard.plutotom.com',

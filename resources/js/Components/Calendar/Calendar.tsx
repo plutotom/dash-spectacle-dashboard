@@ -48,13 +48,18 @@ export function Calendar({ className }: CalendarProps) {
         <div className={`rounded-lg shadow-sm ${className}`}>
             <div>
                 <div className="flex space-x-2">
-                    {Object.values(events)
-                        .slice(0, 4)
-                        .map((dayEvents, index) => (
-                            <div className="w-1/4" key={index}>
-                                <CalendarDay key={index} dayEvents={dayEvents} dayDate={Object.keys(events)[index]} />
-                            </div>
-                        ))}
+                    <span className="text-sm text-muted-foreground">Last updated: {lastUpdated?.toLocaleString()}</span>
+                    {events && Object.keys(events).length > 0 ? (
+                        Object.values(events)
+                            .slice(0, 4)
+                            .map((dayEvents, index) => (
+                                <div className="w-1/4" key={index}>
+                                    <CalendarDay key={index} dayEvents={dayEvents} dayDate={Object.keys(events)[index]} />
+                                </div>
+                            ))
+                    ) : (
+                        <div className="w-full text-center text-muted-foreground">No calendar events found</div>
+                    )}
                 </div>
             </div>
         </div>
