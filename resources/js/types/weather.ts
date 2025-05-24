@@ -46,6 +46,7 @@ interface Current {
     uv: number;
     gust_mph: number;
     air_quality: AirQuality;
+    home_assistant_current_temp: number;
 }
 
 interface Weather {

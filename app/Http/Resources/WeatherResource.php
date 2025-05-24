@@ -22,6 +22,7 @@ class WeatherResource extends JsonResource
             ],
             'current' => [
                 'last_updated' => $this->resource['current']['last_updated'] ?? null,
+                'home_assistant_current_temp' => $this->resource['current']['home_assistant_current_temp'] ?? null,
                 'temp_f' => $this->resource['current']['temp_f'] ?? null,
                 'is_day' => $this->resource['current']['is_day'] ?? null,
                 'condition' => [

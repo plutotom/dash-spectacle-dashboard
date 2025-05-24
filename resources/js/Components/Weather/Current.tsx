@@ -1,6 +1,7 @@
 import { weatherService } from '@/services/weatherService';
 import { Weather } from '@/types/weather';
 import { useEffect, useState } from 'react';
+import { MdWifiTethering } from 'react-icons/md';
 
 export function CurrentWeather() {
     const [weather, setWeather] = useState<Weather | null>(null);
@@ -13,6 +14,7 @@ export function CurrentWeather() {
             try {
                 setError(null);
                 const data = await weatherService.getCurrentWeather();
+                console.log(data);
                 setWeather(data);
                 setLastUpdated(new Date());
             } catch (err) {
@@ -49,16 +51,13 @@ export function CurrentWeather() {
         <div className="h-40 w-full">
             <div className="inline-block h-40 w-full rounded-md bg-white bg-opacity-10 p-4 backdrop-blur-sm transition-colors">
                 <div className="flex flex-col justify-between text-primary-foreground">
-                    <div className="flex items-end">
-                        <h1 className="text-5xl">{weather?.current.temp_f}°</h1>
-                        {/* <span className="ml-2 pr-1 text-base">But Feels like</span> */}
+                    <div className="flex flex-row gap-1 align-middle">
+                        <h1 className="text-5xl">{weather?.current.home_assistant_current_temp}°</h1>
                     </div>
-                    <div className="flex items-center">
-                        <h3 className="text-base">Feels Like: {weather.current.feelslike_f}°</h3>
+                    <div className="flex flex-row items-center gap-1">
+                        <MdWifiTethering />
+                        <h3 className="text-base">{weather.current.temp_f}°</h3>
                     </div>
-                    {/* <div className="text-base">
-                        Wind: {weather.current.wind_dir} {weather.current.wind_mph}MPH
-                    </div> */}
                     <div className="text-small text-muted-foreground">{lastUpdated?.toLocaleString()}</div>
                 </div>
             </div>

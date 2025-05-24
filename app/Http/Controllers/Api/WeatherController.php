@@ -3,25 +3,28 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\HomeAssistantController;
 use App\Http\Resources\WeatherResource;
 use Cache;
 use Http;
 use RakibDevs\Weather\Weather;
-use App\Http\Controllers\HomeassistentController;
+
 class WeatherController extends Controller
 {
     private Weather $weatherService;
 
+    private HomeAssistantController $homeAssistantController;
+
     public function __construct()
     {
         $this->weatherService = new Weather;
-        $this->homeassistentController = new HomeassistentController;
+        $this->homeAssistantController = new HomeAssistantController;
     }
 
     // By Zip Code - string with country code
     public function OpenWeatherCurrent($zip, $countryCode = 'us')
     {
-        $cacheKey = 'weather_current_' . $zip . '_' . $countryCode;
+        $cacheKey = 'weather_current_'.$zip.'_'.$countryCode;
         // $weather = $this->weatherService->getCurrentByZip($zip, $countryCode);
 
         $info = Cache::remember($cacheKey, now()->addHour(), function () use ($zip, $countryCode) {
@@ -35,17 +38,16 @@ class WeatherController extends Controller
     {
         $cacheKey = 'weather_current_60120';
         $response = Cache::remember($cacheKey, now()->addMinutes(15), function () {
-            \Log::info('getting new current weather data');
-
             return Http::get('http://api.weatherapi.com/v1/current.json', [
                 'key' => config('services.weather.api_key'),
-                'q' => '60120',
+                'q' => config('services.weather.zip_code'),
             ])->json();
         });
 
-        //? getting local temperature from home assistant
-        $response['current']['temp_f'] = $this->homeassistentController->getLocalCurrentWeather()['state'];
-        $response['current']['last_updated'] = $this->homeassistentController->getLocalCurrentWeather()['last_updated'];
+        //? getting local temperature frosm home assistant
+        $homeAssistantData = $this->homeAssistantController->getLocalCurrentWeather();
+        $response['current']['home_assistant_current_temp'] = $homeAssistantData['temp'];
+        $response['current']['last_updated'] = $homeAssistantData['last_updated'];
 
         return new WeatherResource($response);
     }
@@ -59,7 +61,7 @@ class WeatherController extends Controller
 
             return Http::get('http://api.weatherapi.com/v1//forecast.json', [
                 'key' => config('services.weather.api_key'),
-                'q' => '60120',
+                'q' => config('services.weather.zip_code'),
                 'days' => '3', // 3 days is our max on free plan
             ])->json();
         });
