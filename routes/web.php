@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\NotionWebhookController;
+use App\Http\Controllers\Api\PrayerRequestController;
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\GooglePhotosController;
@@ -49,13 +51,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/messages', [MessageManagementController::class, 'index'])->name('messages.index');
     Route::delete('/messages/{message}', [MessageManagementController::class, 'destroy'])->name('messages.destroy');
     Route::put('/messages/{message}', [MessageManagementController::class, 'update'])->name('messages.update');
+
+    // Prayer Requests
 });
+Route::get('/prayer-requests', [PrayerRequestController::class, 'index'])->name('prayer-requests.index');
+Route::post('/prayer-requests/fetch', [PrayerRequestController::class, 'fetchFromNotion'])->name('prayer-requests.fetch');
+
 Route::get('/api/random-photo', [GooglePhotosController::class, 'getRandomPhoto'])
     ->name('api.random-photo');
 Route::get('/api/albums', [GooglePhotosController::class, 'listAlbums'])
     ->name('api.albums');
 Route::get('/api/random-photo-from-dashboard-album', [GooglePhotosController::class, 'getRandomPhotoFromDashboardAlbum'])
     ->name('api.random-photo-from-dashboard-album');
+
+Route::post('/api/notion-webhook', [NotionWebhookController::class, 'handle']);
 
 // Route::get('/test-broadcast', [App\Http\Controllers\Api\MessageController::class, 'testBroadcast']);
 

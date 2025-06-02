@@ -69,4 +69,10 @@ return [
         'zip_code' => env('WEATHER_ZIP_CODE', '60120'),
     ],
 
+    'notion' => [
+        'api_token' => env('NOTION_API_TOKEN'),
+        'prayer_db_id' => env('NOTION_PRAYER_DB_ID'),
+        'webhook_secret' => env('NOTION_WEBHOOK_SECRET'),
+    ],
+
 ];
