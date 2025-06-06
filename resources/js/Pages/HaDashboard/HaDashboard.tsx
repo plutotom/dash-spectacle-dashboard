@@ -1,6 +1,5 @@
 import { Calendar } from '@/Components/Calendar/Calendar';
 import CustomMessage from '@/Components/CustomMessage/CustomMessage';
-import PrayerRequests from '@/Components/PrayerRequests';
 import { CurrentWeather } from '@/Components/Weather/Current';
 import ForecastWeather from '@/Components/Weather/Forcast';
 import HaDashboardLayout from '@/Layouts/HaDashboardLayout';
@@ -39,13 +38,13 @@ export default function HaDashboard() {
                         </ErrorBoundary>
                     </div>
                 </div>
-                <div className="flex gap-4">
+                {/* <div className="flex gap-4">
                     <div className="w-full max-w-7xl">
                         <ErrorBoundary fallback={<div>Error loading prayer requests</div>}>
                             <PrayerRequests />
                         </ErrorBoundary>
                     </div>
-                </div>
+                </div> */}
 
                 <div className="h-1/3">
                     <ErrorBoundary fallback={<div>Error loading calendar</div>}>
