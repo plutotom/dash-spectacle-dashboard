@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 
 interface Props {
     isConnected: boolean;
@@ -17,6 +17,19 @@ export default function Setup({ isConnected }: Props) {
                                 <div>
                                     <h3 className="text-lg font-medium text-green-600">✓ Connected to Google Photos</h3>
                                     <p className="mt-2 text-sm text-gray-600">Your account is successfully connected to Google Photos.</p>
+                                    <div className="mt-4">
+                                        <button
+                                            type="button"
+                                            className="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-red-500"
+                                            onClick={() => {
+                                                if (confirm('Are you sure you want to reset your Google Photos connection?')) {
+                                                    router.post(route('google.reset'));
+                                                }
+                                            }}
+                                        >
+                                            Reset Google Connection
+                                        </button>
+                                    </div>
                                 </div>
                             ) : (
                                 <div>

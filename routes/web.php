@@ -47,6 +47,8 @@ Route::middleware('auth')->group(function () {
         ->name('google.redirect');
     Route::get('/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])
         ->name('google.callback');
+    Route::post('/google/reset', [GoogleAuthController::class, 'resetGoogleAuth'])
+        ->name('google.reset');
 
     Route::get('/messages', [MessageManagementController::class, 'index'])->name('messages.index');
     Route::delete('/messages/{message}', [MessageManagementController::class, 'destroy'])->name('messages.destroy');
@@ -65,6 +67,18 @@ Route::get('/api/random-photo-from-dashboard-album', [GooglePhotosController::cl
     ->name('api.random-photo-from-dashboard-album');
 
 Route::post('/api/notion-webhook', [NotionWebhookController::class, 'handle']);
+
+Route::get('/google-photos/upload', [GooglePhotosController::class, 'showUploadPage'])
+    ->middleware(['auth', 'verified'])
+    ->name('google-photos.upload');
+
+Route::post('/api/upload-photos', [GooglePhotosController::class, 'uploadPhotos'])
+    ->middleware(['auth', 'verified'])
+    ->name('api.upload-photos');
+
+Route::post('/api/create-album', [GooglePhotosController::class, 'createAlbum'])
+    ->middleware(['auth', 'verified'])
+    ->name('google-photos.create-album');
 
 // Route::get('/test-broadcast', [App\Http\Controllers\Api\MessageController::class, 'testBroadcast']);
 

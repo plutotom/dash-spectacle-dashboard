@@ -50,6 +50,13 @@ return [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect_uri' => env('GOOGLE_REDIRECT_URI'),
+        'scopes' => [
+            'https://www.googleapis.com/auth/photoslibrary.appendonly',
+            'https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata',
+            'https://www.googleapis.com/auth/photoslibrary.edit.appcreateddata',
+            'https://www.googleapis.com/auth/photospicker.mediaitems.readonly',
+            'https://www.googleapis.com/auth/photoslibrary.sharing',
+        ],
 
         'calendars' => [
             'primary' => env('GOOGLE_CALENDAR_ID', 'primary'),

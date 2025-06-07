@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Google\Photos\Library\V1\PhotosLibraryResourceFactory;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Revolution\Google\Photos\Facades\Photos;
 
 class GooglePhotosController extends Controller
@@ -11,18 +14,23 @@ class GooglePhotosController extends Controller
     public function getRandomPhoto(): JsonResponse
     {
         try {
-
             $token = User::whereNotNull('google_refresh_token')->first()->google_refresh_token;
-
             // Initialize Photos with token
             $photos = Photos::withToken($token);
 
             // List media items (this returns a PagedListResponse)
             $mediaItems = $photos->listMediaItems();
 
-            // dd($mediaItems);
             // Convert to array and get random item
             $items = iterator_to_array($mediaItems->iterateAllElements());
+
+            if (empty($items)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No photos found in Google Photos library',
+                ], 404);
+            }
+
             $randomItem = $items[array_rand($items)];
 
             return response()->json([
@@ -44,26 +52,51 @@ class GooglePhotosController extends Controller
     public function getRandomPhotoFromDashboardAlbum(): JsonResponse
     {
         try {
-            // Get token from your user's stored refresh token
-            // $token = auth()->user()->google_refresh_token;
             $token = User::whereNotNull('google_refresh_token')->first()->google_refresh_token;
-
-            // Initialize Photos with token
             $photos = Photos::withToken($token);
             $albumId = config('services.google.photos.album_id');
 
-            $mediaItems = $photos->search(['albumId' => $albumId, 'pageSize' => 100]);
-            // Convert to array and get random item
+            // First verify the album exists
+            try {
+                $album = $photos->getAlbum($albumId);
+                if (! $album) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Album not found',
+                    ], 404);
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Error accessing album: '.$e->getMessage(),
+                ], 500);
+            }
+
+            // Search for media items in the album
+            $mediaItems = $photos->search([
+                'albumId' => $albumId,
+                'pageSize' => 100,
+            ]);
+
+            // Convert to array and check if we have items
             $items = iterator_to_array($mediaItems->iterateAllElements());
+
+            if (empty($items)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No photos found in album. Album ID: '.$albumId,
+                ], 404);
+            }
+
             $randomItem = $items[array_rand($items)];
 
             return response()->json([
+                'success' => true,
                 'url' => $randomItem->getBaseUrl().'=w'.$randomItem->getMediaMetadata()->getWidth().'-h'.$randomItem->getMediaMetadata()->getHeight(),
-                // 'media_metadata_width' => $randomItem->getMediaMetadata()->getWidth(),
-                // 'media_metadata_height' => $randomItem->getMediaMetadata()->getHeight(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
+                'success' => false,
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -103,5 +136,98 @@ class GooglePhotosController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function showUploadPage()
+    {
+        try {
+            $token = auth()->user()->google_refresh_token;
+            $photos = Photos::withToken($token);
+            $albums = $photos->listAlbums();
+            $albumsArray = array_map(function ($album) {
+                return [
+                    'id' => $album->getId(),
+                    'title' => $album->getTitle(),
+                    'productUrl' => $album->getProductUrl(),
+                    'mediaItemsCount' => $album->getMediaItemsCount(),
+                    'coverPhotoUrl' => $album->getCoverPhotoBaseUrl(),
+                ];
+            }, iterator_to_array($albums->iterateAllElements()));
+
+            return Inertia::render('GooglePhotos/UploadPhotos', [
+                'albums' => array_values($albumsArray),
+            ]);
+        } catch (\Exception $e) {
+            // Optionally handle error, e.g. redirect with error message
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function createAlbum(Request $request)
+    {
+        $request->validate(['name' => 'required|string|max:255']);
+        try {
+            $token = auth()->user()->google_refresh_token;
+            $photos = Photos::withToken($token);
+            $newAlbum = Photos::withToken($token)->createAlbum(PhotosLibraryResourceFactory::album($request->name));
+            // Expect Google\Photos\Types\Album
+
+            return redirect()->route('google-photos.upload')->with('success', 'Album created!');
+        } catch (\Exception $e) {
+            return redirect()->route('google-photos.upload')->withErrors(['album_error' => $e->getMessage()]);
+        }
+    }
+
+    public function uploadPhotos(Request $request)
+    {
+        $request->validate([
+            'albumId' => 'required|string',
+            'photos' => 'required|array',
+            'photos.*' => 'file|mimes:jpeg,png,jpg,gif,webp,bmp,svg,heic,heif',
+        ]);
+
+        $token = auth()->user()->google_refresh_token;
+        $photosApi = Photos::withToken($token);
+        $albumId = $request->input('albumId');
+        $files = array_filter($request->file('photos'), fn ($file) => $file instanceof \Illuminate\Http\UploadedFile);
+
+        $results = [];
+        $uploadTokens = [];
+
+        foreach ($files as $file) {
+            try {
+                $fileContents = file_get_contents($file->getRealPath());
+                $fileName = $file->getClientOriginalName();
+                $uploadToken = $photosApi->upload($fileContents, $fileName);
+                $uploadTokens[] = $uploadToken;
+                $results[] = [
+                    'name' => $fileName,
+                    'success' => true,
+                    'uploadToken' => $uploadToken,
+                ];
+            } catch (\Exception $e) {
+                $results[] = [
+                    'name' => $file->getClientOriginalName(),
+                    'success' => false,
+                    'error' => $e->getMessage(),
+                ];
+            }
+        }
+
+        // Batch create media items in the album
+        try {
+            if (! empty($uploadTokens)) {
+                $batchResult = $photosApi->batchCreate($uploadTokens, ['albumId' => $albumId]);
+                $results[] = [
+                    'batchCreate' => $batchResult,
+                ];
+            }
+        } catch (\Exception $e) {
+            $results[] = [
+                'batchCreateError' => $e->getMessage(),
+            ];
+        }
+
+        return redirect()->back()->with('success', 'Photos uploaded successfully!')->with('results', $results);
     }
 }

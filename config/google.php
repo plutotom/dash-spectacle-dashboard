@@ -9,8 +9,9 @@ return [
         'https://www.googleapis.com/auth/photoslibrary.readonly.appcreateddata',
         'https://www.googleapis.com/auth/photoslibrary.edit.appcreateddata',
         'https://www.googleapis.com/auth/photospicker.mediaitems.readonly',
+        'https://www.googleapis.com/auth/photoslibrary.sharing',
     ],
     'access_type' => 'offline',
     'approval_prompt' => 'force',
-    'prompt' => 'consent', //"none", "consent", "select_account" default:none
+    'prompt' => 'consent', // "none", "consent", "select_account" default:none
 ];

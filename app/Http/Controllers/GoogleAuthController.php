@@ -13,7 +13,7 @@ class GoogleAuthController extends Controller
         $client->setClientId(config('google.client_id'));
         $client->setClientSecret(config('google.client_secret'));
         $client->setRedirectUri(route('google.callback'));
-        $client->setScopes(['https://www.googleapis.com/auth/photoslibrary.readonly']);
+        $client->setScopes(config('google.scopes'));
         $client->setAccessType('offline');
         $client->setPrompt('consent');
 
@@ -54,5 +54,12 @@ class GoogleAuthController extends Controller
         return inertia('GooglePhotos/Setup', [
             'isConnected' => $isConnected,
         ]);
+    }
+
+    public function resetGoogleAuth(Request $request)
+    {
+        auth()->user()->update(['google_refresh_token' => null]);
+
+        return redirect()->route('google.setup')->with('success', 'Google Photos connection reset.');
     }
 }
