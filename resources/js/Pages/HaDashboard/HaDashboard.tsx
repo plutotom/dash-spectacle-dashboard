@@ -50,17 +50,16 @@ export default function HaDashboard() {
                         </RemountingErrorBoundary>
                     </div>
                 </div>
-                <div className="flex justify-center gap-4">
-                    <div className="">
+                <div className="flex w-full items-center justify-start lg:w-1/2">
+                    <div className="w-full">
                         <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
-                            <h1>Messages</h1>
                             <CustomMessage />
                         </RemountingErrorBoundary>
                     </div>
                 </div>
 
                 <div className="h-1/3">
-                    <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
+                    <RemountingErrorBoundary intervalMs={10000}>
                         <Calendar />
                     </RemountingErrorBoundary>
                 </div>

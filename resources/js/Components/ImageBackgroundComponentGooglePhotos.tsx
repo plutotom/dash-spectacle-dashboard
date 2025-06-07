@@ -74,7 +74,7 @@ export default function ImageBackgroundComponentGooglePhotos({ children }: Props
                     transition: 'background-image 1s ease-in-out',
                 }}
             >
-                {error && <div className="text-muted-foreground">{errorMessage}</div>}
+                {/* {error && <div className="text-muted-foreground">{errorMessage}</div>} */}
                 <BackgroundGradient>{children}</BackgroundGradient>
             </div>
         </div>

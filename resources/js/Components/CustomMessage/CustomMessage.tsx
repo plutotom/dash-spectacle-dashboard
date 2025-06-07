@@ -45,7 +45,7 @@ export default function CustomMessage() {
         <div className="">
             <div className="max-h-[30vh] overflow-y-auto">
                 {messages.map((message) => (
-                    <div key={message.id} className="my-1 flex w-1/3 flex-col rounded-xl bg-white bg-opacity-10 p-1 backdrop-blur-sm transition-colors">
+                    <div key={message.id} className="my-1 flex flex-col rounded-xl bg-white bg-opacity-10 p-1 backdrop-blur-sm transition-colors">
                         <div className="mb-1 flex items-center justify-between text-sm text-gray-300">
                             <span className="text-xs font-medium">{message.name}</span>
                             <span>{new Date(message.created_at).toLocaleTimeString()}</span>
