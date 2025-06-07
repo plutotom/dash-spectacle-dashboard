@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\PrayerRequestController;
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\GooglePhotosController;
+use App\Http\Controllers\HabitifyController;
 use App\Http\Controllers\HaDashboardController;
 use App\Http\Controllers\MessageManagementController;
 use App\Http\Controllers\ProfileController;
@@ -76,9 +77,12 @@ Route::post('/api/upload-photos', [GooglePhotosController::class, 'uploadPhotos'
     ->middleware(['auth', 'verified'])
     ->name('api.upload-photos');
 
-Route::post('/api/create-album', [GooglePhotosController::class, 'createAlbum'])
-    ->middleware(['auth', 'verified'])
+Route::post('/api/create-album', [GooglePhotosController::class, 'createAlbum'])->middleware(['auth', 'verified'])
     ->name('google-photos.create-album');
+
+Route::group(['prefix' => 'habitify', 'middleware' => ['auth', 'verified']], function () {
+    Route::get('/', [HabitifyController::class, 'index'])->name('habitify.index');
+});
 
 // Route::get('/test-broadcast', [App\Http\Controllers\Api\MessageController::class, 'testBroadcast']);
 

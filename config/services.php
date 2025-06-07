@@ -82,4 +82,8 @@ return [
         'webhook_secret' => env('NOTION_WEBHOOK_SECRET'),
     ],
 
+    'habitify' => [
+        'api_key' => env('HABITIFY_API_KEY'),
+    ],
+
 ];
