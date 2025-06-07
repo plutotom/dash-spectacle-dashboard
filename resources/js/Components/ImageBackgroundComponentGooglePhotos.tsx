@@ -24,6 +24,7 @@ const DEFAULT_BACKGROUND_IMAGE = 'https://ucarecdn.com/05f649bf-b70b-4cf8-90f7-2
 export default function ImageBackgroundComponentGooglePhotos({ children }: PropsWithChildren) {
     const [currentBackground, setCurrentBackground] = useState<string | null>(null);
     const [error, setError] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const fetchRandomPhoto = async () => {
@@ -34,15 +35,17 @@ export default function ImageBackgroundComponentGooglePhotos({ children }: Props
                 setError(false);
                 return;
             }
-
+            setError(false);
             const response: RandomPhotoResponse = await axios.get('/api/random-photo-from-dashboard-album');
             if (response.status === 200) {
                 setCurrentBackground(response.data.url);
                 setError(false);
+                setErrorMessage(null);
             }
         } catch (err) {
             console.error('Failed to fetch photo:', err);
             setError(true);
+            setErrorMessage(err instanceof Error ? err.message : 'Unknown error');
         } finally {
             setIsLoading(false);
         }
@@ -71,6 +74,7 @@ export default function ImageBackgroundComponentGooglePhotos({ children }: Props
                     transition: 'background-image 1s ease-in-out',
                 }}
             >
+                {error && <div className="text-muted-foreground">{errorMessage}</div>}
                 <BackgroundGradient>{children}</BackgroundGradient>
             </div>
         </div>

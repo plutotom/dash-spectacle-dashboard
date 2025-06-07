@@ -3,100 +3,86 @@ import CustomMessage from '@/Components/CustomMessage/CustomMessage';
 import { CurrentWeather } from '@/Components/Weather/Current';
 import ForecastWeather from '@/Components/Weather/Forcast';
 import HaDashboardLayout from '@/Layouts/HaDashboardLayout';
-import { useEffect, useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
+import RemountingErrorBoundary from '@/Layouts/RemountingErrorBoundary';
 
 export default function HaDashboard() {
     return (
         <HaDashboardLayout header={<h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">HA Dashboard</h2>}>
-            <div className="relative flex h-screen flex-col gap-1 p-4">
+            <div className="relative flex h-screen flex-col gap-4 p-4">
+                <BackgroundGradient />
+
                 <div className="flex items-start justify-between">
                     <div className="flex flex-col">
-                        <DateTimeCard />
-                    </div>
-                    <div className="h-40 w-1/3 justify-end">
-                        <div className="flex items-center">
-                            {/* <img onClick={() => (window.location.href = '/my-wife/thesis')} src={qrCode2} className="h-40"></img> */}
-                            <ErrorBoundary fallback={<div>Error loading current weather</div>}>
-                                <CurrentWeather />
-                            </ErrorBoundary>
+                        <div className="text-5xl text-primary-foreground">
+                            {new Date()
+                                .toLocaleTimeString('en-US', {
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    hour12: true,
+                                })
+                                .replace('AM', '')
+                                .replace('PM', '')}
                         </div>
+                        <div className="flex flex-col">
+                            <span className="text-3xl text-primary-foreground">
+                                {new Date().toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                })}
+                            </span>
+                            <span className="text-lg text-primary-foreground">
+                                {new Date().toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                })}
+                            </span>
+                        </div>
+                    </div>
+                    <div className="w-1/4">
+                        <CurrentWeather />
                     </div>
                 </div>
 
                 <div className="flex flex-1 gap-4">
                     <div className="w-full">
-                        <ErrorBoundary fallback={<div>Error loading forecast weather</div>}>
+                        <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
                             <ForecastWeather />
-                        </ErrorBoundary>
+                        </RemountingErrorBoundary>
                     </div>
                 </div>
-                <div className="flex gap-4">
-                    <div className="w-full max-w-7xl">
-                        <ErrorBoundary fallback={<div>Error loading custom messages</div>}>
+                <div className="flex justify-center gap-4">
+                    <div className="">
+                        <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
+                            <h1>Messages</h1>
                             <CustomMessage />
-                        </ErrorBoundary>
+                        </RemountingErrorBoundary>
                     </div>
                 </div>
-                {/* <div className="flex gap-4">
-                    <div className="w-full max-w-7xl">
-                        <ErrorBoundary fallback={<div>Error loading prayer requests</div>}>
-                            <PrayerRequests />
-                        </ErrorBoundary>
-                    </div>
-                </div> */}
 
                 <div className="h-1/3">
-                    <ErrorBoundary fallback={<div>Error loading calendar</div>}>
+                    <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
                         <Calendar />
-                    </ErrorBoundary>
+                    </RemountingErrorBoundary>
                 </div>
             </div>
         </HaDashboardLayout>
     );
 }
 
-function DateTimeCard() {
-    const [currentTime, setCurrentTime] = useState(new Date());
-
-    useEffect(() => {
-        // Update time immediately
-        setCurrentTime(new Date());
-
-        // Set up interval to update every minute
-        const interval = setInterval(() => {
-            setCurrentTime(new Date());
-        }, 1000 * 60); // 1 minute
-
-        // Cleanup interval on component unmount
-        return () => clearInterval(interval);
-    }, []);
+function BackgroundGradient() {
     return (
-        <div>
-            <div className="text-8xl text-primary-foreground">
-                {currentTime
-                    .toLocaleTimeString('en-US', {
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        hour12: true,
-                    })
-                    .replace('AM', '')
-                    .replace('PM', '')}
-            </div>
-            <div className="flex flex-col">
-                <span className="text-3xl text-primary-foreground">
-                    {currentTime.toLocaleDateString('en-US', {
-                        weekday: 'long',
-                    })}
-                </span>
-                <span className="text-lg text-primary-foreground">
-                    {currentTime.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                    })}
-                </span>
-            </div>
-        </div>
+        <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+                background: `
+        linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.2) 50%,
+            rgba(0, 0, 0, 0) 20%,
+            rgba(0, 0, 0, 0) 30%,
+            rgba(0, 0, 0, .2) 50%
+        )
+    `,
+            }}
+        ></div>
     );
 }

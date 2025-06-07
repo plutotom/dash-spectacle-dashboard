@@ -19,6 +19,7 @@ export function Calendar({ className }: CalendarProps) {
                 const data = await calendarService.getEvents();
                 setEvents(data);
                 setLastUpdated(new Date());
+                setError(null);
             } catch (err) {
                 setError('Failed to fetch calendar events');
                 console.error(err);
@@ -28,7 +29,7 @@ export function Calendar({ className }: CalendarProps) {
         };
 
         fetchEvents();
-        const intervalId = setInterval(fetchEvents, 20 * 60 * 1000); // fetch only every 20 minuets
+        const intervalId = setInterval(fetchEvents, 20 * 60 * 1000);
         return () => clearInterval(intervalId);
     }, []);
 
