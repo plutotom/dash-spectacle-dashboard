@@ -27,6 +27,8 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
+            - 'storage:/var/www/html/storage'
+            - 'public:/var/www/html/public'
         networks:
             - sail
         depends_on:
@@ -90,5 +92,7 @@ volumes:
         driver: local
     sail-meilisearch:
         driver: local
+    storage:
         driver: local
+    public:
         driver: local

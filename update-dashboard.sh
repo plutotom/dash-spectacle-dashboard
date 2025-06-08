@@ -1,17 +1,7 @@
-#!/bin/bash
-set -e  # Exit on any error
-
-echo "Starting dashboard deployment..."
-
-# Pull latest changes
-echo "Pulling latest changes from git..."
 git pull origin main
-
-# Handle .env file
-echo "Setting up environment configuration..."
+# Instead of direct copy, we'll use a safer env file update approach
 if [ ! -f .env ]; then
     cp .env.example .env
-    echo "Created .env from .env.example"
 else
     # Read .env.example and update .env while preserving existing values
     while IFS='=' read -r key value; do
@@ -22,7 +12,6 @@ else
         if ! grep -q "^${key}=" .env; then
             # If key doesn't exist, append it
             echo "${key}=${value}" >> .env
-            echo "Added new environment variable: $key"
         fi
     done < .env.example
 fi
@@ -75,8 +64,13 @@ docker compose exec -t laravel.test php artisan cache:clear
 docker compose exec -t laravel.test php artisan config:cache
 docker compose exec -t laravel.test php artisan route:cache
 docker compose exec -t laravel.test php artisan view:cache
+
+# Set permissions for storage
+docker compose exec -t laravel.test chmod -R 775 storage
+docker compose exec -t laravel.test chown -R www-data:www-data storage
+
 docker compose exec -t laravel.test php artisan optimize
 
 ssh plutotom@spectral-dashboard "sudo reboot"
 
-echo "Dashboard deployment completed successfully!"
+echo "done"
