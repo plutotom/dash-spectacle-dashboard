@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 
-import { useEffect } from 'react';
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 interface RandomPhotoResponse extends AxiosResponse {
@@ -27,25 +26,54 @@ export default function ImageBackgroundComponentGooglePhotos({ children }: Props
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const ignoreDevelopmentPhoto = false;
+
     const fetchRandomPhoto = async () => {
         try {
-            // returns {success: true, url: string}
             if (isDevelopment && ignoreDevelopmentPhoto) {
                 setCurrentBackground(DEFAULT_BACKGROUND_IMAGE);
                 setError(false);
                 return;
             }
+
             setError(false);
-            const response: RandomPhotoResponse = await axios.get('/api/random-photo-from-dashboard-album');
-            if (response.status === 200) {
-                setCurrentBackground(response.data.url);
-                setError(false);
-                setErrorMessage(null);
+
+            // Try Google Photos first
+            try {
+                const response: RandomPhotoResponse = await axios.get('/api/random-photo-from-dashboard-album');
+                if (response.status === 200 && response.data.success) {
+                    setCurrentBackground(response.data.url);
+                    setError(false);
+                    setErrorMessage(null);
+                    return;
+                }
+            } catch (googleErr) {
+                console.log('Google Photos fetch failed, trying local photos...');
             }
+
+            // If Google Photos fails, try local photos
+            try {
+                const localResponse: RandomPhotoResponse = await axios.get('/api/random-photo-local');
+                if (localResponse.status === 200 && localResponse.data.success) {
+                    console.log('Local photos fetch successful');
+                    console.log(localResponse.data);
+                    setCurrentBackground(localResponse.data.url);
+                    setError(false);
+                    setErrorMessage(null);
+                    return;
+                }
+            } catch (localErr) {
+                console.error('Local photos fetch failed:', localErr);
+            }
+
+            // If both fail, use default
+            setCurrentBackground(DEFAULT_BACKGROUND_IMAGE);
+            setError(true);
+            setErrorMessage('Failed to fetch photos from both Google Photos and local storage');
         } catch (err) {
             console.error('Failed to fetch photo:', err);
             setError(true);
             setErrorMessage(err instanceof Error ? err.message : 'Unknown error');
+            setCurrentBackground(DEFAULT_BACKGROUND_IMAGE);
         } finally {
             setIsLoading(false);
         }
@@ -65,9 +93,12 @@ export default function ImageBackgroundComponentGooglePhotos({ children }: Props
     return (
         <div>
             <div
+                id="background-image-container"
                 className="min-h-screen bg-gray-900"
                 style={{
-                    backgroundImage: `url(${currentBackground})`,
+                    backgroundImage: `url(${new URL(currentBackground).href})`,
+                    // backgroundImage: `url(${currentBackground})`,
+                    // backgroundImage: `url(${DEFAULT_BACKGROUND_IMAGE})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',

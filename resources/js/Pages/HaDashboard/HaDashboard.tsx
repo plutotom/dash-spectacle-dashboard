@@ -4,6 +4,7 @@ import { CurrentWeather } from '@/Components/Weather/Current';
 import ForecastWeather from '@/Components/Weather/Forcast';
 import HaDashboardLayout from '@/Layouts/HaDashboardLayout';
 import RemountingErrorBoundary from '@/Layouts/RemountingErrorBoundary';
+import { useEffect, useState } from 'react';
 
 export default function HaDashboard() {
     return (
@@ -14,28 +15,7 @@ export default function HaDashboard() {
                 <div className="flex items-start justify-between">
                     <div className="flex flex-col">
                         <div className="text-5xl text-primary-foreground">
-                            {new Date()
-                                .toLocaleTimeString('en-US', {
-                                    hour: 'numeric',
-                                    minute: 'numeric',
-                                    hour12: true,
-                                })
-                                .replace('AM', '')
-                                .replace('PM', '')}
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-3xl text-primary-foreground">
-                                {new Date().toLocaleDateString('en-US', {
-                                    weekday: 'long',
-                                })}
-                            </span>
-                            <span className="text-lg text-primary-foreground">
-                                {new Date().toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                })}
-                            </span>
+                            <DateTimeCard />
                         </div>
                     </div>
                     <div className="w-1/4">
@@ -83,5 +63,50 @@ function BackgroundGradient() {
     `,
             }}
         ></div>
+    );
+}
+
+function DateTimeCard() {
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    useEffect(() => {
+        // Update time immediately
+        setCurrentTime(new Date());
+
+        // Set up interval to update every minute
+        const interval = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000 * 60); // 1 minute
+
+        // Cleanup interval on component unmount
+        return () => clearInterval(interval);
+    }, []);
+    return (
+        <div>
+            <div className="text-8xl text-primary-foreground">
+                {currentTime
+                    .toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true,
+                    })
+                    .replace('AM', '')
+                    .replace('PM', '')}
+            </div>
+            <div className="flex flex-col">
+                <span className="text-3xl text-primary-foreground">
+                    {currentTime.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                    })}
+                </span>
+                <span className="text-lg text-primary-foreground">
+                    {currentTime.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                    })}
+                </span>
+            </div>
+        </div>
     );
 }

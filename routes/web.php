@@ -66,6 +66,8 @@ Route::get('/api/albums', [GooglePhotosController::class, 'listAlbums'])
     ->name('api.albums');
 Route::get('/api/random-photo-from-dashboard-album', [GooglePhotosController::class, 'getRandomPhotoFromDashboardAlbum'])
     ->name('api.random-photo-from-dashboard-album');
+Route::get('/api/random-photo-local', [GooglePhotosController::class, 'getRandomLocalPhoto'])
+    ->name('api.random-photo-local');
 
 Route::post('/api/notion-webhook', [NotionWebhookController::class, 'handle']);
 
@@ -79,6 +81,10 @@ Route::post('/api/upload-photos', [GooglePhotosController::class, 'uploadPhotos'
 
 Route::post('/api/create-album', [GooglePhotosController::class, 'createAlbum'])->middleware(['auth', 'verified'])
     ->name('google-photos.create-album');
+
+Route::post('/api/upload-photos-local', [GooglePhotosController::class, 'uploadPhotosLocal'])
+    ->middleware(['auth', 'verified'])
+    ->name('api.upload-photos-local');
 
 Route::group(['prefix' => 'habitify', 'middleware' => ['auth', 'verified']], function () {
     Route::get('/', [HabitifyController::class, 'index'])->name('habitify.index');

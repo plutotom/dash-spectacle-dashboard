@@ -142,6 +142,12 @@ class GooglePhotosController extends Controller
     {
         try {
             $token = auth()->user()->google_refresh_token;
+            if(!$token) {
+                return Inertia::render('GooglePhotos/UploadPhotos', [
+                    'albums' => [],
+                    'errors' => ['error' => 'No token found to access Google Photos albums'],
+                ]); 
+            }
             $photos = Photos::withToken($token);
             $albums = $photos->listAlbums();
             $albumsArray = array_map(function ($album) {
@@ -229,5 +235,77 @@ class GooglePhotosController extends Controller
         }
 
         return redirect()->back()->with('success', 'Photos uploaded successfully!')->with('results', $results);
+    }
+
+    public function uploadPhotosLocal(Request $request)
+    {
+        $request->validate([
+            'photos' => 'required|array',
+            'photos.*' => 'file|mimes:jpeg,png,jpg,gif,webp,bmp,svg,heic,heif',
+        ]);
+
+        $files = array_filter($request->file('photos'), fn ($file) => $file instanceof \Illuminate\Http\UploadedFile);
+        $results = [];
+
+        foreach ($files as $file) {
+            try {
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('photos', $fileName, 'public');
+                
+                $results[] = [
+                    'name' => $file->getClientOriginalName(),
+                    'success' => true,
+                    'path' => $path,
+                    'url' => asset('storage/' . $path)
+                ];
+            } catch (\Exception $e) {
+                $results[] = [
+                    'name' => $file->getClientOriginalName(),
+                    'success' => false,
+                    'error' => $e->getMessage(),
+                ];
+            }
+        }
+
+        return redirect()->back()->with('success', 'Photos uploaded successfully!')->with('results', $results);
+    }
+
+    public function getRandomLocalPhoto(): JsonResponse
+    {
+        try {
+            $photosPath = storage_path('app/public/photos');
+            
+            // Check if directory exists and has files
+            if (!is_dir($photosPath) || count(glob($photosPath . '/*')) === 0) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No local photos found',
+                ], 404);
+            }
+
+            // Get all files in the photos directory
+            $files = glob($photosPath . '/*');
+            
+            // Get a random file
+            $randomFile = $files[array_rand($files)];
+            
+            // Get file info
+            $fileInfo = getimagesize($randomFile);
+            $width = $fileInfo[0] ?? 1920; // Default width if not available
+            
+            // Get the relative path for the URL
+            $relativePath = 'storage/photos/' . basename($randomFile);
+            
+            return response()->json([
+                'success' => true,
+                'url' => asset($relativePath),
+                'media_metadata_width' => $width,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

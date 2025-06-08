@@ -27,6 +27,7 @@ const UploadPhotos: React.FC<UploadPhotosProps> = ({ albums, errors, success }) 
     const [files, setFiles] = useState<FileList | null>(null);
     const [progress, setProgress] = useState<number | null>(null);
     const [results, setResults] = useState<unknown>(null);
+    const [uploadType, setUploadType] = useState<'google' | 'local'>('google');
 
     // Album creation state
     const [newAlbumName, setNewAlbumName] = useState('');
@@ -58,16 +59,18 @@ const UploadPhotos: React.FC<UploadPhotosProps> = ({ albums, errors, success }) 
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!files || !albumId) {
+        if (!files) {
             return;
         }
 
         const data = {
-            albumId,
+            ...(uploadType === 'google' && { albumId }),
             photos: Array.from(files),
         };
 
-        router.post('/api/upload-photos', data, {
+        const endpoint = uploadType === 'google' ? '/api/upload-photos' : '/api/upload-photos-local';
+
+        router.post(endpoint, data, {
             forceFormData: true,
             onProgress: (event: InertiaProgressEvent) => {
                 setProgress(event.percentage);
@@ -117,26 +120,56 @@ const UploadPhotos: React.FC<UploadPhotosProps> = ({ albums, errors, success }) 
                         </div>
                     ))}
                 {success && <div className="mb-4 rounded-lg bg-green-100 p-4 text-green-700">{success}</div>}
-                <h1 className="mb-6 text-2xl font-bold text-gray-800">Upload Photos to Google Photos</h1>
+                <h1 className="mb-6 text-2xl font-bold text-gray-800">Upload Photos</h1>
 
+                {/* Upload type selector */}
                 <div className="space-y-2">
-                    <label htmlFor="album-select" className="block text-sm font-medium text-gray-700">
-                        Select Album:
-                    </label>
-                    <select
-                        id="album-select"
-                        name="album"
-                        value={albumId}
-                        onChange={(e) => setAlbumId(e.target.value)}
-                        className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
-                    >
-                        {albums.map((album) => (
-                            <option key={album.id} value={album.id}>
-                                {album.title} ({album.mediaItemsCount || 0} items)
-                            </option>
-                        ))}
-                    </select>
+                    <label className="block text-sm font-medium text-gray-700">Upload Type:</label>
+                    <div className="flex space-x-4">
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                value="google"
+                                checked={uploadType === 'google'}
+                                onChange={(e) => setUploadType(e.target.value as 'google')}
+                                className="form-radio h-4 w-4 text-blue-600"
+                            />
+                            <span className="ml-2">Google Photos</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                value="local"
+                                checked={uploadType === 'local'}
+                                onChange={(e) => setUploadType(e.target.value as 'local')}
+                                className="form-radio h-4 w-4 text-blue-600"
+                            />
+                            <span className="ml-2">Local Storage</span>
+                        </label>
+                    </div>
                 </div>
+
+                {/* Album selector - only show for Google Photos */}
+                {uploadType === 'google' && (
+                    <div className="space-y-2">
+                        <label htmlFor="album-select" className="block text-sm font-medium text-gray-700">
+                            Select Album:
+                        </label>
+                        <select
+                            id="album-select"
+                            name="album"
+                            value={albumId}
+                            onChange={(e) => setAlbumId(e.target.value)}
+                            className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:ring-blue-500"
+                        >
+                            {albums.map((album) => (
+                                <option key={album.id} value={album.id}>
+                                    {album.title} ({album.mediaItemsCount || 0} items)
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
 
                 <div className="space-y-2">
                     <label htmlFor="file-input" className="block text-sm font-medium text-gray-700">
@@ -156,7 +189,7 @@ const UploadPhotos: React.FC<UploadPhotosProps> = ({ albums, errors, success }) 
                     type="submit"
                     className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                    Upload
+                    Upload to {uploadType === 'google' ? 'Google Photos' : 'Local Storage'}
                 </button>
 
                 {progress !== null && (

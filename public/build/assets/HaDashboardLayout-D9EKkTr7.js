@@ -1,0 +1,9 @@
+import{r,j as o,b as l}from"./app-0DiLhEvu.js";const h=!1,i="https://ucarecdn.com/05f649bf-b70b-4cf8-90f7-2588ce404a08/";function m({children:t}){const[u,s]=r.useState(null),[p,a]=r.useState(!1),[x,n]=r.useState(null),[d,g]=r.useState(!0),f=!1,c=async()=>{try{a(!1);try{const e=await l.get("/api/random-photo-from-dashboard-album");if(e.status===200&&e.data.success){s(e.data.url),a(!1),n(null);return}}catch{console.log("Google Photos fetch failed, trying local photos...")}try{const e=await l.get("/api/random-photo-local");if(e.status===200&&e.data.success){console.log("Local photos fetch successful"),console.log(e.data),s(e.data.url),a(!1),n(null);return}}catch(e){console.error("Local photos fetch failed:",e)}s(i),a(!0),n("Failed to fetch photos from both Google Photos and local storage")}catch(e){console.error("Failed to fetch photo:",e),a(!0),n(e instanceof Error?e.message:"Unknown error"),s(i)}finally{g(!1)}};return r.useEffect(()=>{c();const e=setInterval(c,1e3*60*10);return()=>clearInterval(e)},[]),d?o.jsx("div",{children:"Loading..."}):o.jsx("div",{children:o.jsx("div",{id:"background-image-container",className:"min-h-screen bg-gray-900",style:{backgroundImage:`url(${new URL(u).href})`,backgroundSize:"cover",backgroundPosition:"center",backgroundRepeat:"no-repeat",transition:"background-image 1s ease-in-out"},children:o.jsx(b,{children:t})})})}function b({children:t}){return o.jsx("div",{className:"",style:{background:`
+        linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.2) 50%,
+            rgba(0, 0, 0, 0) 20%,
+            rgba(0, 0, 0, 0) 30%,
+            rgba(0, 0, 0, .2) 50%
+        )
+    `},children:t})}function v({children:t}){return o.jsx(o.Fragment,{children:o.jsx(m,{children:o.jsx("div",{className:"relative",children:o.jsx("main",{children:t})})})})}export{v as H};
+//# sourceMappingURL=HaDashboardLayout-D9EKkTr7.js.map
