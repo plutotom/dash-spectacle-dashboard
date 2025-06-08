@@ -31,12 +31,9 @@ docker compose exec -t laravel.test php artisan config:cache
 docker compose exec -t laravel.test php artisan route:cache
 docker compose exec -t laravel.test php artisan view:cache
 
-# Create storage link and set permissions
-docker compose exec -t laravel.test php artisan storage:link
+# Set permissions for storage
 docker compose exec -t laravel.test chmod -R 775 storage
-docker compose exec -t laravel.test chmod -R 775 public/storage
 docker compose exec -t laravel.test chown -R www-data:www-data storage
-docker compose exec -t laravel.test chown -R www-data:www-data public/storage
 
 ssh plutotom@spectral-dashboard "sudo reboot"
 
