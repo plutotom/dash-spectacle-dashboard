@@ -25,7 +25,7 @@ export default function ImageBackgroundComponentGooglePhotos({ children }: Props
     const [error, setError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const ignoreDevelopmentPhoto = false;
+    const ignoreDevelopmentPhoto = true;
 
     const fetchRandomPhoto = async () => {
         try {
