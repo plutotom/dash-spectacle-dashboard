@@ -12,6 +12,7 @@ services:
             args:
                 WWWGROUP: '${WWWGROUP}'
         image: 'sail-8.4/app'
+        restart: unless-stopped
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -27,8 +28,8 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
-            # - 'storage:/var/www/html/storage'
-            # - 'public:/var/www/html/public'
+            - 'storage:/var/www/html/storage:rw'
+            - 'public:/var/www/html/public:rw'
         networks:
             - sail
         depends_on:
@@ -92,7 +93,7 @@ volumes:
         driver: local
     sail-meilisearch:
         driver: local
-    # storage:
-    #     driver: local
-    # public:
-    #     driver: local
+    storage:
+        driver: local
+    public:
+        driver: local

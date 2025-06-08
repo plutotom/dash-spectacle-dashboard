@@ -1,3 +1,5 @@
+#!/bin/bash
+
 git pull origin main
 # Instead of direct copy, we'll use a safer env file update approach
 if [ ! -f .env ]; then
