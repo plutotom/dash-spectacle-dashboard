@@ -1,7 +1,17 @@
+#!/bin/bash
+set -e  # Exit on any error
+
+echo "Starting dashboard deployment..."
+
+# Pull latest changes
+echo "Pulling latest changes from git..."
 git pull origin main
-# Instead of direct copy, we'll use a safer env file update approach
+
+# Handle .env file
+echo "Setting up environment configuration..."
 if [ ! -f .env ]; then
     cp .env.example .env
+    echo "Created .env from .env.example"
 else
     # Read .env.example and update .env while preserving existing values
     while IFS='=' read -r key value; do
@@ -12,29 +22,61 @@ else
         if ! grep -q "^${key}=" .env; then
             # If key doesn't exist, append it
             echo "${key}=${value}" >> .env
+            echo "Added new environment variable: $key"
         fi
     done < .env.example
 fi
 
+# Ensure storage directory structure exists locally
+echo "Setting up storage directory structure..."
+mkdir -p storage/framework/{sessions,views,cache}
+mkdir -p storage/{app/public,logs}
+chmod -R 775 storage
+
+# Build and start containers
+echo "Building and starting Docker containers..."
 docker compose build
 docker compose up -d
 
+# Wait for containers to be ready
+echo "Waiting for containers to be ready..."
+sleep 10
+
+# Wait for MySQL to be ready
+echo "Waiting for MySQL to be ready..."
+until docker compose exec mysql mysqladmin ping -h"localhost" --silent; do
+    echo "MySQL is unavailable - sleeping"
+    sleep 5
+done
+echo "MySQL is ready!"
+
+# Setup Laravel application
+echo "Installing Composer dependencies..."
 docker compose exec -t laravel.test composer install
-# docker compose exec -t laravel.test php artisan migrate:fresh --seed
-docker compose exec -t laravel.test php artisan migrate
-docker compose exec -t laravel.test php artisan db:seed
+
+echo "Setting up storage directories in container..."
+docker compose exec -t laravel.test mkdir -p storage/framework/{sessions,views,cache}
+docker compose exec -t laravel.test mkdir -p storage/{app/public,logs}
+docker compose exec -t laravel.test chmod -R 775 storage
+docker compose exec -t laravel.test chown -R www-data:www-data storage
+
+echo "Generating application key..."
 docker compose exec -t laravel.test php artisan key:generate
-docker compose exec -t laravel.test php artisan optimize
+
+echo "Running database migrations..."
+docker compose exec -t laravel.test php artisan migrate
+
+echo "Seeding database..."
+docker compose exec -t laravel.test php artisan db:seed
+
+echo "Optimizing application..."
 docker compose exec -t laravel.test php artisan config:clear
 docker compose exec -t laravel.test php artisan cache:clear
 docker compose exec -t laravel.test php artisan config:cache
 docker compose exec -t laravel.test php artisan route:cache
 docker compose exec -t laravel.test php artisan view:cache
-
-# Set permissions for storage
-docker compose exec -t laravel.test chmod -R 775 storage
-docker compose exec -t laravel.test chown -R www-data:www-data storage
+docker compose exec -t laravel.test php artisan optimize
 
 ssh plutotom@spectral-dashboard "sudo reboot"
 
-echo "done"
+echo "Dashboard deployment completed successfully!"
