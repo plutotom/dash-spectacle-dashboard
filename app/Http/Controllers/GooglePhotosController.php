@@ -142,11 +142,11 @@ class GooglePhotosController extends Controller
     {
         try {
             $token = auth()->user()->google_refresh_token;
-            if(!$token) {
+            if (! $token) {
                 return Inertia::render('GooglePhotos/UploadPhotos', [
                     'albums' => [],
                     'errors' => ['error' => 'No token found to access Google Photos albums'],
-                ]); 
+                ]);
             }
             $photos = Photos::withToken($token);
             $albums = $photos->listAlbums();
@@ -249,16 +249,18 @@ class GooglePhotosController extends Controller
 
         foreach ($files as $file) {
             try {
-                $fileName = time() . '_' . $file->getClientOriginalName();
+                $fileName = time().'_'.$file->getClientOriginalName();
                 $path = $file->storeAs('photos', $fileName, 'public');
-                
+                \Log::channel('daily')->info('Uploaded photo: '.$path);
+
                 $results[] = [
                     'name' => $file->getClientOriginalName(),
                     'success' => true,
                     'path' => $path,
-                    'url' => asset('storage/' . $path)
+                    'url' => asset('storage/'.$path),
                 ];
             } catch (\Exception $e) {
+                \Log::error('Error uploading photo: '.$e->getMessage());
                 $results[] = [
                     'name' => $file->getClientOriginalName(),
                     'success' => false,
@@ -274,9 +276,9 @@ class GooglePhotosController extends Controller
     {
         try {
             $photosPath = storage_path('app/public/photos');
-            
+
             // Check if directory exists and has files
-            if (!is_dir($photosPath) || count(glob($photosPath . '/*')) === 0) {
+            if (! is_dir($photosPath) || count(glob($photosPath.'/*')) === 0) {
                 return response()->json([
                     'success' => false,
                     'error' => 'No local photos found',
@@ -284,18 +286,18 @@ class GooglePhotosController extends Controller
             }
 
             // Get all files in the photos directory
-            $files = glob($photosPath . '/*');
-            
+            $files = glob($photosPath.'/*');
+
             // Get a random file
             $randomFile = $files[array_rand($files)];
-            
+
             // Get file info
             $fileInfo = getimagesize($randomFile);
             $width = $fileInfo[0] ?? 1920; // Default width if not available
-            
+
             // Get the relative path for the URL
-            $relativePath = 'storage/photos/' . basename($randomFile);
-            
+            $relativePath = 'storage/photos/'.basename($randomFile);
+
             return response()->json([
                 'success' => true,
                 'url' => asset($relativePath),

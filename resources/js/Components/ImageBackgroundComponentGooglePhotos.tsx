@@ -25,11 +25,12 @@ export default function ImageBackgroundComponentGooglePhotos({ children }: Props
     const [error, setError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const ignoreDevelopmentPhoto = true;
+    const ignoreDevelopmentPhoto = false;
 
     const fetchRandomPhoto = async () => {
         try {
             if (isDevelopment && ignoreDevelopmentPhoto) {
+                console.log('Using default image due to being in development mode');
                 setCurrentBackground(DEFAULT_BACKGROUND_IMAGE);
                 setError(false);
                 return;
@@ -67,6 +68,7 @@ export default function ImageBackgroundComponentGooglePhotos({ children }: Props
 
             // If both fail, use default
             setCurrentBackground(DEFAULT_BACKGROUND_IMAGE);
+            console.log('Failed to fetch photos from both Google Photos and local storage, using default background');
             setError(true);
             setErrorMessage('Failed to fetch photos from both Google Photos and local storage');
         } catch (err) {
