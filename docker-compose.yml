@@ -35,7 +35,6 @@ services:
         depends_on:
             - mysql
             - redis
-        user: '${WWWUSER}:${WWWGROUP}'
     mysql:
         image: 'mysql/mysql-server:8.0'
         restart: unless-stopped

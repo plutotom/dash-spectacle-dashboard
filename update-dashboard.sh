@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Get current user and group IDs
+CURRENT_UID=$(id -u)
+CURRENT_GID=$(id -g)
+
+# Export these for docker-compose
+export WWWUSER=$CURRENT_UID
+export WWWGROUP=$CURRENT_GID
+
 git pull origin main
 # Instead of direct copy, we'll use a safer env file update approach
 if [ ! -f .env ]; then
@@ -24,11 +32,10 @@ mkdir -p storage/framework/{sessions,views,cache}
 mkdir -p storage/{app/public,logs}
 chmod -R 775 storage
 
-# Add these lines after your existing storage setup in update-dashboard.sh
 echo "Setting proper permissions for storage..."
-sudo chown -R $USER:www-data storage
+sudo chown -R $CURRENT_UID:$CURRENT_GID storage
 sudo chmod -R 775 storage
-sudo chown -R $USER:www-data bootstrap/cache
+sudo chown -R $CURRENT_UID:$CURRENT_GID bootstrap/cache
 sudo chmod -R 775 bootstrap/cache
 
 # Build and start containers
@@ -56,7 +63,7 @@ echo "Setting up storage directories in container..."
 docker compose exec -t laravel.test mkdir -p storage/framework/{sessions,views,cache}
 docker compose exec -t laravel.test mkdir -p storage/{app/public,logs}
 docker compose exec -t laravel.test chmod -R 775 storage
-docker compose exec -t laravel.test chown -R www-data:www-data storage
+docker compose exec -t laravel.test chown -R $CURRENT_UID:$CURRENT_GID storage
 
 echo "Generating application key..."
 docker compose exec -t laravel.test php artisan key:generate
@@ -67,22 +74,17 @@ docker compose exec -t laravel.test php artisan migrate
 echo "Seeding database..."
 docker compose exec -t laravel.test php artisan db:seed
 
-echo "Optimizing application..."
-docker compose exec -t laravel.test php artisan config:clear
-docker compose exec -t laravel.test php artisan cache:clear
-docker compose exec -t laravel.test php artisan config:cache
-docker compose exec -t laravel.test php artisan route:cache
-docker compose exec -t laravel.test php artisan view:cache
-
-# Set permissions for storage
+echo "Setting permissions for storage..."
 docker compose exec -t laravel.test chmod -R 775 storage
-docker compose exec -t laravel.test chown -R www-data:www-data storage
+docker compose exec -t laravel.test chown -R $CURRENT_UID:$CURRENT_GID storage
 
+echo "Optimizing application..."
+docker compose exec -t laravel.test php artisan optimize:clear
 docker compose exec -t laravel.test php artisan optimize
 
 # After docker compose up -d
 echo "Setting up storage permissions..."
-docker compose exec -t laravel.test bash -c "chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage bootstrap/cache"
+docker compose exec -t laravel.test bash -c "chown -R $CURRENT_UID:$CURRENT_GID storage bootstrap/cache && chmod -R 775 storage bootstrap/cache"
 
 ssh plutotom@spectral-dashboard "sudo reboot"
 
