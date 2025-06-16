@@ -24,6 +24,13 @@ mkdir -p storage/framework/{sessions,views,cache}
 mkdir -p storage/{app/public,logs}
 chmod -R 775 storage
 
+# Add these lines after your existing storage setup in update-dashboard.sh
+echo "Setting proper permissions for storage..."
+sudo chown -R $USER:www-data storage
+sudo chmod -R 775 storage
+sudo chown -R $USER:www-data bootstrap/cache
+sudo chmod -R 775 bootstrap/cache
+
 # Build and start containers
 echo "Building and starting Docker containers..."
 docker compose build
@@ -72,6 +79,10 @@ docker compose exec -t laravel.test chmod -R 775 storage
 docker compose exec -t laravel.test chown -R www-data:www-data storage
 
 docker compose exec -t laravel.test php artisan optimize
+
+# After docker compose up -d
+echo "Setting up storage permissions..."
+docker compose exec -t laravel.test bash -c "chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage bootstrap/cache"
 
 ssh plutotom@spectral-dashboard "sudo reboot"
 

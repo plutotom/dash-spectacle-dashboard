@@ -28,13 +28,14 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
-            # - 'storage:/var/www/html/storage:rw'
-            # - 'public:/var/www/html/public:rw'
+            - 'sail-storage:/var/www/html/storage'
+            - 'sail-bootstrap-cache:/var/www/html/bootstrap/cache'
         networks:
             - sail
         depends_on:
             - mysql
             - redis
+        user: '${WWWUSER}:${WWWGROUP}'
     mysql:
         image: 'mysql/mysql-server:8.0'
         restart: unless-stopped
@@ -93,7 +94,7 @@ volumes:
         driver: local
     sail-meilisearch:
         driver: local
-    # storage:
-    #     driver: local
-    # public:
-    #     driver: local
+    sail-storage:
+        driver: local
+    sail-bootstrap-cache:
+        driver: local
