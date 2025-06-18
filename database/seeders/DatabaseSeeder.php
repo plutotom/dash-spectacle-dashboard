@@ -82,8 +82,8 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         // Call the MessageSeeder
-        $this->call([
-            MessageSeeder::class,
-        ]);
+        // $this->call([
+        //     MessageSeeder::class,
+        // ]);
     }
 }
