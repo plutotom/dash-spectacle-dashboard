@@ -310,4 +310,59 @@ class GooglePhotosController extends Controller
             ], 500);
         }
     }
+
+    public function listLocalImages(): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $photosPath = storage_path('app/public/photos');
+            if (! is_dir($photosPath)) {
+                return response()->json([
+                    'success' => true,
+                    'images' => [],
+                ]);
+            }
+            $files = glob($photosPath.'/*');
+            $images = array_map(function ($file) {
+                return [
+                    'filename' => basename($file),
+                    'url' => asset('storage/photos/'.basename($file)),
+                ];
+            }, $files);
+
+            return response()->json([
+                'success' => true,
+                'images' => $images,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function deleteLocalPhoto($filename): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $photosPath = storage_path('app/public/photos');
+            $filePath = $photosPath.'/'.$filename;
+            if (! file_exists($filePath)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'File not found',
+                ], 404);
+            }
+            unlink($filePath);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Photo deleted',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

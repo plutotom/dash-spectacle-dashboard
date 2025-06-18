@@ -86,6 +86,9 @@ Route::post('/api/upload-photos-local', [GooglePhotosController::class, 'uploadP
     ->middleware(['auth', 'verified'])
     ->name('api.upload-photos-local');
 
+Route::get('/api/local-images', [GooglePhotosController::class, 'listLocalImages'])->middleware(['auth', 'verified']);
+Route::delete('/api/local-images/{filename}', [GooglePhotosController::class, 'deleteLocalPhoto'])->middleware(['auth', 'verified']);
+
 Route::group(['prefix' => 'habitify', 'middleware' => ['auth', 'verified']], function () {
     Route::get('/', [HabitifyController::class, 'index'])->name('habitify.index');
 });

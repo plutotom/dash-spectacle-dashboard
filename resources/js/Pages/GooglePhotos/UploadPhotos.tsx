@@ -1,5 +1,6 @@
 import { router } from '@inertiajs/react';
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 interface Album {
     id: string;
@@ -33,6 +34,45 @@ const UploadPhotos: React.FC<UploadPhotosProps> = ({ albums, errors, success }) 
     const [newAlbumName, setNewAlbumName] = useState('');
     const [albumError, setAlbumError] = useState<string | null>(null);
     const [albumSuccess, setAlbumSuccess] = useState<string | null>(null);
+
+    const [localImages, setLocalImages] = useState<{ filename: string; url: string }[]>([]);
+    const [loadingImages, setLoadingImages] = useState(false);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
+
+    // Fetch local images when uploadType is 'local'
+    useEffect(() => {
+        if (uploadType === 'local') {
+            setLoadingImages(true);
+            axios
+                .get('/api/local-images', { withCredentials: true })
+                .then((res) => {
+                    setLocalImages(res.data.images || []);
+                    setLoadingImages(false);
+                })
+                .catch(() => setLoadingImages(false));
+        }
+    }, [uploadType]);
+
+    // Delete local image
+    const handleDeleteLocalImage = (filename: string) => {
+        setDeleteError(null);
+        console.log('deleting image', filename);
+        axios
+            .delete(`/api/local-images/${encodeURIComponent(filename)}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
+                },
+            })
+            .then((res) => {
+                if (res.data.success) {
+                    setLocalImages((prev) => prev.filter((img) => img.filename !== filename));
+                } else {
+                    setDeleteError(res.data.error || 'Failed to delete image');
+                }
+            })
+            .catch(() => setDeleteError('Failed to delete image'));
+    };
 
     const handleCreateAlbum = (e: React.FormEvent) => {
         e.preventDefault();
@@ -208,6 +248,37 @@ const UploadPhotos: React.FC<UploadPhotosProps> = ({ albums, errors, success }) 
                     </div>
                 )}
             </form>
+
+            {/* Local Images Viewer */}
+            {uploadType === 'local' && (
+                <div className="mt-10">
+                    <h2 className="mb-4 text-lg font-semibold text-gray-800">Local Images</h2>
+                    {loadingImages ? (
+                        <div>Loading images...</div>
+                    ) : localImages.length === 0 ? (
+                        <div className="text-gray-500">No local images found.</div>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-4">
+                            {localImages.map((img) => (
+                                <div key={img.filename} className="relative rounded border bg-white p-2 shadow">
+                                    <img src={img.url} alt={img.filename} className="h-40 w-full rounded object-cover" />
+                                    <div className="mt-2 flex items-center justify-between">
+                                        <span className="break-all text-xs">{img.filename}</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDeleteLocalImage(img.filename)}
+                                            className="ml-2 rounded bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    {deleteError && <div className="mt-2 text-sm text-red-600">{deleteError}</div>}
+                </div>
+            )}
         </div>
     );
 };
