@@ -23,14 +23,15 @@ export default function HaDashboard() {
                     </div>
                 </div>
 
-                <div className="flex flex-1 gap-4">
+                <div className="flex">
                     <div className="w-full">
                         <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
                             <ForecastWeather />
                         </RemountingErrorBoundary>
                     </div>
                 </div>
-                <div className="flex w-full items-center justify-start lg:w-1/2">
+
+                <div className="flex w-1/3 items-center justify-start">
                     <div className="w-full">
                         <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
                             <CustomMessage />
@@ -38,7 +39,7 @@ export default function HaDashboard() {
                     </div>
                 </div>
 
-                <div className="h-1/3">
+                <div className="mt-auto">
                     <RemountingErrorBoundary intervalMs={10000}>
                         <Calendar />
                     </RemountingErrorBoundary>

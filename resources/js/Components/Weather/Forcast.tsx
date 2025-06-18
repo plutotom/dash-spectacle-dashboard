@@ -44,7 +44,9 @@ const ForecastWeather = () => {
                                     <span className="">{Math.round(day.day.mintemp_f)}°</span>
                                 </div>
                                 <div className="text text-sm text-gray-400">{day.day.daily_chance_of_rain}%</div>
-                                <span className="none">{lastUpdated?.toLocaleTimeString()}</span>
+                                <span className="text-xs text-muted-foreground">
+                                    {lastUpdated?.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })} {lastUpdated?.toLocaleTimeString()}
+                                </span>
                             </div>
                         </div>
                     </div>

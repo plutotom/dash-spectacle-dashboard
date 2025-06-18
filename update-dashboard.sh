@@ -65,14 +65,14 @@ docker compose exec -t laravel.test mkdir -p storage/{app/public,logs}
 docker compose exec -t laravel.test chmod -R 775 storage
 docker compose exec -t laravel.test chown -R $CURRENT_UID:$CURRENT_GID storage
 
-echo "Generating application key..."
-docker compose exec -t laravel.test php artisan key:generate
+# echo "Generating application key..."
+# docker compose exec -t laravel.test php artisan key:generate
 
 echo "Running database migrations..."
 docker compose exec -t laravel.test php artisan migrate
 
-echo "Seeding database..."
-docker compose exec -t laravel.test php artisan db:seed
+# echo "Seeding database..."
+# docker compose exec -t laravel.test php artisan db:seed
 
 echo "Setting permissions for storage..."
 docker compose exec -t laravel.test chmod -R 775 storage
