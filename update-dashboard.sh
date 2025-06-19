@@ -86,6 +86,9 @@ docker compose exec -t laravel.test php artisan optimize
 echo "Setting up storage permissions..."
 docker compose exec -t laravel.test bash -c "chown -R $CURRENT_UID:$CURRENT_GID storage bootstrap/cache && chmod -R 775 storage bootstrap/cache"
 
+echo "Running nightwatch:agent..."
+docker compose exec -t laravel.test php artisan nightwatch:agent
+
 ssh plutotom@spectral-dashboard "sudo reboot"
 
 echo "done"
