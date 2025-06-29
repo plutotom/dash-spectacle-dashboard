@@ -86,6 +86,19 @@ docker compose exec -t laravel.test php artisan optimize
 echo "Setting up storage permissions..."
 docker compose exec -t laravel.test bash -c "chown -R $CURRENT_UID:$CURRENT_GID storage bootstrap/cache && chmod -R 775 storage bootstrap/cache"
 
+# Wait for containers to be healthy
+echo "Waiting for containers to be ready..."
+docker compose exec -t laravel.test php artisan --version
+
+# Test espresso components
+echo "Testing espresso components..."
+docker compose exec -t laravel.test php artisan espresso:test-components --component=all
+
+# Optional: Test the scheduling command
+echo "Testing espresso scheduling..."
+docker compose exec -t laravel.test php artisan espresso:schedule-processing
+
+
 # echo "Running nightwatch:agent..."
 # docker compose exec -t laravel.test php artisan nightwatch:agent
 

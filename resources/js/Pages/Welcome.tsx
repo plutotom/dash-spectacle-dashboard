@@ -67,12 +67,12 @@ export default function Welcome({ auth, laravelVersion, phpVersion }: PageProps<
                                         >
                                             Ha Dashboard
                                         </Link>
-                                        <Link
+                                        {/* <Link
                                             href={'/test-broadcast'}
                                             className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                                         >
                                             Test create message
-                                        </Link>
+                                        </Link> */}
                                     </>
                                 )}
                             </nav>
@@ -216,7 +216,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }: PageProps<
                                         <h2 className="text-xl font-semibold text-black dark:text-white">Vibrant Ecosystem</h2>
 
                                         <p className="mt-4 text-sm/relaxed">
-                                            Laravel's robust library of first-party tools and libraries, such as{' '}
+                                            Laravel&apos;s robust library of first-party tools and libraries, such as{' '}
                                             <a
                                                 href="https://forge.laravel.com"
                                                 className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white dark:focus-visible:ring-[#FF2D20]"

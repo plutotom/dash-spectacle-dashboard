@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\NotionWebhookController;
 use App\Http\Controllers\Api\PrayerRequestController;
 use App\Http\Controllers\ApiTokenController;
+use App\Http\Controllers\EspressoShotController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\GooglePhotosController;
 use App\Http\Controllers\HabitifyController;
@@ -91,6 +92,14 @@ Route::delete('/api/local-images/{filename}', [GooglePhotosController::class, 'd
 
 Route::group(['prefix' => 'habitify', 'middleware' => ['auth', 'verified']], function () {
     Route::get('/', [HabitifyController::class, 'index'])->name('habitify.index');
+});
+
+Route::prefix('shots')->group(function () {
+    Route::get('/', [EspressoShotController::class, 'index'])->name('shots.index');
+    Route::get('/latest', [EspressoShotController::class, 'latest'])->name('shots.latest');
+    Route::post('/sync', [EspressoShotController::class, 'sync'])->name('shots.sync');
+    Route::post('/start', [EspressoShotController::class, 'start'])->name('shots.start');
+    Route::get('/{id}', [EspressoShotController::class, 'show'])->name('shots.show');
 });
 
 // Route::get('/test-broadcast', [App\Http\Controllers\Api\MessageController::class, 'testBroadcast']);

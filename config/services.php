@@ -69,6 +69,7 @@ return [
         'url' => env('HOMEASSISTANT_URL'),
         'token' => env('HOMEASSISTANT_TOKEN'),
         'local_temperature_entity_id' => env('HOMEASSISTANT_LOCAL_TEMPERATURE_ENTITY_ID'),
+        'espresso_machine_entity_id' => env('HOMEASSISTANT_ESPRESSO_MACHINE_ENTITY_ID'),
     ],
 
     'weather' => [
@@ -76,6 +77,7 @@ return [
         'zip_code' => env('WEATHER_ZIP_CODE', '60120'),
     ],
 
+<<<<<<< Updated upstream
     'notion' => [
         'api_token' => env('NOTION_API_TOKEN'),
         'prayer_db_id' => env('NOTION_PRAYER_DB_ID'),
@@ -84,6 +86,10 @@ return [
 
     'habitify' => [
         'api_key' => env('HABITIFY_API_KEY'),
+=======
+    'gaggiuino' => [
+        'url' => env('GAGGIUINO_URL', 'http://gaggiuino.local'),
+>>>>>>> Stashed changes
     ],
 
 ];
