@@ -37,16 +37,14 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                 <NavLink href={route('messages.index')} active={route().current('messages.index')}>
                                     Messages
                                 </NavLink>
-<<<<<<< Updated upstream
                                 <NavLink href={route('habitify.index')} active={route().current('habitify.index')}>
                                     Habitify
                                 </NavLink>
-                                <NavLink href={route('google-photos.upload')} active={route().current('google-photos.upload')}>
-                                    Upload Images
-=======
                                 <NavLink href={route('shots.index')} active={route().current('shots.index')}>
                                     Espresso Shots
->>>>>>> Stashed changes
+                                </NavLink>
+                                <NavLink href={route('google-photos.upload')} active={route().current('google-photos.upload')}>
+                                    Upload Images
                                 </NavLink>
                             </div>
                         </div>
