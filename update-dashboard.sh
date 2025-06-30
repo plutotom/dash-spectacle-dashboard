@@ -91,25 +91,25 @@ echo "Waiting for containers to be ready..."
 docker compose exec -t laravel.test php artisan --version
 
 # Test espresso components (only if environment is properly configured)
-# echo "Testing espresso components..."
-# if docker compose exec -t laravel.test php artisan espresso:test-components --component=all 2>/dev/null; then
-#     echo "✅ Espresso components test completed successfully"
-# else
-#     echo "⚠️ Espresso components test failed - this is expected if environment variables are not configured"
-#     echo "To configure espresso functionality, add the following to your .env file:"
-#     echo "  GAGGIUINO_URL=http://gaggiuino.local"
-#     echo "  HOMEASSISTANT_URL=http://your-ha-instance:8123"
-#     echo "  HOMEASSISTANT_TOKEN=your_long_lived_access_token"
-#     echo "  HOMEASSISTANT_ESPRESSO_MACHINE_ENTITY_ID=switch.your_espresso_machine"
-# fi
+echo "Testing espresso components..."
+if docker compose exec -t laravel.test php artisan espresso:test-components --component=all 2>/dev/null; then
+    echo "✅ Espresso components test completed successfully"
+else
+    echo "⚠️ Espresso components test failed - this is expected if environment variables are not configured"
+    echo "To configure espresso functionality, add the following to your .env file:"
+    echo "  GAGGIUINO_URL=http://gaggiuino.local"
+    echo "  HOMEASSISTANT_URL=http://your-ha-instance:8123"
+    echo "  HOMEASSISTANT_TOKEN=your_long_lived_access_token"
+    echo "  HOMEASSISTANT_ESPRESSO_MACHINE_ENTITY_ID=switch.your_espresso_machine"
+fi
 
-# # Optional: Test the scheduling command (only if environment is properly configured)
-# echo "Testing espresso scheduling..."
-# if docker compose exec -t laravel.test php artisan espresso:schedule-processing 2>/dev/null; then
-#     echo "✅ Espresso scheduling test completed successfully"
-# else
-#     echo "⚠️ Espresso scheduling test failed - this is expected if environment variables are not configured"
-# fi
+# Optional: Test the scheduling command (only if environment is properly configured)
+echo "Testing espresso scheduling..."
+if docker compose exec -t laravel.test php artisan espresso:schedule-processing 2>/dev/null; then
+    echo "✅ Espresso scheduling test completed successfully"
+else
+    echo "⚠️ Espresso scheduling test failed - this is expected if environment variables are not configured"
+fi
 
 # echo "Running nightwatch:agent..."
 # docker compose exec -t laravel.test php artisan nightwatch:agent

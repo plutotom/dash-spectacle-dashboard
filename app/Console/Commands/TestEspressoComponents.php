@@ -18,7 +18,7 @@ class TestEspressoComponents extends Command
 
     private string $homeAssistantToken;
 
-    private ?string $espressoMachineEntityId;
+    private string $espressoMachineEntityId;
 
     private bool $dryRun;
 
@@ -26,12 +26,11 @@ class TestEspressoComponents extends Command
     {
         parent::__construct();
 
-        $this->validateEnvironmentVariables();
-
-        $this->gaggiuinoUrl = config('services.gaggiuino.url', 'http://gaggiuino.local');
-        $this->homeAssistantUrl = config('services.homeAssistant.url');
-        $this->homeAssistantToken = config('services.homeAssistant.token');
-        $this->espressoMachineEntityId = config('services.homeAssistant.espresso_machine_entity_id');
+        // Set properties with defaults - no validation in constructor
+        $this->gaggiuinoUrl = config('services.gaggiuino.url', '');
+        $this->homeAssistantUrl = config('services.homeAssistant.url', '');
+        $this->homeAssistantToken = config('services.homeAssistant.token', '');
+        $this->espressoMachineEntityId = config('services.homeAssistant.espresso_machine_entity_id', '');
     }
 
     public function handle()
@@ -40,6 +39,9 @@ class TestEspressoComponents extends Command
         $this->dryRun = $this->option('dry-run');
 
         $this->info("Testing component: {$component}".($this->dryRun ? ' (DRY RUN)' : ''));
+
+        // Validate environment variables before executing any espresso-related commands
+        $this->validateEnvironmentVariables();
 
         switch ($component) {
             case 'gaggiuino':
@@ -83,27 +85,38 @@ class TestEspressoComponents extends Command
     {
         $missingVars = [];
 
-        if (empty(config('services.gaggiuino.url'))) {
+        if (empty($this->gaggiuinoUrl)) {
             $missingVars[] = 'GAGGIUINO_URL';
         }
 
-        if (empty(config('services.homeAssistant.url'))) {
+        if (empty($this->homeAssistantUrl)) {
             $missingVars[] = 'HOMEASSISTANT_URL';
         }
 
-        if (empty(config('services.homeAssistant.token'))) {
+        if (empty($this->homeAssistantToken)) {
             $missingVars[] = 'HOMEASSISTANT_TOKEN';
         }
 
-        if (empty(config('services.homeAssistant.espresso_machine_entity_id'))) {
+        if (empty($this->espressoMachineEntityId)) {
             $missingVars[] = 'HOMEASSISTANT_ESPRESSO_MACHINE_ENTITY_ID';
         }
 
         if (! empty($missingVars)) {
-            throw new \RuntimeException(
-                'Missing required environment variables: '.implode(', ', $missingVars).
-                '. Please check your .env file and ensure all required variables are set.'
-            );
+            $this->error('❌ Missing required environment variables: '.implode(', ', $missingVars));
+            $this->error('Please add the following to your .env file:');
+            $this->error('');
+            foreach ($missingVars as $var) {
+                $this->error("  {$var}=your_value_here");
+            }
+            $this->error('');
+            $this->error('Example values:');
+            $this->error('  GAGGIUINO_URL=http://gaggiuino.local');
+            $this->error('  HOMEASSISTANT_URL=http://your-ha-instance:8123');
+            $this->error('  HOMEASSISTANT_TOKEN=your_long_lived_access_token');
+            $this->error('  HOMEASSISTANT_ESPRESSO_MACHINE_ENTITY_ID=switch.your_espresso_machine');
+            $this->error('');
+
+            exit(1);
         }
     }
 
