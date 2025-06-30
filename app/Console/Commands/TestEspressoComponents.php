@@ -18,13 +18,16 @@ class TestEspressoComponents extends Command
 
     private string $homeAssistantToken;
 
-    private string $espressoMachineEntityId;
+    private ?string $espressoMachineEntityId;
 
     private bool $dryRun;
 
     public function __construct()
     {
         parent::__construct();
+
+        $this->validateEnvironmentVariables();
+
         $this->gaggiuinoUrl = config('services.gaggiuino.url', 'http://gaggiuino.local');
         $this->homeAssistantUrl = config('services.homeAssistant.url');
         $this->homeAssistantToken = config('services.homeAssistant.token');
@@ -73,6 +76,34 @@ class TestEspressoComponents extends Command
                 $this->testHomeAssistantConnection();
                 $this->testDatabase();
                 break;
+        }
+    }
+
+    private function validateEnvironmentVariables(): void
+    {
+        $missingVars = [];
+
+        if (empty(config('services.gaggiuino.url'))) {
+            $missingVars[] = 'GAGGIUINO_URL';
+        }
+
+        if (empty(config('services.homeAssistant.url'))) {
+            $missingVars[] = 'HOMEASSISTANT_URL';
+        }
+
+        if (empty(config('services.homeAssistant.token'))) {
+            $missingVars[] = 'HOMEASSISTANT_TOKEN';
+        }
+
+        if (empty(config('services.homeAssistant.espresso_machine_entity_id'))) {
+            $missingVars[] = 'HOMEASSISTANT_ESPRESSO_MACHINE_ENTITY_ID';
+        }
+
+        if (! empty($missingVars)) {
+            throw new \RuntimeException(
+                'Missing required environment variables: '.implode(', ', $missingVars).
+                '. Please check your .env file and ensure all required variables are set.'
+            );
         }
     }
 

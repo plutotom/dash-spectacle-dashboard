@@ -44,10 +44,43 @@ class ProcessEspressoShot implements ShouldQueue
     public function __construct(bool $dryRun = false)
     {
         $this->dryRun = $dryRun;
-        $this->gaggiuinoUrl = config('services.gaggiuino.url', 'http://gaggiuino.local');
+
+        // Validate required environment variables
+        $this->validateEnvironmentVariables();
+
+        $this->gaggiuinoUrl = config('services.gaggiuino.url');
         $this->homeAssistantUrl = config('services.homeAssistant.url');
         $this->homeAssistantToken = config('services.homeAssistant.token');
         $this->espressoMachineEntityId = config('services.homeAssistant.espresso_machine_entity_id');
+    }
+
+    private function validateEnvironmentVariables(): void
+    {
+        $missingVars = [];
+
+        if (empty(config('services.gaggiuino.url'))) {
+            $missingVars[] = 'GAGGIUINO_URL';
+        }
+
+        if (empty(config('services.homeAssistant.url'))) {
+            $missingVars[] = 'HOMEASSISTANT_URL';
+        }
+
+        if (empty(config('services.homeAssistant.token'))) {
+            $missingVars[] = 'HOMEASSISTANT_TOKEN';
+        }
+
+        if (empty(config('services.homeAssistant.espresso_machine_entity_id'))) {
+            $missingVars[] = 'HOMEASSISTANT_ESPRESSO_MACHINE_ENTITY_ID';
+        }
+
+        if (! empty($missingVars)) {
+            $errorMessage = 'Missing required environment variables: '.implode(', ', $missingVars).
+                           '. Please check your .env file and ensure all required variables are set.';
+
+            Log::error($errorMessage);
+            throw new \RuntimeException($errorMessage);
+        }
     }
 
     /**
