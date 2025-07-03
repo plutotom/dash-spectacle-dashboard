@@ -108,24 +108,24 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
-    laravel-scheduler:
-        build:
-            context: './docker/8.4'
-            dockerfile: Dockerfile
-            args:
-                WWWGROUP: '${WWWGROUP}'
-        image: 'sail-8.4/app'
-        command: php artisan schedule:work
-        environment:
-            WWWUSER: '${WWWUSER}'
-            LARAVEL_SAIL: 1
-        volumes:
-            - '.:/var/www/html'
-        networks:
-            - sail
-        depends_on:
-            - mysql
-            - redis
+    # laravel-scheduler:
+    #     build:
+    #         context: './docker/8.4'
+    #         dockerfile: Dockerfile
+    #         args:
+    #             WWWGROUP: '${WWWGROUP}'
+    #     image: 'sail-8.4/app'
+    #     command: php artisan schedule:work
+    #     environment:
+    #         WWWUSER: '${WWWUSER}'
+    #         LARAVEL_SAIL: 1
+    #     volumes:
+    #         - '.:/var/www/html'
+    #     networks:
+    #         - sail
+    #     depends_on:
+    #         - mysql
+    #         - redis
 networks:
     sail:
         driver: bridge
