@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use Opcodes\LogViewer\Facades\LogViewer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,10 +21,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
-        LogViewer::auth(function ($request) {
-            return
-            $request->user() &&
-            str_contains($request->user()->email, 'plutotom');
-        });
+
+        // Check if LogViewer facade is available before using it
+        if (class_exists('Opcodes\LogViewer\Facades\LogViewer')) {
+            \Opcodes\LogViewer\Facades\LogViewer::auth(function ($request) {
+                return
+                $request->user() &&
+                str_contains($request->user()->email, 'plutotom');
+            });
+        }
     }
 }
