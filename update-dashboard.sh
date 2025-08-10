@@ -111,8 +111,7 @@ docker compose exec -t laravel.test bash -c "chown -R $CURRENT_UID:$CURRENT_GID 
 #     echo "⚠️ Espresso scheduling test failed - this is expected if environment variables are not configured"
 # fi
 
-# echo "Running nightwatch:agent..."
-# docker compose exec -t laravel.test php artisan nightwatch:agent
+
 
 ssh plutotom@spectral-dashboard "sudo reboot"
 

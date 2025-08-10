@@ -36,30 +36,6 @@ services:
             - mysql
             - redis
 
-    # Nightwatch Agent Service
-    nightwatch-agent:
-        image: 'sail-8.4/app' # Use the same image as laravel.test
-        container_name: 'dash-spectral-nightwatch'
-        restart: always
-        environment:
-            WWWUSER: '${WWWUSER}'
-            LARAVEL_SAIL: 1
-        volumes:
-            - '.:/var/www/html'
-        networks:
-            - sail
-        depends_on:
-            - mysql
-            - redis
-        command: php artisan nightwatch:agent
-        # Optional: Add healthcheck for the agent
-        healthcheck:
-            test: ['CMD', 'php', 'artisan', 'nightwatch:status']
-            interval: 30s
-            timeout: 10s
-            retries: 3
-            start_period: 40s
-
     mysql:
         image: 'mysql/mysql-server:8.0'
         restart: unless-stopped
