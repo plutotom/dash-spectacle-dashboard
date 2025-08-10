@@ -108,24 +108,37 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
-    # laravel-scheduler:
-    #     build:
-    #         context: './docker/8.4'
-    #         dockerfile: Dockerfile
-    #         args:
-    #             WWWGROUP: '${WWWGROUP}'
-    #     image: 'sail-8.4/app'
-    #     command: php artisan schedule:work
-    #     environment:
-    #         WWWUSER: '${WWWUSER}'
-    #         LARAVEL_SAIL: 1
-    #     volumes:
-    #         - '.:/var/www/html'
-    #     networks:
-    #         - sail
-    #     depends_on:
-    #         - mysql
-    #         - redis
+    laravel-queue:
+        image: 'sail-8.4/app'
+        container_name: 'dash-spectral-queue'
+        restart: unless-stopped
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+        command: php artisan queue:work --sleep=1 --tries=3 --queue=default
+        depends_on:
+            - mysql
+            - redis
+    laravel-scheduler:
+        image: 'sail-8.4/app'
+        container_name: 'dash-spectral-scheduler'
+        restart: unless-stopped
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+        command: php artisan schedule:work --no-interaction --verbose
+        depends_on:
+            - mysql
+            - redis
+            - laravel.test
 networks:
     sail:
         driver: bridge
@@ -136,7 +149,3 @@ volumes:
         driver: local
     sail-meilisearch:
         driver: local
-    # sail-storage:
-    #     driver: local
-    # sail-bootstrap-cache:
-    #     driver: local
