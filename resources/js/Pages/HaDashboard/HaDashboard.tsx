@@ -1,5 +1,6 @@
 import { Calendar } from '@/Components/Calendar/Calendar';
 import CustomMessage from '@/Components/CustomMessage/CustomMessage';
+import LoanWidget from '@/Components/Finance/LoanWidget';
 import { CurrentWeather } from '@/Components/Weather/Current';
 import ForecastWeather from '@/Components/Weather/Forcast';
 import HaDashboardLayout from '@/Layouts/HaDashboardLayout';
@@ -35,6 +36,14 @@ export default function HaDashboard() {
                     <div className="w-full">
                         <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
                             <CustomMessage />
+                        </RemountingErrorBoundary>
+                    </div>
+                </div>
+
+                <div className="flex w-1/3 items-center justify-start">
+                    <div className="w-full">
+                        <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
+                            <LoanWidget />
                         </RemountingErrorBoundary>
                     </div>
                 </div>

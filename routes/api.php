@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CalendarEventController;
+use App\Http\Controllers\Api\LoanController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\WeatherController;
 use App\Http\Controllers\GooglePhotosController;
@@ -24,4 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/habits', [HabitifyController::class, 'index']);
         Route::get('/weekly-progress', [HabitifyController::class, 'weeklyProgress']);
     });
+});
+
+Route::prefix('loan')->group(function () {
+    Route::get('/summary', [LoanController::class, 'summary']);
+    Route::get('/entries', [LoanController::class, 'indexEntries']);
+    Route::post('/entries', [LoanController::class, 'storeEntry']);
 });

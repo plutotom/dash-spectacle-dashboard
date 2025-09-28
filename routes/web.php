@@ -8,6 +8,7 @@ use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\GooglePhotosController;
 use App\Http\Controllers\HabitifyController;
 use App\Http\Controllers\HaDashboardController;
+use App\Http\Controllers\LoanManagementController;
 use App\Http\Controllers\MessageManagementController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -55,6 +56,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/messages', [MessageManagementController::class, 'index'])->name('messages.index');
     Route::delete('/messages/{message}', [MessageManagementController::class, 'destroy'])->name('messages.destroy');
     Route::put('/messages/{message}', [MessageManagementController::class, 'update'])->name('messages.update');
+
+    // Loans CRUD
+    Route::get('/loans', [LoanManagementController::class, 'index'])->name('loans.index');
+    Route::post('/loans', [LoanManagementController::class, 'store'])->name('loans.store');
+    Route::put('/loans/{loan}', [LoanManagementController::class, 'update'])->name('loans.update');
+    Route::delete('/loans/{loan}', [LoanManagementController::class, 'destroy'])->name('loans.destroy');
+
+    // Loan entries CRUD
+    Route::post('/loans/{loan}/entries', [LoanManagementController::class, 'storeEntry'])->name('loans.entries.store');
+    Route::put('/loans/{loan}/entries/{entry}', [LoanManagementController::class, 'updateEntry'])->name('loans.entries.update');
+    Route::delete('/loans/{loan}/entries/{entry}', [LoanManagementController::class, 'destroyEntry'])->name('loans.entries.destroy');
 
     // Prayer Requests
 });
