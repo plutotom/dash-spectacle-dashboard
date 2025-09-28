@@ -43,10 +43,6 @@ export function CurrentWeather() {
         );
     }
 
-    if (error) {
-        return <div className="p-4 text-destructive">Error loading weather: {error}</div>;
-    }
-
     return (
         <div className="h-40 w-full">
             <div className="inline-block h-40 w-full rounded-md bg-white bg-opacity-10 p-4 backdrop-blur-sm transition-colors">
@@ -61,6 +57,7 @@ export function CurrentWeather() {
                     <div className="text-small text-muted-foreground">{lastUpdated?.toLocaleString()}</div>
                 </div>
             </div>
+            {error && <div className="p-4 text-muted-foreground">Error loading Current Weather: {error}</div>}
         </div>
     );
 }

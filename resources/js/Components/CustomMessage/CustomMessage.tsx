@@ -38,11 +38,13 @@ export default function CustomMessage() {
         return () => clearInterval(interval);
     }, []);
 
-    if (loading) return <div>Loading messages...</div>;
-    if (error) return <div className="text-red-500">{error}</div>;
+    // if (loading) return <div>Loading messages...</div>;
+    // if (error) return <div className="text-red-500">{error}</div>;
 
     return (
         <div className="w-full">
+            {loading && <div>Loading messages...</div>}
+
             <div
                 className="max-h-[30vh] overflow-y-auto"
                 style={{
@@ -80,6 +82,7 @@ export default function CustomMessage() {
                     </div>
                 </div>
             </div>
+            {error && <div className="text-red-500">{error}</div>}
         </div>
     );
 }

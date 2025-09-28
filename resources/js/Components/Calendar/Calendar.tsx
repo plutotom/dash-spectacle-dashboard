@@ -41,9 +41,9 @@ export function Calendar({ className }: CalendarProps) {
         );
     }
 
-    if (error) {
-        return <div className="p-4 text-destructive">Error loading calendar: {error}</div>;
-    }
+    // if (error) {
+    //     return <div className="p-4 text-destructive">Error loading calendar: {error}</div>;
+    // }
 
     return (
         <div className={`rounded-lg shadow-sm ${className}`}>
@@ -65,6 +65,7 @@ export function Calendar({ className }: CalendarProps) {
                     )}
                 </div>
             </div>
+            {error && <div className="p-4 text-muted-foreground">Error loading calendar: {error}</div>}
         </div>
     );
 }
