@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EspressoShot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class EspressoShotController extends Controller
@@ -15,9 +16,23 @@ class EspressoShotController extends Controller
     private function getLatestShotNumber()
     {
         // This would be replaced with your actual API call to the espresso machine
-        $response = Http::get('your-espresso-machine-api/latest-shot');
+        try {
+            $response = Http::get('your-espresso-machine-api/latest-shot');
+            if (! $response->successful()) {
+                Log::warning('Espresso latest-shot request failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
 
-        return $response->json()['shot_number'];
+                return 0;
+            }
+
+            return (int) ($response->json()['shot_number'] ?? 0);
+        } catch (\Throwable $e) {
+            Log::error('Espresso latest-shot exception: '.$e->getMessage());
+
+            return 0;
+        }
     }
 
     /**
@@ -26,9 +41,24 @@ class EspressoShotController extends Controller
     private function fetchShotData($shotNumber)
     {
         // This would be replaced with your actual API call to the espresso machine
-        $response = Http::get("your-espresso-machine-api/shots/{$shotNumber}");
+        try {
+            $response = Http::get("your-espresso-machine-api/shots/{$shotNumber}");
+            if (! $response->successful()) {
+                Log::warning('Espresso shot fetch failed', [
+                    'shotNumber' => $shotNumber,
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
 
-        return $response->json();
+                return null;
+            }
+
+            return $response->json();
+        } catch (\Throwable $e) {
+            Log::error('Espresso shot fetch exception: '.$e->getMessage());
+
+            return null;
+        }
     }
 
     /**
@@ -62,6 +92,9 @@ class EspressoShotController extends Controller
         if ($latestMachineShot > $latestDbShot) {
             for ($shotNumber = $latestDbShot + 1; $shotNumber <= $latestMachineShot; $shotNumber++) {
                 $shotData = $this->fetchShotData($shotNumber);
+                if ($shotData === null) {
+                    continue;
+                }
 
                 EspressoShot::create([
                     'shot_number' => $shotNumber,
@@ -85,7 +118,17 @@ class EspressoShotController extends Controller
     public function start()
     {
         // This would be replaced with your actual API call to start the shot
-        $response = Http::post('your-espresso-machine-api/start-shot');
+        try {
+            $response = Http::post('your-espresso-machine-api/start-shot');
+            if (! $response->successful()) {
+                Log::warning('Espresso start-shot failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+            }
+        } catch (\Throwable $e) {
+            Log::error('Espresso start-shot exception: '.$e->getMessage());
+        }
 
         return response()->json(['message' => 'Shot started']);
     }

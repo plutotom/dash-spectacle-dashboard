@@ -30,7 +30,8 @@ class CalendarEventController extends Controller
         } catch (Exception $e) {
             \Log::error('Calendar Error: '.$e->getMessage());
 
-            return response()->json(['error' => 'Failed to fetch calendar events'.$e->getMessage(), 'error_code' => $e->getCode()], 500);
+            // Return 200 with error info to avoid 500s on the dashboard
+            return response()->json(['error' => 'Failed to fetch calendar events '.$e->getMessage(), 'error_code' => $e->getCode()], 200);
         }
     }
 }

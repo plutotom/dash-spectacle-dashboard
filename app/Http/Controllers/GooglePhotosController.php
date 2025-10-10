@@ -41,7 +41,7 @@ class GooglePhotosController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
-            ], 500);
+            ], 200);
         }
     }
 
@@ -69,7 +69,7 @@ class GooglePhotosController extends Controller
                 return response()->json([
                     'success' => false,
                     'error' => 'Error accessing album: '.$e->getMessage(),
-                ], 500);
+                ], 200);
             }
 
             // Search for media items in the album
@@ -98,7 +98,7 @@ class GooglePhotosController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
-            ], 500);
+            ], 200);
         }
     }
 
@@ -134,7 +134,7 @@ class GooglePhotosController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
-            ], 500);
+            ], 200);
         }
     }
 
@@ -307,7 +307,7 @@ class GooglePhotosController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
-            ], 500);
+            ], 200);
         }
     }
 
@@ -337,7 +337,7 @@ class GooglePhotosController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
-            ], 500);
+            ], 200);
         }
     }
 

@@ -115,10 +115,11 @@ class PrayerRequestController extends Controller
         } catch (\Exception $e) {
             Log::error('Fatal error during prayer request sync: '.$e->getMessage());
 
+            // Return 200 with error info so frontend doesn't break
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage(),
-            ], 500);
+            ], 200);
         }
     }
 

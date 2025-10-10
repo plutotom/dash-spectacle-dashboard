@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class HabitifyController extends Controller
@@ -33,66 +34,105 @@ class HabitifyController extends Controller
         ]);
     }
 
-    private function getHabitsFromHabitify()
+    private function getHabitsFromHabitify(): array
     {
         // Cache habits for 24 hours since they don't change often
         return Cache::remember('habitify_habits', $this->habitsCacheTime, function () {
-            $response = Http::withHeaders([
-                'Authorization' => $this->apiKey,
-            ])->get("{$this->baseUrl}/habits");
+            try {
+                $response = Http::withHeaders([
+                    'Authorization' => $this->apiKey,
+                ])->get("{$this->baseUrl}/habits");
 
-            return $response->json()['data'] ?? [];
+                if (! $response->successful()) {
+                    Log::warning('Habitify API habits request failed (web)', [
+                        'status' => $response->status(),
+                        'body' => $response->body(),
+                    ]);
+
+                    return [];
+                }
+
+                return $response->json()['data'] ?? [];
+            } catch (\Throwable $e) {
+                Log::error('Habitify web habits error: '.$e->getMessage());
+
+                return [];
+            }
         });
     }
 
-    private function getWeeklyProgress($habits)
+    private function getWeeklyProgress($habits): array
     {
         $cacheKey = 'habitify_weekly_progress_'.now()->startOfWeek()->format('Y-m-d');
 
         return Cache::remember($cacheKey, $this->cacheTime, function () use ($habits) {
-            $weeklyProgress = [];
-            $startDate = now()->startOfWeek();
+            try {
+                $weeklyProgress = [];
+                $startDate = now()->startOfWeek();
 
-            foreach ($habits as $habit) {
-                $progress = [];
-                for ($i = 0; $i < 7; $i++) {
-                    $date = $startDate->copy()->addDays($i);
-                    $status = $this->getHabitStatus($habit['id'], $date);
-                    $name = $habit['name'];
-                    $goal = $habit['goal'];
-                    $progress[] = [
-                        'date' => $date->format('Y-m-d'),
-                        'status' => $status['status'],
-                        'progress' => $status['progress'] ?? null,
-                        'name' => $name,
-                        'goal' => $goal,
-                    ];
+                foreach ($habits as $habit) {
+                    $progress = [];
+                    for ($i = 0; $i < 7; $i++) {
+                        $date = $startDate->copy()->addDays($i);
+                        $status = $this->getHabitStatus($habit['id'], $date);
+                        $name = $habit['name'];
+                        $goal = $habit['goal'];
+                        $progress[] = [
+                            'date' => $date->format('Y-m-d'),
+                            'status' => $status['status'],
+                            'progress' => $status['progress'] ?? null,
+                            'name' => $name,
+                            'goal' => $goal,
+                        ];
+                    }
+                    $weeklyProgress[$habit['id']] = $progress;
                 }
-                $weeklyProgress[$habit['id']] = $progress;
-            }
 
-            return $weeklyProgress;
+                return $weeklyProgress;
+            } catch (\Throwable $e) {
+                Log::error('Habitify web weekly progress error: '.$e->getMessage());
+
+                return [];
+            }
         });
     }
 
-    private function getHabitStatus($habitId, $date)
+    private function getHabitStatus($habitId, $date): array
     {
         $cacheKey = "habitify_status_{$habitId}_{$date->format('Y-m-d')}";
 
         return Cache::remember($cacheKey, $this->cacheTime, function () use ($habitId, $date) {
-            $response = Http::withHeaders([
-                'Authorization' => $this->apiKey,
-            ])->get("{$this->baseUrl}/status/{$habitId}", [
-                'target_date' => $date->format('Y-m-d\TH:i:sP'),
-            ]);
+            try {
+                $response = Http::withHeaders([
+                    'Authorization' => $this->apiKey,
+                ])->get("{$this->baseUrl}/status/{$habitId}", [
+                    'target_date' => $date->format('Y-m-d\\TH:i:sP'),
+                ]);
 
-            $data = $response->json()['data'] ?? ['status' => 'none'];
+                if (! $response->successful()) {
+                    Log::warning('Habitify API status request failed (web)', [
+                        'habitId' => $habitId,
+                        'status' => $response->status(),
+                        'body' => $response->body(),
+                    ]);
+                    $data = ['status' => 'none'];
+                } else {
+                    $data = $response->json()['data'] ?? ['status' => 'none'];
+                }
 
-            // Ensure we have a consistent response structure
-            return [
-                'status' => $data['status'] ?? 'none',
-                'progress' => $data['progress'] ?? null,
-            ];
+                // Ensure we have a consistent response structure
+                return [
+                    'status' => $data['status'] ?? 'none',
+                    'progress' => $data['progress'] ?? null,
+                ];
+            } catch (\Throwable $e) {
+                Log::error('Habitify web status error: '.$e->getMessage());
+
+                return [
+                    'status' => 'none',
+                    'progress' => null,
+                ];
+            }
         });
     }
 

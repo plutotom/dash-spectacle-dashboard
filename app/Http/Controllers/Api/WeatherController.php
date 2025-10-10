@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeAssistantController;
 use App\Http\Resources\WeatherResource;
 use Cache;
 use Http;
+use Illuminate\Support\Facades\Log;
 use RakibDevs\Weather\Weather;
 
 class WeatherController extends Controller
@@ -36,36 +37,80 @@ class WeatherController extends Controller
 
     public function current()
     {
-        $cacheKey = 'weather_current_60120';
-        $response = Cache::remember($cacheKey, now()->addMinutes(15), function () {
-            return Http::get('http://api.weatherapi.com/v1/current.json', [
-                'key' => config('services.weather.api_key'),
-                'q' => config('services.weather.zip_code'),
-            ])->json();
-        });
+        try {
+            $cacheKey = 'weather_current_60120';
+            $response = Cache::remember($cacheKey, now()->addMinutes(15), function () {
+                $apiResponse = Http::get('http://api.weatherapi.com/v1/current.json', [
+                    'key' => config('services.weather.api_key'),
+                    'q' => config('services.weather.zip_code'),
+                ]);
 
-        //? getting local temperature frosm home assistant
-        $homeAssistantData = $this->homeAssistantController->getLocalCurrentWeather();
-        $response['current']['home_assistant_current_temp'] = $homeAssistantData['temp'];
-        $response['current']['last_updated'] = $homeAssistantData['last_updated'];
+                if (! $apiResponse->successful()) {
+                    Log::warning('WeatherAPI current request failed', [
+                        'status' => $apiResponse->status(),
+                        'body' => $apiResponse->body(),
+                    ]);
 
-        return new WeatherResource($response);
+                    return [];
+                }
+
+                return $apiResponse->json();
+            });
+
+            // getting local temperature from home assistant
+            $homeAssistantData = $this->homeAssistantController->getLocalCurrentWeather();
+            if (! isset($response['current'])) {
+                $response['current'] = [];
+            }
+            $response['current']['home_assistant_current_temp'] = $homeAssistantData['temp'];
+            $response['current']['last_updated'] = $homeAssistantData['last_updated'] ?? ($response['current']['last_updated'] ?? null);
+
+            return new WeatherResource($response);
+        } catch (\Throwable $e) {
+            Log::error('WeatherController current endpoint error', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'message' => 'Failed to fetch current weather',
+            ], 200);
+        }
     }
 
     public function forecast()
     {
+        try {
+            $cacheKey = 'weather_forecast_60120';
+            $response = Cache::remember($cacheKey, now()->addMinutes(15), function () {
+                Log::info('getting new forcast weather data');
 
-        $cacheKey = 'weather_forecast_60120';
-        $response = Cache::remember($cacheKey, now()->addMinutes(15), function () {
-            \Log::info('getting new forcast weather data');
+                $apiResponse = Http::get('http://api.weatherapi.com/v1//forecast.json', [
+                    'key' => config('services.weather.api_key'),
+                    'q' => config('services.weather.zip_code'),
+                    'days' => '3', // 3 days is our max on free plan
+                ]);
 
-            return Http::get('http://api.weatherapi.com/v1//forecast.json', [
-                'key' => config('services.weather.api_key'),
-                'q' => config('services.weather.zip_code'),
-                'days' => '3', // 3 days is our max on free plan
-            ])->json();
-        });
+                if (! $apiResponse->successful()) {
+                    Log::warning('WeatherAPI forecast request failed', [
+                        'status' => $apiResponse->status(),
+                        'body' => $apiResponse->body(),
+                    ]);
 
-        return new WeatherResource($response);
+                    return [];
+                }
+
+                return $apiResponse->json();
+            });
+
+            return new WeatherResource($response);
+        } catch (\Throwable $e) {
+            Log::error('WeatherController forecast endpoint error', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'message' => 'Failed to fetch forecast weather',
+            ], 200);
+        }
     }
 }
