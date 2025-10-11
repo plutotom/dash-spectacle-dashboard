@@ -52,12 +52,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/google/reset', [GoogleAuthController::class, 'resetGoogleAuth'])
         ->name('google.reset');
 
-    Route::get('/messages/feed', [MessagesController::class, 'feed'])->name('messages.feed');
     Route::post('/messages', [MessagesController::class, 'store'])->name('messages.store');
     Route::delete('/messages', [MessagesController::class, 'destroy'])->name('messages.destroy');
 
     // Prayer Requests
 });
+
+// Public messages feed
+Route::get('/messages/feed', [MessagesController::class, 'feed'])->name('messages.feed');
 Route::get('/prayer-requests', [PrayerRequestController::class, 'index'])->name('prayer-requests.index');
 Route::post('/prayer-requests/fetch', [PrayerRequestController::class, 'fetchFromNotion'])->name('prayer-requests.fetch');
 

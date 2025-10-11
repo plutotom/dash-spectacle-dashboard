@@ -11,10 +11,10 @@ class FeedTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guest_is_redirected_from_feed(): void
+    public function test_guest_can_access_public_feed(): void
     {
-        $response = $this->get('/messages/feed');
-        $response->assertStatus(302);
+        $response = $this->getJson('/messages/feed');
+        $response->assertOk();
     }
 
     public function test_authenticated_user_can_view_feed_with_full_names(): void

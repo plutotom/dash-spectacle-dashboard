@@ -1,3 +1,4 @@
+import { usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 
@@ -70,6 +71,8 @@ export default function CustomMessage() {
     // if (loading) return <div>Loading messages...</div>;
     // if (error) return <div className="text-red-500">{error}</div>;
 
+    // @ts-expect-error - lazy and not setting type
+    const canPost = usePage().props.auth?.user ?? false;
     return (
         <div className="w-full">
             {loading && <div>Loading messages...</div>}
@@ -114,36 +117,38 @@ export default function CustomMessage() {
                 </div>
             </div>
             {error && <div className="text-red-500">{error}</div>}
-            <form
-                className={`mt-2 flex gap-2 transition-opacity duration-500 ${composerVisible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
-                onSubmit={async (e) => {
-                    e.preventDefault();
-                    const form = e.target as HTMLFormElement;
-                    const formData = new FormData(form);
-                    const content = String(formData.get('content') || '').trim();
-                    if (!content) return;
-                    try {
-                        await axios.post('/messages', { content });
-                        form.reset();
-                        // refresh feed
-                        const response = await axios.get('/messages/feed');
-                        setMessages(response.data.data);
-                        setError(null);
-                    } catch (err) {
-                        setError('Failed' + JSON.stringify(err));
-                    }
-                }}
-            >
-                <input
-                    name="content"
-                    placeholder="Write a message..."
-                    className="flex-1 rounded border border-gray-300 p-2 text-sm text-black"
-                    onFocus={() => setComposerVisible(true)}
-                />
-                <button type="submit" className="rounded bg-blue-600 px-3 py-2 text-sm text-white">
-                    Send
-                </button>
-            </form>
+            {canPost && (
+                <form
+                    className={`mt-2 flex gap-2 transition-opacity duration-500 ${composerVisible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+                    onSubmit={async (e) => {
+                        e.preventDefault();
+                        const form = e.target as HTMLFormElement;
+                        const formData = new FormData(form);
+                        const content = String(formData.get('content') || '').trim();
+                        if (!content) return;
+                        try {
+                            await axios.post('/messages', { content });
+                            form.reset();
+                            // refresh feed
+                            const response = await axios.get('/messages/feed');
+                            setMessages(response.data.data);
+                            setError(null);
+                        } catch (err) {
+                            setError('Failed' + JSON.stringify(err));
+                        }
+                    }}
+                >
+                    <input
+                        name="content"
+                        placeholder="Write a message..."
+                        className="flex-1 rounded border border-gray-300 p-2 text-sm text-black"
+                        onFocus={() => setComposerVisible(true)}
+                    />
+                    <button type="submit" className="rounded bg-blue-600 px-3 py-2 text-sm text-white">
+                        Send
+                    </button>
+                </form>
+            )}
         </div>
     );
 }
