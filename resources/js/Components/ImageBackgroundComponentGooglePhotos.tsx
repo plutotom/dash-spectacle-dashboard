@@ -98,7 +98,7 @@ export default function ImageBackgroundComponentGooglePhotos({ children }: Props
                 id="background-image-container"
                 className="min-h-screen bg-gray-900"
                 style={{
-                    backgroundImage: `url(${new URL(currentBackground).href})`,
+                    backgroundImage: `url(${new URL(currentBackground || DEFAULT_BACKGROUND_IMAGE).href})`,
                     // backgroundImage: `url(${currentBackground})`,
                     // backgroundImage: `url(${DEFAULT_BACKGROUND_IMAGE})`,
                     backgroundSize: 'cover',

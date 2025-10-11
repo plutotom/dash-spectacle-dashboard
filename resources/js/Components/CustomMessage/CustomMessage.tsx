@@ -70,15 +70,17 @@ export default function CustomMessage() {
                         `}
                     </style>
                     <div data-hide-scrollbar>
-                        {messages.map((message) => (
-                            <div key={message.id} className="my-1 flex flex-col rounded-xl bg-white bg-opacity-10 p-1 backdrop-blur-sm transition-colors">
-                                <div className="mb-1 flex items-center justify-between text-sm text-gray-300">
-                                    <span className="text-xs font-medium">{message.name}</span>
-                                    <span>{new Date(message.created_at).toLocaleTimeString()}</span>
-                                </div>
-                                <p className="text-sm text-white">{message.content}</p>
-                            </div>
-                        ))}
+                        {messages.length === 0
+                            ? !loading && <div className="text-muted-foreground">No messages available</div>
+                            : messages.map((message) => (
+                                  <div key={message.id} className="my-1 flex flex-col rounded-xl bg-white bg-opacity-10 p-1 backdrop-blur-sm transition-colors">
+                                      <div className="mb-1 flex items-center justify-between text-sm text-gray-300">
+                                          <span className="text-xs font-medium">{message.name}</span>
+                                          <span>{new Date(message.created_at).toLocaleTimeString()}</span>
+                                      </div>
+                                      <p className="text-sm text-white">{message.content}</p>
+                                  </div>
+                              ))}
                     </div>
                 </div>
             </div>

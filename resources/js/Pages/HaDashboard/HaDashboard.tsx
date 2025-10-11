@@ -19,13 +19,21 @@ export default function HaDashboard() {
                         </div>
                     </div>
                     <div className="w-1/4">
-                        <CurrentWeather />
+                        <RemountingErrorBoundary
+                            intervalMs={1000 * 60 * 1}
+                            fallback={<div className="text-primary-foreground opacity-70">Weather unavailable</div>}
+                        >
+                            <CurrentWeather />
+                        </RemountingErrorBoundary>
                     </div>
                 </div>
 
                 <div className="flex">
                     <div className="w-full">
-                        <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
+                        <RemountingErrorBoundary
+                            intervalMs={1000 * 60 * 1}
+                            fallback={<div className="text-primary-foreground opacity-70">Forecast unavailable</div>}
+                        >
                             <ForecastWeather />
                         </RemountingErrorBoundary>
                     </div>
@@ -33,14 +41,17 @@ export default function HaDashboard() {
 
                 <div className="flex w-1/3 items-center justify-start">
                     <div className="w-full">
-                        <RemountingErrorBoundary intervalMs={1000 * 60 * 1}>
+                        <RemountingErrorBoundary
+                            intervalMs={1000 * 60 * 1}
+                            fallback={<div className="text-primary-foreground opacity-70">Message unavailable</div>}
+                        >
                             <CustomMessage />
                         </RemountingErrorBoundary>
                     </div>
                 </div>
 
                 <div className="mt-auto">
-                    <RemountingErrorBoundary intervalMs={10000}>
+                    <RemountingErrorBoundary intervalMs={10000} fallback={<div className="text-primary-foreground opacity-70">Calendar unavailable</div>}>
                         <Calendar />
                     </RemountingErrorBoundary>
                 </div>

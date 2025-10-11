@@ -27,7 +27,7 @@ const ForecastWeather = () => {
     }, []);
 
     if (loading) return <div>Loading forecast...</div>;
-    if (!forecast) return <div>Unable to load forecast</div>;
+    if (!forecast || !forecast.forecast) return <div className="text-primary-foreground opacity-70">Forecast unavailable</div>;
 
     return (
         <div className="space-y-2">

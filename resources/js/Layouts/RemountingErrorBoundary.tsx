@@ -1,7 +1,13 @@
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
-export default function RemountingErrorBoundary({ children, intervalMs }) {
+type RemountingErrorBoundaryProps = {
+    children: ReactNode;
+    intervalMs?: number;
+    fallback?: ReactNode;
+};
+
+export default function RemountingErrorBoundary({ children, intervalMs = 60_000, fallback }: RemountingErrorBoundaryProps) {
     const [resetKey, setResetKey] = useState(0);
 
     useEffect(() => {
@@ -12,7 +18,7 @@ export default function RemountingErrorBoundary({ children, intervalMs }) {
 
     return (
         <ErrorBoundary
-            fallbackRender={() => <div>Something went wrong. Retrying in {intervalMs / 60000} minutes...</div>}
+            fallbackRender={() => fallback ?? <div>Something went wrong. Retrying in {intervalMs / 60000} minutes...</div>}
             onReset={() => setResetKey((k) => k + 1)}
             resetKeys={[resetKey]}
         >

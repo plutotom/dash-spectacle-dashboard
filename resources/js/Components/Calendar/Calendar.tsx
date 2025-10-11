@@ -8,7 +8,7 @@ interface CalendarProps {
 }
 
 export function Calendar({ className }: CalendarProps) {
-    const [events, setEvents] = useState<GroupedCalendarEvents>(null);
+    const [events, setEvents] = useState<GroupedCalendarEvents | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -52,8 +52,8 @@ export function Calendar({ className }: CalendarProps) {
                     <span className="text-sm text-muted-foreground" style={{ display: 'none' }}>
                         Last updated: {lastUpdated?.toLocaleString()}
                     </span>
-                    {events && Object.keys(events).length > 0 ? (
-                        Object.values(events)
+                    {events && Object.keys(events || {}).length > 0 ? (
+                        Object.values(events || {})
                             .slice(0, 4)
                             .map((dayEvents, index) => (
                                 <div className="w-1/4" key={index}>
