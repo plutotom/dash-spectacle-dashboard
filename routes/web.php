@@ -8,7 +8,7 @@ use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\GooglePhotosController;
 use App\Http\Controllers\HabitifyController;
 use App\Http\Controllers\HaDashboardController;
-use App\Http\Controllers\MessageManagementController;
+use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -52,9 +52,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/google/reset', [GoogleAuthController::class, 'resetGoogleAuth'])
         ->name('google.reset');
 
-    Route::get('/messages', [MessageManagementController::class, 'index'])->name('messages.index');
-    Route::delete('/messages/{message}', [MessageManagementController::class, 'destroy'])->name('messages.destroy');
-    Route::put('/messages/{message}', [MessageManagementController::class, 'update'])->name('messages.update');
+    Route::get('/messages/feed', [MessagesController::class, 'feed'])->name('messages.feed');
+    Route::post('/messages', [MessagesController::class, 'store'])->name('messages.store');
+    Route::delete('/messages', [MessagesController::class, 'destroy'])->name('messages.destroy');
 
     // Prayer Requests
 });

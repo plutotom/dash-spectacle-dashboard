@@ -41,15 +41,19 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        $user->apiTokens()->create([
-            'name' => 'Chloe',
-            'token' => 'chloe-is-sexy-and-i-love you very much!',
-        ]);
+        if (! $user->apiTokens()->where('token', 'chloe-is-sexy-and-i-love you very much!')->exists()) {
+            $user->apiTokens()->create([
+                'name' => 'Chloe',
+                'token' => 'chloe-is-sexy-and-i-love you very much!',
+            ]);
+        }
 
-        $user->apiTokens()->create([
-            'name' => 'Isaiah',
-            'token' => 'isaiah-test-token',
-        ]);
+        if (! $user->apiTokens()->where('token', 'isaiah-test-token')->exists()) {
+            $user->apiTokens()->create([
+                'name' => 'Isaiah',
+                'token' => 'isaiah-test-token',
+            ]);
+        }
 
         // $user->apiTokens()->create([
         //     'name' => 'Levi',

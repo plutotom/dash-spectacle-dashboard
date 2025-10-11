@@ -20,7 +20,6 @@ class MessageFactory extends Factory
     {
         return [
             'content' => $this->faker->paragraph(),
-            'name' => $this->faker->optional()->name(),
             'user_id' => User::factory(),
         ];
     }
@@ -38,10 +37,5 @@ class MessageFactory extends Factory
     /**
      * Indicate that the message has no name.
      */
-    public function withoutName(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'name' => null,
-        ]);
-    }
+    // name is deprecated and ignored; keeping compatibility shim removed
 }

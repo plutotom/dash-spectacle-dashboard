@@ -19,6 +19,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
         'google_refresh_token',
@@ -55,5 +57,14 @@ class User extends Authenticatable
     public function messages()
     {
         return $this->hasMany(Message::class);
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        $first = $this->first_name ?? '';
+        $last = $this->last_name ?? '';
+        $full = trim($first.' '.$last);
+
+        return $full !== '' ? $full : (string) ($this->name ?? '');
     }
 }
