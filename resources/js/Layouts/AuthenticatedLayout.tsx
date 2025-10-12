@@ -124,6 +124,14 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                         <ResponsiveNavLink href={route('ha.dashboard')} active={route().current('ha.dashboard')}>
                             HA Dashboard
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('google-photos.upload')} active={route().current('google-photos.upload')}>
+                            Upload Images
+                        </ResponsiveNavLink>
+                        {user?.role === 'admin' && (
+                            <ResponsiveNavLink href={route('users.index')} active={route().current('users.index')}>
+                                Manage Users
+                            </ResponsiveNavLink>
+                        )}
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
