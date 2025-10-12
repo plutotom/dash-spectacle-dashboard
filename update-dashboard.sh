@@ -59,27 +59,16 @@ echo "MySQL is ready!"
 echo "Installing Composer dependencies..."
 docker compose exec -t laravel.test composer install
 
+
+# Ensure public/storage symlink exists (create or fix if missing/broken)
+echo "Ensuring public/storage symlink exists..."
+docker compose exec -t laravel.test php artisan storage:link
+
 echo "Setting up storage directories in container..."
 docker compose exec -t laravel.test mkdir -p storage/framework/{sessions,views,cache}
 docker compose exec -t laravel.test mkdir -p storage/{app/public,logs}
 docker compose exec -t laravel.test chmod -R 775 storage
 docker compose exec -t laravel.test chown -R $CURRENT_UID:$CURRENT_GID storage
-
-# Ensure public/storage symlink exists (create or fix if missing/broken)
-echo "Ensuring public/storage symlink exists..."
-if [ ! -L public/storage ] || [ ! -e public/storage ]; then
-    echo "Creating storage symlink via Sail artisan..."
-    if ./vendor/bin/sail artisan storage:link; then
-        echo "Created public/storage symlink via Sail."
-    else
-        echo "Sail artisan failed, falling back to host symlink..."
-        rm -rf public/storage
-        ln -s "$(pwd)/storage/app/public" "$(pwd)/public/storage"
-        echo "Created public/storage -> storage/app/public"
-    fi
-else
-    echo "public/storage symlink already exists."
-fi
 
 # echo "Generating application key..."
 # docker compose exec -t laravel.test php artisan key:generate
