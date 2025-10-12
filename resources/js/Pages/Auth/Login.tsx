@@ -79,7 +79,12 @@ export default function Login({ status, canResetPassword }: { status?: string; c
                         </Link>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <Link href={route('register')}>
+                        <PrimaryButton type="button" className="ms-4">
+                            Register
+                        </PrimaryButton>
+                    </Link>
+                    <PrimaryButton type="submit" className="ms-4" disabled={processing}>
                         Log in
                     </PrimaryButton>
                 </div>
