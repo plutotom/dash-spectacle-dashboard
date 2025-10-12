@@ -4,9 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class MessagesController extends Controller
 {
+    public function index()
+    {
+        $this->authorizeAdmin();
+
+        return Inertia::render('Messages/Manage', [
+            'messages' => Message::with('user')->latest()->paginate(25),
+        ]);
+    }
+
     public function feed(Request $request)
     {
         $messages = Message::with('user')
@@ -25,6 +35,7 @@ class MessagesController extends Controller
 
     public function store(Request $request)
     {
+        abort_unless($request->user() !== null, 403);
         $validated = $request->validate([
             'content' => ['required', 'string', 'max:10000'],
         ]);
@@ -43,10 +54,28 @@ class MessagesController extends Controller
         ], 201);
     }
 
-    public function destroy(Request $request)
+    public function update(Request $request, Message $message)
     {
-        $request->user()->messages()->delete();
+        $this->authorizeAdmin();
+        $validated = $request->validate([
+            'content' => ['required', 'string', 'max:10000'],
+        ]);
+        $message->update($validated);
 
-        return response()->noContent();
+        return redirect()->back()->with('success', 'Message updated');
+    }
+
+    public function destroy(Message $message)
+    {
+        $this->authorizeAdmin();
+        $message->delete();
+
+        return redirect()->back()->with('success', 'Message deleted');
+    }
+
+    private function authorizeAdmin(): void
+    {
+        $user = request()->user();
+        abort_unless($user && ($user->role === 'admin'), 403);
     }
 }

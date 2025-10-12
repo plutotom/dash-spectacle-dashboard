@@ -31,10 +31,11 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                 <NavLink href={route('ha.dashboard')} active={route().current('ha.dashboard')}>
                                     HA Dashboard
                                 </NavLink>
-                                <NavLink href={route('google.setup')} active={route().current('google.setup')}>
-                                    Google setup
-                                </NavLink>
-                                {/* Messages are shown on Dashboard; removed old messages.index link */}
+                                {user?.role === 'admin' && (
+                                    <NavLink href={route('messages.index')} active={route().current('messages.index')}>
+                                        Manage Messages
+                                    </NavLink>
+                                )}
                                 <NavLink href={route('habitify.index')} active={route().current('habitify.index')}>
                                     Habitify
                                 </NavLink>
@@ -44,6 +45,11 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                 <NavLink href={route('google-photos.upload')} active={route().current('google-photos.upload')}>
                                     Upload Images
                                 </NavLink>
+                                {user?.role === 'admin' && (
+                                    <NavLink href={route('users.index')} active={route().current('users.index')}>
+                                        Manage Users
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -118,10 +124,6 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                         <ResponsiveNavLink href={route('ha.dashboard')} active={route().current('ha.dashboard')}>
                             HA Dashboard
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('google.setup')} active={route().current('google.setup')}>
-                            Google setup
-                        </ResponsiveNavLink>
-                        {/* Messages are shown on Dashboard; removed old messages.index link */}
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">

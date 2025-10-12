@@ -10,6 +10,7 @@ use App\Http\Controllers\HabitifyController;
 use App\Http\Controllers\HaDashboardController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -52,8 +53,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/google/reset', [GoogleAuthController::class, 'resetGoogleAuth'])
         ->name('google.reset');
 
+    Route::get('/messages', [MessagesController::class, 'index'])->name('messages.index');
     Route::post('/messages', [MessagesController::class, 'store'])->name('messages.store');
-    Route::delete('/messages', [MessagesController::class, 'destroy'])->name('messages.destroy');
+    Route::put('/messages/{message}', [MessagesController::class, 'update'])->name('messages.update');
+    Route::delete('/messages/{message}', [MessagesController::class, 'destroy'])->name('messages.destroy');
+
+    Route::get('/users', [UsersController::class, 'index'])->name('users.index');
+    Route::put('/users/{user}', [UsersController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
 
     // Prayer Requests
 });
