@@ -65,6 +65,10 @@ docker compose exec -t laravel.test mkdir -p storage/{app/public,logs}
 docker compose exec -t laravel.test chmod -R 775 storage
 docker compose exec -t laravel.test chown -R $CURRENT_UID:$CURRENT_GID storage
 
+# Ensure public/storage symlink exists (create or fix if missing/broken)
+echo "Ensuring public/storage symlink exists..."
+docker compose exec -t laravel.test bash -lc 'if [ ! -L public/storage ] || [ ! -e public/storage ]; then echo "Creating storage symlink..."; rm -rf public/storage; php artisan storage:link; else echo "public/storage symlink already exists."; fi'
+
 # echo "Generating application key..."
 # docker compose exec -t laravel.test php artisan key:generate
 
@@ -110,8 +114,6 @@ docker compose exec -t laravel.test bash -c "chown -R $CURRENT_UID:$CURRENT_GID 
 # else
 #     echo "⚠️ Espresso scheduling test failed - this is expected if environment variables are not configured"
 # fi
-
-
 
 ssh plutotom@spectral-dashboard "sudo reboot"
 
