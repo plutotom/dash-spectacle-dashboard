@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UsersController extends Controller
@@ -27,7 +28,16 @@ class UsersController extends Controller
             'name' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'role' => ['required', 'string', 'in:admin,user'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
+
+        if (! empty($validated['password'] ?? '')) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+
+        unset($validated['password_confirmation']);
 
         $user->update($validated);
 

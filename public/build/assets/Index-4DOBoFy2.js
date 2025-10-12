@@ -1,2 +1,0 @@
-import{j as o}from"./app-ieQgo3w9.js";import{A as r}from"./AuthenticatedLayout-Boup1U0J.js";import t from"./WeeklyProgress-Z4ehCSJ-.js";import"./ApplicationLogo-9AWh_biP.js";import"./transition-CVB_O_BL.js";function p({habits:s,weeklyProgress:e}){return console.log("habits",s),console.log("weekly progress",e),o.jsx(r,{children:o.jsxs("div",{className:"space-y-8 p-6",children:[o.jsx("h1",{className:"text-2xl font-bold",children:"Habitify Dashboard"}),o.jsx(t,{habits:s,progress:e})]})})}export{p as default};
-//# sourceMappingURL=Index-4DOBoFy2.js.map

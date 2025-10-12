@@ -79,6 +79,18 @@ export default function Manage({ users }: { users: { data: User[]; links: Pagina
                                                     <option value="user">user</option>
                                                     <option value="admin">admin</option>
                                                 </select>
+                                                <input
+                                                    name="password"
+                                                    type="password"
+                                                    className="rounded border p-2 text-sm"
+                                                    placeholder="New password (optional)"
+                                                />
+                                                <input
+                                                    name="password_confirmation"
+                                                    type="password"
+                                                    className="rounded border p-2 text-sm"
+                                                    placeholder="Confirm password"
+                                                />
                                                 <button className="rounded bg-green-600 px-3 py-2 text-sm text-white">Save</button>
                                             </form>
                                         </td>
