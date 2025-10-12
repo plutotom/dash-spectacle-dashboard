@@ -67,7 +67,16 @@ docker compose exec -t laravel.test chown -R $CURRENT_UID:$CURRENT_GID storage
 
 # Ensure public/storage symlink exists (create or fix if missing/broken)
 echo "Ensuring public/storage symlink exists..."
-docker compose exec -t laravel.test bash -lc 'if [ ! -L public/storage ] || [ ! -e public/storage ]; then echo "Creating storage symlink..."; rm -rf public/storage; php artisan storage:link; else echo "public/storage symlink already exists."; fi'
+# docker compose exec -t laravel.test bash -lc 'if [ ! -L public/storage ] || [ ! -e public/storage ]; then echo "Creating storage symlink..."; rm -rf public/storage; php artisan storage:link; else echo "public/storage symlink already exists."; fi'
+cd /Users/proctoi/Documents/Coding/dash-spectacle-dashboard
+ROOT="$(pwd)"
+if [ ! -L "$ROOT/public/storage" ] || [ ! -e "$ROOT/public/storage" ]; then
+  rm -rf "$ROOT/public/storage"
+  ln -s "$ROOT/storage/app/public" "$ROOT/public/storage"
+  echo "Created $ROOT/public/storage -> $ROOT/storage/app/public"
+else
+  echo "$ROOT/public/storage symlink already exists"
+fi
 
 # echo "Generating application key..."
 # docker compose exec -t laravel.test php artisan key:generate
