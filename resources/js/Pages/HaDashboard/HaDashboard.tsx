@@ -18,6 +18,14 @@ export default function HaDashboard() {
                             <DateTimeCard />
                         </div>
                     </div>
+                    <div className="flex flex-col">
+                        <div className="text-5xl text-primary-foreground">
+                            {/* <ScriptureMemory>
+                                9 “So I say to you: Ask and it will be given to you; seek and you will find; knock and the door will be opened to you. 10 For
+                                everyone who asks receives; the one who seeks finds; and to the one who knocks, the door will be opened.
+                            </ScriptureMemory> */}
+                        </div>
+                    </div>
                     <div className="w-1/4">
                         <RemountingErrorBoundary
                             intervalMs={1000 * 60 * 1}

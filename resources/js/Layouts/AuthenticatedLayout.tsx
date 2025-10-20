@@ -36,12 +36,12 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                         Manage Messages
                                     </NavLink>
                                 )}
-                                <NavLink href={route('habitify.index')} active={route().current('habitify.index')}>
+                                {/* <NavLink href={route('habitify.index')} active={route().current('habitify.index')}>
                                     Habitify
-                                </NavLink>
-                                <NavLink href={route('shots.index')} active={route().current('shots.index')}>
+                                </NavLink> */}
+                                {/* <NavLink href={route('shots.index')} active={route().current('shots.index')}>
                                     Espresso Shots
-                                </NavLink>
+                                </NavLink> */}
                                 <NavLink href={route('google-photos.upload')} active={route().current('google-photos.upload')}>
                                     Upload Images
                                 </NavLink>
