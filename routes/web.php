@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\NotionWebhookController;
 use App\Http\Controllers\Api\PrayerRequestController;
+use App\Http\Controllers\Api\SettingController as ApiSettingController;
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\EspressoShotController;
 use App\Http\Controllers\GoogleAuthController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\HabitifyController;
 use App\Http\Controllers\HaDashboardController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -65,12 +67,28 @@ Route::middleware('auth')->group(function () {
     Route::delete('/users/{user}', [UsersController::class, 'destroy'])->name('users.destroy');
 
     // Prayer Requests
+    Route::get('/prayer-requests/manage', function () {
+        return Inertia::render('PrayerRequests/Index');
+    })->name('prayer-requests.manage');
+    Route::post('/prayer-requests', [PrayerRequestController::class, 'store'])->name('prayer-requests.store');
+    Route::put('/prayer-requests/{prayerRequest}', [PrayerRequestController::class, 'update'])->name('prayer-requests.update');
+    Route::delete('/prayer-requests/{prayerRequest}', [PrayerRequestController::class, 'destroy'])->name('prayer-requests.destroy');
+    Route::post('/prayer-requests/{prayerRequest}/mark-answered', [PrayerRequestController::class, 'markAnswered'])->name('prayer-requests.mark-answered');
+    Route::post('/prayer-requests/{prayerRequest}/mark-unanswered', [PrayerRequestController::class, 'markUnanswered'])->name('prayer-requests.mark-unanswered');
+    Route::get('/prayer-requests/manage/data', [PrayerRequestController::class, 'manage'])->name('prayer-requests.manage.data');
+
+    // Settings
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
 });
 
 // Public messages feed
 Route::get('/messages/feed', [MessagesController::class, 'feed'])->name('messages.feed');
 Route::get('/prayer-requests', [PrayerRequestController::class, 'index'])->name('prayer-requests.index');
+Route::get('/prayer-requests/dashboard', [PrayerRequestController::class, 'dashboard'])->name('prayer-requests.dashboard');
 Route::post('/prayer-requests/fetch', [PrayerRequestController::class, 'fetchFromNotion'])->name('prayer-requests.fetch');
+
+Route::get('/api/settings/public', [ApiSettingController::class, 'public'])->name('api.settings.public');
 
 Route::get('/api/random-photo', [GooglePhotosController::class, 'getRandomPhoto'])
     ->name('api.random-photo');

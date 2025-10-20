@@ -31,6 +31,9 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                 <NavLink href={route('ha.dashboard')} active={route().current('ha.dashboard')}>
                                     HA Dashboard
                                 </NavLink>
+                                <NavLink href={route('prayer-requests.manage')} active={route().current('prayer-requests.manage')}>
+                                    Prayer Requests Management
+                                </NavLink>
                                 {user?.role === 'admin' && (
                                     <NavLink href={route('messages.index')} active={route().current('messages.index')}>
                                         Manage Messages
@@ -123,6 +126,12 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('ha.dashboard')} active={route().current('ha.dashboard')}>
                             HA Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('prayer-requests.manage')} active={route().current('prayer-requests.manage')}>
+                            Prayer Requests Management
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('prayer-requests.manage')} active={route().current('prayer-requests.manage')}>
+                            Prayer Requests Management
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('google-photos.upload')} active={route().current('google-photos.upload')}>
                             Upload Images

@@ -22,6 +22,7 @@ class PrayerRequestResource extends JsonResource
             'is_answered' => $this->is_answered,
             'answer' => $this->answer,
             'prayer_date' => $this->prayer_date,
+            'answered_at' => $this->answered_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

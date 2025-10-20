@@ -16,5 +16,12 @@ class PrayerRequest extends Model
         'is_answered',
         'answer',
         'prayer_date',
+        'answered_at',
+    ];
+
+    protected $casts = [
+        'is_answered' => 'boolean',
+        'prayer_date' => 'date',
+        'answered_at' => 'datetime',
     ];
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PrayerRequestResource;
 use App\Models\PrayerRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -134,5 +135,117 @@ class PrayerRequestController extends Controller
         });
 
         return PrayerRequestResource::collection($requests);
+    }
+
+    /**
+     * Return prayer requests for dashboard (filtered: unanswered + answered within 7 days).
+     */
+    public function dashboard()
+    {
+        $cacheKey = 'prayer_requests_dashboard'.random_int(1, 1000000);
+        $requests = Cache::remember($cacheKey, now()->addMinutes(15), function () {
+            return PrayerRequest::where(function ($query) {
+                $query->where('is_answered', false)
+                    ->orWhere('answered_at', '>=', now()->subDays(7));
+            })
+                ->orderBy('is_answered')
+                ->orderByDesc('prayer_date')
+                ->orderByDesc('answered_at')
+                ->get();
+        });
+
+        return PrayerRequestResource::collection($requests);
+    }
+
+    /**
+     * Return paginated prayer requests for manage page.
+     */
+    public function manage(Request $request)
+    {
+        $query = PrayerRequest::query();
+
+        // Apply filter
+        $filter = $request->get('filter', 'all');
+        if ($filter === 'unanswered') {
+            $query->where('is_answered', false);
+        } elseif ($filter === 'answered') {
+            $query->where('is_answered', true);
+        }
+
+        $requests = $query->orderByDesc('prayer_date')->paginate(15);
+
+        return PrayerRequestResource::collection($requests);
+    }
+
+    /**
+     * Store a newly created prayer request.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'person' => 'nullable|string|max:255',
+            'prayer_date' => 'nullable|date',
+            'answer' => 'nullable|string',
+            'is_answered' => 'boolean',
+        ]);
+
+        $prayerRequest = PrayerRequest::create($validated);
+
+        return new PrayerRequestResource($prayerRequest);
+    }
+
+    /**
+     * Update the specified prayer request.
+     */
+    public function update(Request $request, PrayerRequest $prayerRequest)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'person' => 'nullable|string|max:255',
+            'prayer_date' => 'nullable|date',
+            'answer' => 'nullable|string',
+            'is_answered' => 'boolean',
+        ]);
+
+        $prayerRequest->update($validated);
+
+        return new PrayerRequestResource($prayerRequest);
+    }
+
+    /**
+     * Remove the specified prayer request.
+     */
+    public function destroy(PrayerRequest $prayerRequest)
+    {
+        $prayerRequest->delete();
+
+        return response()->json(['message' => 'Prayer request deleted successfully']);
+    }
+
+    /**
+     * Mark a prayer request as answered.
+     */
+    public function markAnswered(PrayerRequest $prayerRequest)
+    {
+        $prayerRequest->update([
+            'is_answered' => true,
+            'answered_at' => now(),
+        ]);
+
+        return new PrayerRequestResource($prayerRequest);
+    }
+
+    /**
+     * Mark a prayer request as unanswered.
+     */
+    public function markUnanswered(PrayerRequest $prayerRequest)
+    {
+        $prayerRequest->update([
+            'is_answered' => false,
+            'answered_at' => null,
+        ]);
+
+        return new PrayerRequestResource($prayerRequest);
     }
 }

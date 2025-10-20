@@ -1,12 +1,37 @@
 import { Calendar } from '@/Components/Calendar/Calendar';
 import CustomMessage from '@/Components/CustomMessage/CustomMessage';
+import PrayerRequests from '@/Components/PrayerRequests';
 import { CurrentWeather } from '@/Components/Weather/Current';
 import ForecastWeather from '@/Components/Weather/Forcast';
 import HaDashboardLayout from '@/Layouts/HaDashboardLayout';
 import RemountingErrorBoundary from '@/Layouts/RemountingErrorBoundary';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 export default function HaDashboard() {
+    const [showPrayerRequests, setShowPrayerRequests] = useState(true);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const response = await axios.get('/api/settings/public');
+                setShowPrayerRequests(response.data.show_prayer_requests ?? true);
+            } catch (error) {
+                console.error('Failed to fetch settings:', error);
+                // Default to showing prayer requests if settings fail to load
+                setShowPrayerRequests(true);
+            }
+        };
+
+        // Fetch settings immediately
+        fetchSettings();
+
+        // Poll settings every 30 seconds
+        const interval = setInterval(fetchSettings, 30000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <HaDashboardLayout header={<h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">HA Dashboard</h2>}>
             <div className="relative flex h-screen flex-col gap-4 p-4">
@@ -57,6 +82,19 @@ export default function HaDashboard() {
                         </RemountingErrorBoundary>
                     </div>
                 </div>
+
+                {showPrayerRequests && (
+                    <div className="flex w-1/3 items-center justify-start">
+                        <div className="w-full">
+                            <RemountingErrorBoundary
+                                intervalMs={1000 * 60 * 1}
+                                fallback={<div className="text-primary-foreground opacity-70">Prayer requests unavailable</div>}
+                            >
+                                <PrayerRequests limit={8} />
+                            </RemountingErrorBoundary>
+                        </div>
+                    </div>
+                )}
 
                 <div className="mt-auto">
                     <RemountingErrorBoundary intervalMs={10000} fallback={<div className="text-primary-foreground opacity-70">Calendar unavailable</div>}>
