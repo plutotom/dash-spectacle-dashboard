@@ -11,17 +11,15 @@ class PrayerRequest extends Model
 
     protected $fillable = [
         'notion_id',
-        'name',
-        'person',
+        'prayer_request_from',
+        'prayer_for',
         'is_answered',
-        'answer',
-        'prayer_date',
+        'prayer_request',
         'answered_at',
     ];
 
     protected $casts = [
         'is_answered' => 'boolean',
-        'prayer_date' => 'date',
         'answered_at' => 'datetime',
     ];
 }

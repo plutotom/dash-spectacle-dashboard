@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface PrayerRequest {
     id: number;
-    name: string | null;
-    person: string | null;
+    prayer_request_from: string | null;
+    prayer_for: string | null;
     is_answered: boolean;
-    answer: string | null;
-    prayer_date: string | null;
+    prayer_request: string | null;
     answered_at: string | null;
 }
 
@@ -19,26 +18,65 @@ const PrayerRequests: React.FC<PrayerRequestsProps> = ({ endpoint = '/prayer-req
     const [requests, setRequests] = useState<PrayerRequest[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const idleTimeoutMs = 1000 * 10; // 10 seconds
 
     useEffect(() => {
-        fetch(endpoint)
-            .then((res) => {
-                if (!res.ok) throw new Error('Failed to fetch prayer requests');
-                return res.json();
-            })
-            .then((data) => {
+        const fetchPrayerRequests = async () => {
+            try {
+                const response = await fetch(endpoint);
+                setError(null);
+                if (!response.ok) throw new Error('Failed to fetch prayer requests');
+                const data = await response.json();
                 const requestsData = data.data || [];
                 setRequests(limit ? requestsData.slice(0, limit) : requestsData);
+                setError(null);
                 setLoading(false);
-            })
-            .catch((err) => {
-                setError(err.message);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Failed to fetch prayer requests');
                 setLoading(false);
-            });
+            }
+        };
+
+        fetchPrayerRequests();
+
+        const interval = setInterval(
+            () => {
+                fetchPrayerRequests();
+            },
+            1000 * 60 * 1 // 1 minute
+        );
+
+        return () => clearInterval(interval);
     }, [endpoint, limit]);
 
+    useEffect(() => {
+        const resetIdleTimer = () => {
+            if (idleTimerRef.current) {
+                clearTimeout(idleTimerRef.current);
+            }
+            idleTimerRef.current = setTimeout(() => {
+                // You can add any idle timeout logic here if needed
+                console.log('User has been idle for 10 seconds');
+            }, idleTimeoutMs);
+        };
+
+        const activityHandler = () => resetIdleTimer();
+        const events: (keyof DocumentEventMap)[] = ['mousemove', 'keydown', 'mousedown', 'touchstart', 'scroll'];
+        events.forEach((event) => window.addEventListener(event, activityHandler, { passive: true } as AddEventListenerOptions));
+
+        // start timer on mount
+        resetIdleTimer();
+
+        return () => {
+            events.forEach((event) => window.removeEventListener(event, activityHandler));
+            if (idleTimerRef.current) {
+                clearTimeout(idleTimerRef.current);
+            }
+        };
+    }, []);
+
     if (loading) return <div className="text-primary-foreground opacity-70">Loading prayer requests...</div>;
-    if (error) return <div className="text-red-500">Error: {error}</div>;
 
     return (
         <div className="w-full">
@@ -77,28 +115,28 @@ const PrayerRequests: React.FC<PrayerRequestsProps> = ({ endpoint = '/prayer-req
                                       }`}
                                   >
                                       <div className="mb-1 flex items-center justify-between text-sm text-gray-300">
-                                          <span className="text-xs font-medium">{req.name || 'Unnamed'}</span>
-                                          <span className="text-lg">{req.is_answered ? '✅' : '🙏'}</span>
+                                          <span className="text-xs font-medium">{req.prayer_request_from || 'Unnamed'}</span>
+                                          <span className="text-lg">{req.is_answered ? '●' : '○'}</span>
                                       </div>
                                       <div className={`text-sm text-white ${req.is_answered ? 'line-through' : ''}`}>
-                                          {req.person && (
+                                          {req.prayer_for && (
                                               <div className="mb-1">
-                                                  <span className="font-medium">Person:</span> {req.person}
+                                                  <span className="font-medium">For:</span> {req.prayer_for}
                                               </div>
                                           )}
-                                          {req.answer && (
+                                          {req.prayer_request && (
                                               <div className="mb-1 text-green-200">
-                                                  <span className="font-medium">Answer:</span> {req.answer}
+                                                  <span className="font-medium">Request:</span> {req.prayer_request}
                                               </div>
                                           )}
                                       </div>
-                                      <div className="mt-1 text-xs text-gray-300">
-                                          {req.prayer_date && <span>Prayer Date: {new Date(req.prayer_date).toLocaleDateString()}</span>}
-                                          {req.answered_at && <span className="ml-2">Answered: {new Date(req.answered_at).toLocaleDateString()}</span>}
+                                      <div className="text-xs text-gray-300">
+                                          {req.answered_at && <span>Answered: {new Date(req.answered_at).toLocaleDateString()}</span>}
                                       </div>
                                   </div>
                               ))}
                     </div>
+                    {error && <div className="text-red-500">Error: {error}</div>}
                 </div>
             </div>
         </div>

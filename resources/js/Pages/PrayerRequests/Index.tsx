@@ -1,15 +1,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 interface PrayerRequest {
     id: number;
-    name: string | null;
-    person: string | null;
+    prayer_request_from: string | null;
+    prayer_for: string | null;
     is_answered: boolean;
-    answer: string | null;
-    prayer_date: string | null;
+    prayer_request: string | null;
     answered_at: string | null;
     created_at: string;
     updated_at: string;
@@ -36,11 +35,12 @@ export default function PrayerRequestsIndex() {
     const [filter, setFilter] = useState<'all' | 'unanswered' | 'answered'>('all');
     const [showForm, setShowForm] = useState(false);
     const [editingRequest, setEditingRequest] = useState<PrayerRequest | null>(null);
+    console.log(usePage().props);
     const [formData, setFormData] = useState({
-        name: '',
-        person: '',
-        prayer_date: '',
-        answer: '',
+        //@ts-expect-error - ignore the type error for the auth user
+        prayer_request_from: usePage().props.auth?.user?.first_name || 'Unnamed',
+        prayer_for: '',
+        prayer_request: '',
         is_answered: false,
     });
 
@@ -79,7 +79,7 @@ export default function PrayerRequestsIndex() {
             }
             setShowForm(false);
             setEditingRequest(null);
-            setFormData({ name: '', person: '', prayer_date: '', answer: '', is_answered: false });
+            setFormData({ prayer_request_from: '', prayer_for: '', prayer_request: '', is_answered: false });
             fetchRequests(pagination.current_page);
         } catch (err) {
             setError('Failed to save prayer request');
@@ -90,10 +90,9 @@ export default function PrayerRequestsIndex() {
     const handleEdit = (request: PrayerRequest) => {
         setEditingRequest(request);
         setFormData({
-            name: request.name || '',
-            person: request.person || '',
-            prayer_date: request.prayer_date || '',
-            answer: request.answer || '',
+            prayer_request_from: request.prayer_request_from || '',
+            prayer_for: request.prayer_for || '',
+            prayer_request: request.prayer_request || '',
             is_answered: request.is_answered,
         });
         setShowForm(true);
@@ -128,7 +127,7 @@ export default function PrayerRequestsIndex() {
     const resetForm = () => {
         setShowForm(false);
         setEditingRequest(null);
-        setFormData({ name: '', person: '', prayer_date: '', answer: '', is_answered: false });
+        setFormData({ prayer_request_from: '', prayer_for: '', prayer_request: '', is_answered: false });
     };
 
     return (
@@ -173,26 +172,26 @@ export default function PrayerRequestsIndex() {
                                     <div className="w-full max-w-md rounded-lg bg-white p-6">
                                         <h2 className="mb-4 text-xl font-bold">{editingRequest ? 'Edit Prayer Request' : 'Add Prayer Request'}</h2>
                                         <form onSubmit={handleSubmit}>
-                                            <div className="mb-4">
-                                                <label className="mb-2 block text-sm font-medium text-gray-700">Name *</label>
+                                            {/* <div className="mb-4">
+                                                <label className="mb-2 block text-sm font-medium text-gray-700">Your Name *</label>
                                                 <input
                                                     type="text"
-                                                    value={formData.name}
-                                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                    value={formData.prayer_request_from}
+                                                    onChange={(e) => setFormData({ ...formData, prayer_request_from: e.target.value })}
                                                     className="w-full rounded border border-gray-300 px-3 py-2"
                                                     required
                                                 />
-                                            </div>
+                                            </div> */}
                                             <div className="mb-4">
-                                                <label className="mb-2 block text-sm font-medium text-gray-700">Person</label>
+                                                <label className="mb-2 block text-sm font-medium text-gray-700">Who is requesting prayer?</label>
                                                 <input
                                                     type="text"
-                                                    value={formData.person}
-                                                    onChange={(e) => setFormData({ ...formData, person: e.target.value })}
+                                                    value={formData.prayer_for}
+                                                    onChange={(e) => setFormData({ ...formData, prayer_for: e.target.value })}
                                                     className="w-full rounded border border-gray-300 px-3 py-2"
                                                 />
                                             </div>
-                                            <div className="mb-4">
+                                            {/* <div className="mb-4">
                                                 <label className="mb-2 block text-sm font-medium text-gray-700">Prayer Date</label>
                                                 <input
                                                     type="date"
@@ -200,12 +199,12 @@ export default function PrayerRequestsIndex() {
                                                     onChange={(e) => setFormData({ ...formData, prayer_date: e.target.value })}
                                                     className="w-full rounded border border-gray-300 px-3 py-2"
                                                 />
-                                            </div>
+                                            </div> */}
                                             <div className="mb-4">
-                                                <label className="mb-2 block text-sm font-medium text-gray-700">Answer</label>
+                                                <label className="mb-2 block text-sm font-medium text-gray-700">Prayer Request</label>
                                                 <textarea
-                                                    value={formData.answer}
-                                                    onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
+                                                    value={formData.prayer_request}
+                                                    onChange={(e) => setFormData({ ...formData, prayer_request: e.target.value })}
                                                     className="w-full rounded border border-gray-300 px-3 py-2"
                                                     rows={3}
                                                 />
@@ -261,27 +260,22 @@ export default function PrayerRequestsIndex() {
                                                     <div className="flex-1">
                                                         <div className="mb-2 flex items-center gap-2">
                                                             <h3 className={`text-lg font-semibold ${request.is_answered ? 'text-gray-500 line-through' : ''}`}>
-                                                                {request.name || 'Unnamed'}
+                                                                {request.prayer_request_from || 'Unnamed'}
                                                             </h3>
                                                             <span className="text-xl">{request.is_answered ? '✅' : '🙏'}</span>
                                                         </div>
-                                                        {request.person && (
+                                                        {request.prayer_for && (
                                                             <p className="mb-1 text-sm text-gray-600">
-                                                                <strong>Person:</strong> {request.person}
+                                                                <strong>For:</strong> {request.prayer_for}
                                                             </p>
                                                         )}
-                                                        {request.answer && (
+                                                        {request.prayer_request && (
                                                             <p className="mb-1 text-sm text-green-700">
-                                                                <strong>Answer:</strong> {request.answer}
+                                                                <strong>Answer:</strong> {request.prayer_request}
                                                             </p>
                                                         )}
                                                         <div className="text-xs text-gray-500">
-                                                            {request.prayer_date && (
-                                                                <span>Prayer Date: {new Date(request.prayer_date).toLocaleDateString()}</span>
-                                                            )}
-                                                            {request.answered_at && (
-                                                                <span className="ml-4">Answered: {new Date(request.answered_at).toLocaleDateString()}</span>
-                                                            )}
+                                                            {request.answered_at && <span>Answered: {new Date(request.answered_at).toLocaleDateString()}</span>}
                                                         </div>
                                                     </div>
                                                     <div className="ml-4 flex gap-2">

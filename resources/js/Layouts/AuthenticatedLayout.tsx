@@ -130,9 +130,6 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                         <ResponsiveNavLink href={route('prayer-requests.manage')} active={route().current('prayer-requests.manage')}>
                             Prayer Requests Management
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('prayer-requests.manage')} active={route().current('prayer-requests.manage')}>
-                            Prayer Requests Management
-                        </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('google-photos.upload')} active={route().current('google-photos.upload')}>
                             Upload Images
                         </ResponsiveNavLink>

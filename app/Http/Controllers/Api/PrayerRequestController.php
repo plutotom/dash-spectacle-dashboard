@@ -71,18 +71,17 @@ class PrayerRequestController extends Controller
                     $props = $item['properties'] ?? [];
 
                     // Validate required properties
-                    if (! isset($props['Name']['title'][0]['plain_text'])) {
-                        throw new \Exception('Missing required property: Name');
+                    if (! isset($props['prayer_request_from']['title'][0]['plain_text'])) {
+                        throw new \Exception('Missing required property: prayer_request_from');
                     }
 
                     PrayerRequest::updateOrCreate(
                         ['notion_id' => $item['id']],
                         [
-                            'name' => $props['Name']['title'][0]['plain_text'] ?? null,
-                            'person' => $props['Person']['rich_text'][0]['plain_text'] ?? null,
-                            'is_answered' => $props['IsAnswered']['checkbox'] ?? false,
-                            'answer' => $props['Answer']['rich_text'][0]['plain_text'] ?? null,
-                            'prayer_date' => $props['Prayer Date']['date']['start'] ?? null,
+                            'prayer_request_from' => $props['prayer_request_from']['title'][0]['plain_text'] ?? null,
+                            'prayer_for' => $props['prayer_for']['rich_text'][0]['plain_text'] ?? null,
+                            'is_answered' => $props['is_answered']['checkbox'] ?? false,
+                            'prayer_request' => $props['prayer_request']['rich_text'][0]['plain_text'] ?? null,
                         ]
                     );
                     $syncedCount++;
@@ -131,7 +130,7 @@ class PrayerRequestController extends Controller
     {
         $cacheKey = 'prayer_requests_all'.random_int(1, 1000000);
         $requests = Cache::remember($cacheKey, now()->addMinutes(15), function () {
-            return PrayerRequest::orderByDesc('prayer_date')->get();
+            return PrayerRequest::orderByDesc('created_at')->get();
         });
 
         return PrayerRequestResource::collection($requests);
@@ -149,7 +148,7 @@ class PrayerRequestController extends Controller
                     ->orWhere('answered_at', '>=', now()->subDays(7));
             })
                 ->orderBy('is_answered')
-                ->orderByDesc('prayer_date')
+                ->orderByDesc('created_at')
                 ->orderByDesc('answered_at')
                 ->get();
         });
@@ -172,7 +171,7 @@ class PrayerRequestController extends Controller
             $query->where('is_answered', true);
         }
 
-        $requests = $query->orderByDesc('prayer_date')->paginate(15);
+        $requests = $query->orderByDesc('created_at')->paginate(15);
 
         return PrayerRequestResource::collection($requests);
     }
@@ -183,10 +182,9 @@ class PrayerRequestController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'person' => 'nullable|string|max:255',
-            'prayer_date' => 'nullable|date',
-            'answer' => 'nullable|string',
+            'prayer_request_from' => 'required|string|max:255',
+            'prayer_for' => 'nullable|string|max:255',
+            'prayer_request' => 'nullable|string',
             'is_answered' => 'boolean',
         ]);
 
@@ -201,10 +199,9 @@ class PrayerRequestController extends Controller
     public function update(Request $request, PrayerRequest $prayerRequest)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'person' => 'nullable|string|max:255',
-            'prayer_date' => 'nullable|date',
-            'answer' => 'nullable|string',
+            'prayer_request_from' => 'required|string|max:255',
+            'prayer_for' => 'nullable|string|max:255',
+            'prayer_request' => 'nullable|string',
             'is_answered' => 'boolean',
         ]);
 
