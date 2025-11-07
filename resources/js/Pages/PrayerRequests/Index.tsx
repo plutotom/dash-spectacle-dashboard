@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface PrayerRequest {
     id: number;
@@ -23,6 +23,10 @@ interface PaginatedData {
 }
 
 export default function PrayerRequestsIndex() {
+    const { props } = usePage();
+    //@ts-expect-error - ignore the type error for the auth user
+    const userName = props.auth?.user?.first_name || 'Unnamed';
+
     const [requests, setRequests] = useState<PrayerRequest[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -35,39 +39,47 @@ export default function PrayerRequestsIndex() {
     const [filter, setFilter] = useState<'all' | 'unanswered' | 'answered'>('all');
     const [showForm, setShowForm] = useState(false);
     const [editingRequest, setEditingRequest] = useState<PrayerRequest | null>(null);
-    console.log(usePage().props);
-    const [formData, setFormData] = useState({
-        //@ts-expect-error - ignore the type error for the auth user
-        prayer_request_from: usePage().props.auth?.user?.first_name || 'Unnamed',
-        prayer_for: '',
-        prayer_request: '',
-        is_answered: false,
-    });
+    console.log(props);
 
-    const fetchRequests = async (page = 1) => {
-        try {
-            setLoading(true);
-            const response = await axios.get(`/prayer-requests/manage/data?page=${page}&filter=${filter}`);
-            const data: PaginatedData = response.data;
-            setRequests(data.data);
-            setPagination({
-                current_page: data.current_page,
-                last_page: data.last_page,
-                per_page: data.per_page,
-                total: data.total,
-            });
-            setError(null);
-        } catch (err) {
-            setError('Failed to fetch prayer requests');
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
+    // Helper function to get initial form data with user's name
+    const getInitialFormData = () => {
+        return {
+            prayer_request_from: userName,
+            prayer_for: '',
+            prayer_request: '',
+            is_answered: false,
+        };
     };
+
+    const [formData, setFormData] = useState(getInitialFormData());
+
+    const fetchRequests = useCallback(
+        async (page = 1) => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`/prayer-requests/manage/data?page=${page}&filter=${filter}`);
+                const data: PaginatedData = response.data;
+                setRequests(data.data);
+                setPagination({
+                    current_page: data.current_page,
+                    last_page: data.last_page,
+                    per_page: data.per_page,
+                    total: data.total,
+                });
+                setError(null);
+            } catch (err) {
+                setError('Failed to fetch prayer requests');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        },
+        [filter]
+    );
 
     useEffect(() => {
         fetchRequests();
-    }, [filter]);
+    }, [filter, fetchRequests]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -79,7 +91,7 @@ export default function PrayerRequestsIndex() {
             }
             setShowForm(false);
             setEditingRequest(null);
-            setFormData({ prayer_request_from: '', prayer_for: '', prayer_request: '', is_answered: false });
+            setFormData(getInitialFormData());
             fetchRequests(pagination.current_page);
         } catch (err) {
             setError('Failed to save prayer request');
@@ -127,7 +139,13 @@ export default function PrayerRequestsIndex() {
     const resetForm = () => {
         setShowForm(false);
         setEditingRequest(null);
-        setFormData({ prayer_request_from: '', prayer_for: '', prayer_request: '', is_answered: false });
+        setFormData(getInitialFormData());
+    };
+
+    const handleAddNew = () => {
+        setEditingRequest(null);
+        setFormData(getInitialFormData());
+        setShowForm(true);
     };
 
     return (
@@ -139,7 +157,7 @@ export default function PrayerRequestsIndex() {
                         <div className="p-6 text-gray-900">
                             <div className="mb-6 flex items-center justify-between">
                                 <h1 className="text-2xl font-bold">Prayer Requests</h1>
-                                <button onClick={() => setShowForm(true)} className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+                                <button onClick={handleAddNew} className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
                                     Add Prayer Request
                                 </button>
                             </div>

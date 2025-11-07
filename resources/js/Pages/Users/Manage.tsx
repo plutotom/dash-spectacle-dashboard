@@ -46,12 +46,38 @@ export default function Manage({ users }: { users: { data: User[]; links: Pagina
                                                 onSubmit={(e) => {
                                                     e.preventDefault();
                                                     const data = new FormData(e.currentTarget);
-                                                    router.put(route('users.update', { user: u.id }), {
+                                                    const password = String(data.get('password') || '');
+                                                    const passwordConfirmation = String(data.get('password_confirmation') || '');
+
+                                                    // Only include password if both fields are filled and match
+                                                    const formData: Record<string, string> = {
                                                         name: String(data.get('name') || ''),
                                                         first_name: String(data.get('first_name') || ''),
                                                         last_name: String(data.get('last_name') || ''),
                                                         email: String(data.get('email') || ''),
                                                         role: String(data.get('role') || 'user'),
+                                                    };
+
+                                                    if (password && password === passwordConfirmation) {
+                                                        formData.password = password;
+                                                        formData.password_confirmation = passwordConfirmation;
+                                                    } else if (password || passwordConfirmation) {
+                                                        alert('Passwords do not match or are incomplete');
+                                                        return;
+                                                    }
+
+                                                    router.put(route('users.update', { user: u.id }), formData, {
+                                                        headers: {
+                                                            'X-CSRF-TOKEN':
+                                                                (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
+                                                        },
+                                                        onError: (errors) => {
+                                                            console.error('Validation errors:', errors);
+                                                            alert('Please check the form for errors: ' + Object.values(errors).flat().join(', '));
+                                                        },
+                                                        onSuccess: () => {
+                                                            alert('User updated successfully!');
+                                                        },
                                                     });
                                                 }}
                                                 className="flex flex-col gap-2 md:flex-row md:items-center"
@@ -98,7 +124,15 @@ export default function Manage({ users }: { users: { data: User[]; links: Pagina
                                         <td className="px-3 py-2"></td>
                                         <td className="px-3 py-2 text-right">
                                             <button
-                                                onClick={() => router.delete(route('users.destroy', { user: u.id }))}
+                                                onClick={() => {
+                                                    if (confirm('Are you sure you want to delete this user?')) {
+                                                        router.delete(route('users.destroy', { user: u.id }), {
+                                                            onSuccess: () => {
+                                                                alert('User deleted successfully!');
+                                                            },
+                                                        });
+                                                    }
+                                                }}
                                                 className="rounded bg-red-600 px-3 py-2 text-sm text-white"
                                             >
                                                 Delete
