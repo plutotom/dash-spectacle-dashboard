@@ -81,7 +81,7 @@ const PrayerRequests: React.FC<PrayerRequestsProps> = ({ endpoint = '/prayer-req
     return (
         <div className="w-full">
             <div
-                className="max-h-[30vh] overflow-y-auto"
+                className="max-h-[60vh] overflow-y-auto"
                 style={{
                     scrollbarWidth: 'none', // Firefox
                     msOverflowStyle: 'none', // IE and Edge
@@ -90,7 +90,7 @@ const PrayerRequests: React.FC<PrayerRequestsProps> = ({ endpoint = '/prayer-req
                 <div
                     style={{
                         overflowY: 'auto',
-                        maxHeight: '30vh',
+                        maxHeight: '60vh',
                         scrollbarWidth: 'none', // Firefox
                         msOverflowStyle: 'none', // IE and Edge
                     }}
@@ -114,18 +114,18 @@ const PrayerRequests: React.FC<PrayerRequestsProps> = ({ endpoint = '/prayer-req
                                           req.is_answered ? 'opacity-60' : ''
                                       }`}
                                   >
-                                      <div className="mb-1 flex items-center justify-between text-sm text-gray-300">
+                                      <div className="flex items-center justify-between text-sm text-gray-300">
                                           <span className="text-xs font-medium">{req.prayer_request_from || 'Unnamed'}</span>
                                           <span className="text-lg">{req.is_answered ? '●' : '○'}</span>
                                       </div>
                                       <div className={`text-sm text-white ${req.is_answered ? 'line-through' : ''}`}>
                                           {req.prayer_for && (
-                                              <div className="mb-1">
+                                              <div className="">
                                                   <span className="font-medium">For:</span> {req.prayer_for}
                                               </div>
                                           )}
                                           {req.prayer_request && (
-                                              <div className="mb-1 text-green-200">
+                                              <div className="text-green-200">
                                                   <span className="font-medium">Request:</span> {req.prayer_request}
                                               </div>
                                           )}
