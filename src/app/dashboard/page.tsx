@@ -1,9 +1,10 @@
 "use client";
 
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useQuery } from "convex/react";
 import { useConvexAuth } from "convex/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import {
   DateTimeDisplay,
@@ -13,23 +14,20 @@ import {
   PrayerRequestsWidget,
   CalendarWidget,
 } from "@/components/dashboard";
+import { Shield } from "lucide-react";
 
 export default function DashboardPage() {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const { signOut } = useAuthActions();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push("/signin");
-    }
-  }, [isAuthenticated, isLoading, router]);
+  const isAdmin = useQuery(api.profile.isAdmin);
 
   const handleSignOut = async () => {
     await signOut();
     router.push("/signin");
   };
 
+  // Show loading spinner only briefly
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -38,22 +36,50 @@ export default function DashboardPage() {
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 overflow-hidden">
-      {/* Header with sign out */}
-      <div className="absolute top-4 right-4">
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={handleSignOut}
-          className="bg-white/10 hover:bg-white/20 text-white border-white/10"
-        >
-          Sign Out
-        </Button>
+      {/* Header with auth buttons */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        {isAuthenticated ? (
+          <>
+            {isAdmin && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => router.push("/dashboard/users")}
+                className="bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border-purple-500/30"
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                Manage Users
+              </Button>
+            )}
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => router.push("/profile")}
+              className="bg-white/10 hover:bg-white/20 text-white border-white/10"
+            >
+              Profile
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleSignOut}
+              className="bg-white/10 hover:bg-white/20 text-white border-white/10"
+            >
+              Sign Out
+            </Button>
+          </>
+        ) : (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => router.push("/signin")}
+            className="bg-white/10 hover:bg-white/20 text-white border-white/10"
+          >
+            Sign In
+          </Button>
+        )}
       </div>
 
       {/* Main Dashboard Layout */}

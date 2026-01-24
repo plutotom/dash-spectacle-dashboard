@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   CheckCircle,
   Circle,
+  Shield,
 } from "lucide-react";
 
 type FilterType = "all" | "answered" | "unanswered";
@@ -30,6 +31,7 @@ export default function PrayerRequestsPage() {
   const [filter, setFilter] = useState<FilterType>("all");
 
   const requests = useQuery(api.prayerRequests.listAll, { filter, limit: 100 });
+  const isAdmin = useQuery(api.profile.isAdmin);
   const createRequest = useMutation(api.prayerRequests.create);
   const updateRequest = useMutation(api.prayerRequests.update);
   const markAnswered = useMutation(api.prayerRequests.markAnswered);
@@ -126,14 +128,22 @@ export default function PrayerRequestsPage() {
               Back
             </Button>
             <h1 className="text-2xl font-bold text-white">Prayer Requests</h1>
+            {isAdmin && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">
+                <Shield className="w-3 h-3" />
+                Admin
+              </span>
+            )}
           </div>
-          <Button
-            onClick={() => setShowNewForm(!showNewForm)}
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Request
-          </Button>
+          {isAdmin && (
+            <Button
+              onClick={() => setShowNewForm(!showNewForm)}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Request
+            </Button>
+          )}
         </div>
 
         {/* Filter Tabs */}
@@ -150,8 +160,8 @@ export default function PrayerRequestsPage() {
           ))}
         </div>
 
-        {/* New Request Form */}
-        {showNewForm && (
+        {/* New Request Form - Admin Only */}
+        {showNewForm && isAdmin && (
           <Card className="mb-6 bg-white/10 border-white/10 backdrop-blur-xl">
             <CardHeader>
               <CardTitle className="text-white text-lg">
@@ -203,6 +213,16 @@ export default function PrayerRequestsPage() {
                   Cancel
                 </Button>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Non-admin notice */}
+        {!isAdmin && (
+          <Card className="mb-6 bg-yellow-500/10 border-yellow-500/30 backdrop-blur-xl">
+            <CardContent className="p-4 text-center text-yellow-300 text-sm">
+              You are viewing prayer requests in read-only mode. Contact an
+              admin to make changes.
             </CardContent>
           </Card>
         )}
@@ -259,19 +279,29 @@ export default function PrayerRequestsPage() {
                   </div>
                 ) : (
                   <div className="flex items-start gap-4">
-                    {/* Status Icon */}
-                    <button
-                      onClick={() =>
-                        handleToggleAnswered(request._id, request.isAnswered)
-                      }
-                      className="mt-1 transition-colors"
-                    >
-                      {request.isAnswered ? (
-                        <CheckCircle className="w-6 h-6 text-green-400" />
-                      ) : (
-                        <Circle className="w-6 h-6 text-gray-500 hover:text-purple-400" />
-                      )}
-                    </button>
+                    {/* Status Icon - Admin can toggle */}
+                    {isAdmin ? (
+                      <button
+                        onClick={() =>
+                          handleToggleAnswered(request._id, request.isAnswered)
+                        }
+                        className="mt-1 transition-colors"
+                      >
+                        {request.isAnswered ? (
+                          <CheckCircle className="w-6 h-6 text-green-400" />
+                        ) : (
+                          <Circle className="w-6 h-6 text-gray-500 hover:text-purple-400" />
+                        )}
+                      </button>
+                    ) : (
+                      <div className="mt-1">
+                        {request.isAnswered ? (
+                          <CheckCircle className="w-6 h-6 text-green-400" />
+                        ) : (
+                          <Circle className="w-6 h-6 text-gray-500" />
+                        )}
+                      </div>
+                    )}
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
@@ -312,25 +342,27 @@ export default function PrayerRequestsPage() {
                       </div>
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleEdit(request)}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDelete(request._id)}
-                        className="text-red-400 hover:text-red-300"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+                    {/* Actions - Admin Only */}
+                    {isAdmin && (
+                      <div className="flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleEdit(request)}
+                          className="text-gray-400 hover:text-white"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDelete(request._id)}
+                          className="text-red-400 hover:text-red-300"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>
@@ -340,7 +372,7 @@ export default function PrayerRequestsPage() {
           {requests?.length === 0 && (
             <Card className="bg-white/10 border-white/10 backdrop-blur-xl">
               <CardContent className="p-8 text-center text-gray-500">
-                No prayer requests found. Create one above!
+                No prayer requests found.{isAdmin && " Create one above!"}
               </CardContent>
             </Card>
           )}

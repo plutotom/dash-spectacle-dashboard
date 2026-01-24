@@ -1,6 +1,18 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { query, mutation, QueryCtx } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 import { auth } from "./auth";
+
+// Helper to check if user is admin or owns the message
+async function canModifyMessage(
+  ctx: QueryCtx,
+  userId: Id<"users">,
+  messageUserId: Id<"users">,
+): Promise<boolean> {
+  const user = await ctx.db.get(userId);
+  // Admins can modify any message, users can only modify their own
+  return user?.role === "admin" || userId === messageUserId;
+}
 
 // Get recent messages for dashboard feed (public) - includes user info
 export const list = query({
@@ -27,9 +39,9 @@ export const list = query({
 });
 
 // Create a new message (authenticated users)
+// Name is fetched from user profile, not passed in
 export const create = mutation({
   args: {
-    name: v.string(),
     content: v.string(),
   },
   handler: async (ctx, args) => {
@@ -37,15 +49,20 @@ export const create = mutation({
     if (!userId) {
       throw new Error("Not authenticated");
     }
+
+    // Fetch user to get their name
+    const user = await ctx.db.get(userId);
+    const name = user?.name || user?.email || "Anonymous";
+
     return await ctx.db.insert("messages", {
       userId,
-      name: args.name,
+      name, // Store snapshot of name at time of posting
       content: args.content,
     });
   },
 });
 
-// Update a message (admin only - for now allow any authenticated user)
+// Update a message (owner or admin only)
 export const update = mutation({
   args: {
     id: v.id("messages"),
@@ -57,10 +74,19 @@ export const update = mutation({
     if (!userId) {
       throw new Error("Not authenticated");
     }
+
     const message = await ctx.db.get(args.id);
     if (!message) {
       throw new Error("Message not found");
     }
+
+    // Check permissions
+    const canModify = await canModifyMessage(ctx, userId, message.userId);
+
+    if (!canModify) {
+      throw new Error("You can only edit your own messages");
+    }
+
     await ctx.db.patch(args.id, {
       ...(args.name !== undefined && { name: args.name }),
       ...(args.content !== undefined && { content: args.content }),
@@ -68,7 +94,7 @@ export const update = mutation({
   },
 });
 
-// Delete a message (admin only - for now allow any authenticated user)
+// Delete a message (owner or admin only)
 export const remove = mutation({
   args: {
     id: v.id("messages"),
@@ -78,6 +104,19 @@ export const remove = mutation({
     if (!userId) {
       throw new Error("Not authenticated");
     }
+
+    const message = await ctx.db.get(args.id);
+    if (!message) {
+      throw new Error("Message not found");
+    }
+
+    // Check permissions
+    const canModify = await canModifyMessage(ctx, userId, message.userId);
+
+    if (!canModify) {
+      throw new Error("You can only delete your own messages");
+    }
+
     await ctx.db.delete(args.id);
   },
 });

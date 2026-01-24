@@ -18,6 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 export default function SignInPage() {
   const { signIn } = useAuthActions();
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,10 +27,23 @@ export default function SignInPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    // Validate name for signup
+    if (flow === "signUp" && !name.trim()) {
+      setError("Name is required");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await signIn("password", { email, password, flow });
+      await signIn("password", {
+        email,
+        password,
+        flow,
+        // Only pass name during signup
+        ...(flow === "signUp" && { name: name.trim() }),
+      });
       // Use full page navigation to ensure auth state is fresh
       window.location.href = "/dashboard";
     } catch (err: unknown) {
@@ -68,6 +82,21 @@ export default function SignInPage() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Name field - only shown during signup */}
+            {flow === "signUp" && (
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                  required={flow === "signUp"}
+                />
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -115,7 +144,10 @@ export default function SignInPage() {
         <CardFooter className="justify-center">
           <Button
             variant="link"
-            onClick={() => setFlow(flow === "signIn" ? "signUp" : "signIn")}
+            onClick={() => {
+              setFlow(flow === "signIn" ? "signUp" : "signIn");
+              setError("");
+            }}
             className="text-purple-400 hover:text-purple-300"
           >
             {flow === "signIn"

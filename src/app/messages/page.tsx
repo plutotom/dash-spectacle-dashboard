@@ -10,13 +10,23 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Pencil, Trash2, X, Check, Plus, ArrowLeft, User } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  X,
+  Check,
+  Plus,
+  ArrowLeft,
+  User,
+  Shield,
+} from "lucide-react";
 
 export default function MessagesPage() {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
   const messages = useQuery(api.messages.list, { limit: 100 });
-  const currentUser = useQuery(api.users.currentUser);
+  const profile = useQuery(api.profile.getProfile);
+  const isAdmin = useQuery(api.profile.isAdmin);
   const createMessage = useMutation(api.messages.create);
   const updateMessage = useMutation(api.messages.update);
   const deleteMessage = useMutation(api.messages.remove);
@@ -24,7 +34,6 @@ export default function MessagesPage() {
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
   const [editName, setEditName] = useState("");
   const [editContent, setEditContent] = useState("");
-  const [newName, setNewName] = useState("");
   const [newContent, setNewContent] = useState("");
   const [showNewForm, setShowNewForm] = useState(false);
 
@@ -40,6 +49,16 @@ export default function MessagesPage() {
     router.push("/signin");
     return null;
   }
+
+  // Check if current user owns a message
+  const isMessageOwner = (messageUserId: Id<"users">) => {
+    return profile?._id === messageUserId;
+  };
+
+  // Can edit/delete if admin or owner
+  const canModifyMessage = (messageUserId: Id<"users">) => {
+    return isAdmin || isMessageOwner(messageUserId);
+  };
 
   const handleEdit = (message: {
     _id: Id<"messages">;
@@ -74,21 +93,15 @@ export default function MessagesPage() {
   };
 
   const handleCreate = async () => {
-    if (!newName.trim() || !newContent.trim()) return;
+    if (!newContent.trim()) return;
     await createMessage({
-      name: newName.trim(),
       content: newContent.trim(),
     });
-    setNewName("");
     setNewContent("");
     setShowNewForm(false);
   };
 
-  // Auto-fill name with current user email if available
   const handleShowNewForm = () => {
-    if (currentUser?.email && !newName) {
-      setNewName(currentUser.email.split("@")[0]); // Use email prefix as default name
-    }
     setShowNewForm(true);
   };
 
@@ -108,13 +121,19 @@ export default function MessagesPage() {
               Back
             </Button>
             <h1 className="text-2xl font-bold text-white">Messages</h1>
+            {isAdmin && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">
+                <Shield className="w-3 h-3" />
+                Admin
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-4">
             {/* Current User Badge */}
-            {currentUser && (
+            {profile && (
               <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-full text-sm text-gray-300">
                 <User className="w-4 h-4" />
-                {currentUser.email}
+                {profile.name || profile.email}
               </div>
             )}
             <Button
@@ -134,12 +153,12 @@ export default function MessagesPage() {
               <CardTitle className="text-white text-lg">New Message</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Input
-                placeholder="Display Name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                className="bg-white/5 border-white/10 text-white"
-              />
+              <p className="text-sm text-gray-400">
+                Posting as{" "}
+                <span className="text-purple-400">
+                  {profile?.name || profile?.email || "..."}
+                </span>
+              </p>
               <Input
                 placeholder="Message content"
                 value={newContent}
@@ -238,22 +257,28 @@ export default function MessagesPage() {
                         {format(new Date(message._creationTime), "MMM d, yyyy")}
                       </div>
                       <div className="col-span-2 flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleEdit(message)}
-                          className="text-gray-400 hover:text-white"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleDelete(message._id)}
-                          className="text-red-400 hover:text-red-300"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        {canModifyMessage(message.userId) ? (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleEdit(message)}
+                              className="text-gray-400 hover:text-white"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDelete(message._id)}
+                              className="text-red-400 hover:text-red-300"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </>
+                        ) : (
+                          <span className="text-gray-600 text-xs">—</span>
+                        )}
                       </div>
                     </>
                   )}

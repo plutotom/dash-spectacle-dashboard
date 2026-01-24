@@ -44,7 +44,7 @@ export const listAll = query({
   },
 });
 
-// Create a new prayer request
+// Create a new prayer request (admin only)
 export const create = mutation({
   args: {
     prayerRequestFrom: v.optional(v.string()),
@@ -56,6 +56,13 @@ export const create = mutation({
     if (!userId) {
       throw new Error("Not authenticated");
     }
+
+    // Check if user is admin
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") {
+      throw new Error("Only admins can create prayer requests");
+    }
+
     return await ctx.db.insert("prayerRequests", {
       prayerRequestFrom: args.prayerRequestFrom,
       prayerFor: args.prayerFor,
@@ -65,7 +72,7 @@ export const create = mutation({
   },
 });
 
-// Update a prayer request
+// Update a prayer request (admin only)
 export const update = mutation({
   args: {
     id: v.id("prayerRequests"),
@@ -79,6 +86,13 @@ export const update = mutation({
     if (!userId) {
       throw new Error("Not authenticated");
     }
+
+    // Check if user is admin
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") {
+      throw new Error("Only admins can update prayer requests");
+    }
+
     const request = await ctx.db.get(args.id);
     if (!request) {
       throw new Error("Prayer request not found");
@@ -99,7 +113,7 @@ export const update = mutation({
   },
 });
 
-// Toggle answered status
+// Toggle answered status (admin only)
 export const markAnswered = mutation({
   args: {
     id: v.id("prayerRequests"),
@@ -110,6 +124,13 @@ export const markAnswered = mutation({
     if (!userId) {
       throw new Error("Not authenticated");
     }
+
+    // Check if user is admin
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") {
+      throw new Error("Only admins can mark prayer requests as answered");
+    }
+
     await ctx.db.patch(args.id, {
       isAnswered: args.isAnswered,
       answeredAt: args.isAnswered ? Date.now() : undefined,
@@ -117,7 +138,7 @@ export const markAnswered = mutation({
   },
 });
 
-// Delete a prayer request
+// Delete a prayer request (admin only)
 export const remove = mutation({
   args: {
     id: v.id("prayerRequests"),
@@ -127,6 +148,13 @@ export const remove = mutation({
     if (!userId) {
       throw new Error("Not authenticated");
     }
+
+    // Check if user is admin
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") {
+      throw new Error("Only admins can delete prayer requests");
+    }
+
     await ctx.db.delete(args.id);
   },
 });

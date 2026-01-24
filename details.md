@@ -10,6 +10,26 @@ Backend: Laravel (PHP)
 Frontend: React with TypeScript (via Inertia.js)
 Styling: Tailwind CSS with dark theme optimizations
 Database: Relational (MySQL/PostgreSQL)
+
+## Deployment Context: 24/7 Always-On Display
+
+**CRITICAL**: This dashboard runs continuously on a wall-mounted TV in the home. The page is **never manually refreshed** - it loads once and stays running indefinitely (days, weeks, months).
+
+This has major implications for error handling:
+
+- **Network failures are inevitable**: WiFi hiccups, API timeouts, server maintenance - these WILL happen at 3am when no one is watching
+- **Crashed components stay crashed**: Without error boundaries, a single widget failure would require someone to manually refresh the TV
+- **Auto-retry is essential**: When the Weather API returns a 500 error at midnight, the widget needs to automatically retry in a few seconds/minutes and recover on its own
+- **Graceful degradation**: If one widget fails, the others should keep working - don't crash the entire dashboard
+
+**Error Resilience Requirements**:
+
+1. Every data-fetching widget must be wrapped in an error boundary
+2. Failed components should show a subtle error state (not a giant red error)
+3. Auto-retry with exponential backoff (e.g., 5s → 10s → 30s → 1min)
+4. Successful retry should seamlessly restore the widget to normal operation
+5. Consider logging errors to an external service for monitoring
+
 Primary Use Case: Wall-mounted display showing:
 
 Current time and date
@@ -318,13 +338,17 @@ When rebuilding this app, ensure you implement:
 - [x] Messages feature (view + post) - CRUD with user association
 - [x] Prayer requests tracking with answered/unanswered status - full CRUD + filters
 - [x] Settings system for feature toggles - Convex settings table
-- [ ] Error boundaries with auto-retry - pending
+- [ ] Error boundaries with auto-retry - essential for 24/7 operation (see Deployment Context)
 - [x] Auto-refresh for all data widgets - Convex real-time reactivity
 - [x] Idle detection for interactive elements - MessagesFeed component
 - [x] Dark theme with glassmorphism aesthetics - implemented
 - [x] Responsive layout for tablet/wall display - implemented
 - [x] Pagination for list views - implemented in admin pages
 - [x] Filter/search capabilities - Prayer requests filter tabs
+- [x] **Public dashboard access** - Dashboard viewable without login, only message posting requires auth
+- [x] **Message author from profile** - Remove manual name input, pull name from user profile automatically
+- [x] **Profile/Settings page** - Allow users to edit their name and profile settings
+- [x] **Name required on signup** - Require first/last name during registration flow
 
 Document generated from dash-spectacle-dashboard codebase analysis
 

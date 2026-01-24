@@ -2,18 +2,20 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation } from "convex/react";
+import { useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export function MessagesFeed() {
+  const { isAuthenticated } = useConvexAuth();
   const messages = useQuery(api.messages.list, { limit: 20 });
+  const profile = useQuery(api.profile.getProfile);
   const createMessage = useMutation(api.messages.create);
 
   const [isIdle, setIsIdle] = useState(false);
   const [newMessage, setNewMessage] = useState("");
-  const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   // Idle detection
@@ -49,16 +51,16 @@ export function MessagesFeed() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !name.trim()) return;
+    if (!newMessage.trim() || !isAuthenticated) return;
 
     setSubmitting(true);
     try {
       await createMessage({
-        name: name.trim(),
         content: newMessage.trim(),
       });
       setNewMessage("");
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to send message:", error);
     } finally {
       setSubmitting(false);
@@ -98,38 +100,53 @@ export function MessagesFeed() {
         )}
       </div>
 
-      {/* Message Composer - fades when idle */}
-      <div
-        className={`mt-4 transition-opacity duration-300 ${
-          isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
-      >
-        <form onSubmit={handleSubmit} className="space-y-2">
-          <Input
-            type="text"
-            placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-          />
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              placeholder="Type a message..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-            />
-            <Button
-              type="submit"
-              disabled={submitting || !newMessage.trim() || !name.trim()}
-              className="bg-purple-600 hover:bg-purple-700"
-            >
-              Send
-            </Button>
-          </div>
-        </form>
-      </div>
+      {/* Message Composer - only shown for authenticated users, fades when idle */}
+      {isAuthenticated ? (
+        <div
+          className={`mt-4 transition-opacity duration-300 ${
+            isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
+        >
+          <form onSubmit={handleSubmit} className="space-y-2">
+            {/* Show posting as name */}
+            <p className="text-xs text-gray-400">
+              Posting as{" "}
+              <span className="text-purple-400">
+                {profile?.name || profile?.email || "..."}
+              </span>
+            </p>
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                placeholder="Type a message..."
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
+              />
+              <Button
+                type="submit"
+                disabled={submitting || !newMessage.trim()}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                Send
+              </Button>
+            </div>
+          </form>
+        </div>
+      ) : (
+        <div
+          className={`mt-4 transition-opacity duration-300 ${
+            isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
+        >
+          <p className="text-sm text-gray-400 text-center py-2">
+            <a href="/signin" className="text-purple-400 hover:text-purple-300">
+              Sign in
+            </a>{" "}
+            to post a message
+          </p>
+        </div>
+      )}
     </div>
   );
 }
