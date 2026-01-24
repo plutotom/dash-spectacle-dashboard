@@ -5,7 +5,13 @@ import { useConvexAuth } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function DashboardPage() {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -72,8 +78,12 @@ export default function DashboardPage() {
             >
               <CardContent className="pt-6">
                 <div className="text-3xl mb-3">{stat.icon}</div>
-                <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-                <div className="text-muted-foreground text-sm">{stat.label}</div>
+                <div className="text-3xl font-bold text-white mb-1">
+                  {stat.value}
+                </div>
+                <div className="text-muted-foreground text-sm">
+                  {stat.label}
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -82,7 +92,9 @@ export default function DashboardPage() {
         {/* Activity Section */}
         <Card className="mt-8 bg-white/5 border-white/10 backdrop-blur-xl">
           <CardHeader>
-            <CardTitle className="text-lg text-white">Recent Activity</CardTitle>
+            <CardTitle className="text-lg text-white">
+              Recent Activity
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -95,7 +107,9 @@ export default function DashboardPage() {
                   className="flex items-center justify-between py-3 border-b border-white/5 last:border-0"
                 >
                   <span className="text-gray-300">{item.text}</span>
-                  <span className="text-muted-foreground text-sm">{item.time}</span>
+                  <span className="text-muted-foreground text-sm">
+                    {item.time}
+                  </span>
                 </div>
               ))}
             </div>

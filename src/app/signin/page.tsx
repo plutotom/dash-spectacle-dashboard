@@ -5,7 +5,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function SignInPage() {
@@ -27,9 +34,18 @@ export default function SignInPage() {
       window.location.href = "/dashboard";
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message || (flow === "signIn" ? "Invalid credentials" : "Could not create account"));
+        setError(
+          err.message ||
+            (flow === "signIn"
+              ? "Invalid credentials"
+              : "Could not create account"),
+        );
       } else {
-        setError(flow === "signIn" ? "Invalid credentials" : "Could not create account");
+        setError(
+          flow === "signIn"
+            ? "Invalid credentials"
+            : "Could not create account",
+        );
       }
     } finally {
       setLoading(false);
@@ -44,7 +60,9 @@ export default function SignInPage() {
             {flow === "signIn" ? "Welcome Back" : "Create Account"}
           </CardTitle>
           <CardDescription>
-            {flow === "signIn" ? "Sign in to continue" : "Sign up to get started"}
+            {flow === "signIn"
+              ? "Sign in to continue"
+              : "Sign up to get started"}
           </CardDescription>
         </CardHeader>
 
@@ -85,7 +103,11 @@ export default function SignInPage() {
               disabled={loading}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
-              {loading ? "Loading..." : flow === "signIn" ? "Sign In" : "Sign Up"}
+              {loading
+                ? "Loading..."
+                : flow === "signIn"
+                  ? "Sign In"
+                  : "Sign Up"}
             </Button>
           </form>
         </CardContent>
@@ -96,7 +118,9 @@ export default function SignInPage() {
             onClick={() => setFlow(flow === "signIn" ? "signUp" : "signIn")}
             className="text-purple-400 hover:text-purple-300"
           >
-            {flow === "signIn" ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+            {flow === "signIn"
+              ? "Don't have an account? Sign up"
+              : "Already have an account? Sign in"}
           </Button>
         </CardFooter>
       </Card>
