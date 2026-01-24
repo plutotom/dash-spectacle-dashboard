@@ -10,6 +10,10 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as messages from "../messages.js";
+import type * as prayerRequests from "../prayerRequests.js";
+import type * as settings from "../settings.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -20,6 +24,10 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  messages: typeof messages;
+  prayerRequests: typeof prayerRequests;
+  settings: typeof settings;
+  users: typeof users;
 }>;
 
 /**
