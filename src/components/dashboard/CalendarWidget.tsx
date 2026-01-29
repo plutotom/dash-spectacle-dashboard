@@ -26,7 +26,7 @@ export function CalendarWidget() {
       // This will be replaced with actual Google Calendar API call via Convex action
       // For now, using placeholder data
       const today = new Date();
-      const mockDays: DayEvents[] = Array.from({ length: 4 }, (_, i) => ({
+      const mockDays: DayEvents[] = Array.from({ length: 5 }, (_, i) => ({
         date: addDays(today, i),
         events:
           i === 0
@@ -93,44 +93,45 @@ export function CalendarWidget() {
   const today = new Date();
 
   return (
-    <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/10">
-      <h3 className="text-lg font-medium text-white mb-4">Calendar</h3>
-      <div className="grid grid-cols-4 gap-3">
-        {days.map((day, index) => (
+    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 border border-white/5 flex flex-col mt-4">
+      <h3 className="text-sm font-medium text-white/70 mb-3 uppercase tracking-wider">
+        Upcoming Events
+      </h3>
+      <div className="grid grid-cols-5 gap-4">
+        {days.slice(0, 5).map((day, index) => (
           <div
             key={index}
-            className={`rounded-lg p-3 ${
+            className={`rounded-md p-2 flex flex-col h-full ${
               isSameDay(day.date, today)
-                ? "bg-purple-600/30 border border-purple-500/50"
-                : "bg-white/5"
+                ? "bg-purple-500/10 border border-purple-500/20"
+                : "bg-white/5 border border-white/5"
             }`}
           >
-            <div className="text-xs text-gray-400 uppercase mb-1">
+            <div className="text-[10px] text-white/40 uppercase mb-1.5 font-medium tracking-wide border-b border-white/5 pb-1">
               {isSameDay(day.date, today)
                 ? "Today"
                 : isSameDay(day.date, addDays(today, 1))
                   ? "Tomorrow"
-                  : format(day.date, "EEE")}
+                  : format(day.date, "EEEE")}
             </div>
-            <div className="text-sm font-medium text-white mb-2">
-              {format(day.date, "MMM d")}
-            </div>
-            <div className="space-y-1">
+
+            <div className="flex-1 space-y-1.5">
               {day.events.length > 0 ? (
-                day.events.slice(0, 3).map((event) => (
-                  <div
-                    key={event.id}
-                    className="text-xs text-gray-300 truncate bg-white/10 rounded px-2 py-1"
-                  >
-                    {event.title}
+                day.events.map((event) => (
+                  <div key={event.id} className="group">
+                    <div className="text-xs font-medium text-white/90 truncate leading-tight">
+                      {event.title}
+                    </div>
+                    <div className="text-[9px] text-white/40">
+                      {format(event.start, "h:mm a")}
+                    </div>
                   </div>
                 ))
               ) : (
-                <div className="text-xs text-gray-500 italic">No events</div>
-              )}
-              {day.events.length > 3 && (
-                <div className="text-xs text-gray-400">
-                  +{day.events.length - 3} more
+                <div className="h-full flex items-center justify-center">
+                  <span className="text-[10px] text-white/20 italic">
+                    No events
+                  </span>
                 </div>
               )}
             </div>

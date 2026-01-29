@@ -15,6 +15,7 @@ import type * as prayerRequests from "../prayerRequests.js";
 import type * as profile from "../profile.js";
 import type * as settings from "../settings.js";
 import type * as users from "../users.js";
+import type * as weather from "../weather.js";
 
 import type {
   ApiFromModules,
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   profile: typeof profile;
   settings: typeof settings;
   users: typeof users;
+  weather: typeof weather;
 }>;
 
 /**

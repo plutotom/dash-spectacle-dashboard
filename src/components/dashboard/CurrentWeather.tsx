@@ -1,76 +1,107 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Wifi } from "lucide-react";
-
-interface WeatherData {
-  temp_f: number;
-  condition: string;
-  icon?: string;
-  lastUpdated?: Date;
-}
+import { useQuery, useAction } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { useEffect, useState } from "react";
+import { Wifi, WifiOff, Loader2 } from "lucide-react";
 
 export function CurrentWeather() {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchWeather = useCallback(async () => {
-    try {
-      // This will be replaced with actual API call via Convex action
-      // For now, using placeholder data
-      setWeather({
-        temp_f: 72,
-        condition: "Partly Cloudy",
-        lastUpdated: new Date(),
-      });
-      setError(null);
-    } catch {
-      setError("Failed to load weather");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const weatherData = useQuery(api.weather.get, { type: "current" });
+  const fetchCurrent = useAction(api.weather.fetchCurrent);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    fetchWeather();
-    // Refresh every 15 minutes
-    const interval = setInterval(fetchWeather, 15 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [fetchWeather]);
+    // If no data or stale, fetch new data
+    if (weatherData === undefined) return; // Loading initial state
 
-  if (loading) {
+    if (!weatherData || weatherData.isStale) {
+      const refresh = async () => {
+        setIsRefreshing(true);
+        try {
+          await fetchCurrent();
+        } catch (e) {
+          console.error("Failed to auto-refresh weather:", e);
+        } finally {
+          setIsRefreshing(false);
+        }
+      };
+      void refresh();
+    }
+
+    const timer = setInterval(
+      () => {
+        void fetchCurrent();
+      },
+      15 * 60 * 1000,
+    ); // 15 minutes
+
+    return () => clearInterval(timer);
+  }, [weatherData, fetchCurrent]);
+
+  // Loading state (initial load only)
+  if (weatherData === undefined) {
     return (
-      <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 h-40 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white" />
+      <div className="flex items-center justify-center h-20">
+        <Loader2 className="w-5 h-5 text-white/50 animate-spin" />
       </div>
     );
   }
 
-  if (error) {
+  // Error/Empty state
+  if (!weatherData && !isRefreshing) {
     return (
-      <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 h-40 flex items-center justify-center">
-        <p className="text-gray-400 text-sm">{error}</p>
+      <div className="flex items-center justify-center h-20 text-white/50">
+        <WifiOff className="w-5 h-5 mr-2" />
+        <span className="text-sm">Unavailable</span>
       </div>
     );
   }
 
+  // Display Logic
+  const data = weatherData?.data || {};
+  const current = data.current || {};
+
+  const apiTemp = current.temp_f;
+  const haTemp = current.home_assistant_current_temp;
+  const condition = current.condition?.text ?? "Unknown";
+
+  // Minimal compact view
   return (
-    <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 h-40 flex flex-col justify-between border border-white/10">
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="text-5xl font-light text-white">
-            {weather?.temp_f}°
+    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 border border-white/5 transition-all hover:bg-black/30">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          {/* Main Temp */}
+          <div className="flex flex-col">
+            <div className="text-3xl font-light text-white leading-none">
+              {apiTemp !== undefined ? Math.round(apiTemp) : "--"}°
+            </div>
+            <div className="text-white/60 text-xs mt-1">{condition}</div>
           </div>
-          <div className="text-gray-300 text-sm mt-1">{weather?.condition}</div>
+
+          {/* Indoor Temp (Small) */}
+          {haTemp !== undefined && (
+            <div className="border-l border-white/10 pl-3 flex flex-col justify-center">
+              <span className="text-[10px] text-green-400/80 uppercase tracking-wider font-medium">
+                Indoor
+              </span>
+              <span className="text-lg font-light text-white/90 leading-none mt-0.5">
+                {Math.round(haTemp)}°
+              </span>
+            </div>
+          )}
         </div>
-        <Wifi className="w-5 h-5 text-green-400" />
+
+        {/* Status Icon */}
+        <div className="flex flex-col items-end gap-1">
+          {isRefreshing ? (
+            <Loader2 className="w-3 h-3 text-white/50 animate-spin" />
+          ) : (
+            <Wifi
+              className={`w-3 h-3 ${haTemp !== undefined ? "text-green-400/50" : "text-blue-400/50"}`}
+            />
+          )}
+        </div>
       </div>
-      {weather?.lastUpdated && (
-        <div className="text-xs text-gray-500">
-          Updated {weather.lastUpdated.toLocaleTimeString()}
-        </div>
-      )}
     </div>
   );
 }

@@ -36,6 +36,13 @@ const schema = defineSchema({
     key: v.string(),
     value: v.any(),
   }).index("by_key", ["key"]),
+
+  // Weather data cache (current and forecast)
+  weather: defineTable({
+    type: v.string(), // "current" | "forecast"
+    data: v.any(), // JSON response from API
+    updatedAt: v.number(),
+  }).index("by_type", ["type"]),
 });
 
 export default schema;

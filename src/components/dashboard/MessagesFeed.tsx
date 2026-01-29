@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 export function MessagesFeed() {
   const { isAuthenticated } = useConvexAuth();
   const messages = useQuery(api.messages.list, { limit: 20 });
-  const profile = useQuery(api.profile.getProfile);
   const createMessage = useMutation(api.messages.create);
 
   const [isIdle, setIsIdle] = useState(false);
@@ -68,82 +67,90 @@ export function MessagesFeed() {
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/10 flex flex-col h-full">
-      <h3 className="text-lg font-medium text-white mb-3">Messages</h3>
+    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-0 border border-white/5 flex flex-col h-[250px] relative overflow-hidden group/feed">
+      <h3 className="absolute top-4 left-4 z-10 text-sm font-medium text-white/70 uppercase tracking-wider bg-black/40 backdrop-blur-md px-2 py-1 rounded text-xs pointer-events-none">
+        Messages
+      </h3>
 
-      {/* Messages List */}
+      {/* Messages List - Full height, scrollable */}
       <div
-        className="flex-1 overflow-y-auto space-y-3 max-h-[30vh]"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="w-full h-full overflow-y-auto space-y-2 p-4 pt-12"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "rgba(255,255,255,0.1) transparent",
+        }}
       >
         {messages?.map((message) => (
-          <div
-            key={message._id}
-            className="bg-white/5 rounded-lg p-3 border border-white/5"
-          >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm text-gray-400">{message.name}</span>
-              <span className="text-xs text-gray-500">
+          <div key={message._id} className="group">
+            <div className="flex items-baseline justify-between mb-1">
+              <span className="text-sm font-medium text-white/90">
+                {message.name}
+              </span>
+              <span className="text-[10px] text-white/30 ml-2">
                 {formatDistanceToNow(new Date(message._creationTime), {
                   addSuffix: true,
                 })}
               </span>
             </div>
-            <p className="text-white text-sm">{message.content}</p>
+            <p className="text-white/70 text-sm leading-relaxed font-light">
+              {message.content}
+            </p>
           </div>
         ))}
 
         {messages?.length === 0 && (
-          <p className="text-gray-500 text-sm text-center py-4">
+          <p className="text-white/30 text-sm text-center py-10 italic">
             No messages yet
           </p>
         )}
+
+        {/* Spacer at bottom for when input is visible */}
+        <div className="h-10"></div>
       </div>
 
-      {/* Message Composer - only shown for authenticated users, fades when idle */}
+      {/* Message Composer - Floating at bottom */}
       {isAuthenticated ? (
         <div
-          className={`mt-4 transition-opacity duration-300 ${
-            isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
+          className={`absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 via-black/80 to-transparent border-t border-white/5 transition-all duration-500 transform ${
+            isIdle
+              ? "translate-y-full opacity-0 pointer-events-none"
+              : "translate-y-0 opacity-100"
           }`}
         >
-          <form onSubmit={handleSubmit} className="space-y-2">
-            {/* Show posting as name */}
-            <p className="text-xs text-gray-400">
-              Posting as{" "}
-              <span className="text-purple-400">
-                {profile?.name || profile?.email || "..."}
-              </span>
-            </p>
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                placeholder="Type a message..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-              />
-              <Button
-                type="submit"
-                disabled={submitting || !newMessage.trim()}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
-                Send
-              </Button>
-            </div>
+          <form onSubmit={handleSubmit} className="relative">
+            <Input
+              type="text"
+              placeholder="Type a message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              className="w-full bg-white/10 border-white/10 text-white placeholder:text-white/40 focus:bg-black/60 focus:border-white/20 transition-colors pr-16 h-9 text-sm backdrop-blur-md shadow-xl"
+            />
+            <Button
+              type="submit"
+              size="sm"
+              disabled={submitting || !newMessage.trim()}
+              className="absolute right-1 top-0.5 h-8 bg-purple-600/80 hover:bg-purple-600 text-white border-none scale-90"
+            >
+              Send
+            </Button>
           </form>
         </div>
       ) : (
         <div
-          className={`mt-4 transition-opacity duration-300 ${
-            isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
+          className={`absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 to-transparent border-t border-white/5 transition-all duration-500 ${
+            isIdle
+              ? "translate-y-full opacity-0 pointer-events-none"
+              : "translate-y-0 opacity-100"
           }`}
         >
-          <p className="text-sm text-gray-400 text-center py-2">
-            <a href="/signin" className="text-purple-400 hover:text-purple-300">
+          <p className="text-[10px] text-white/50 text-center backdrop-blur-md py-1">
+            <a
+              href="/signin"
+              className="text-white/80 hover:text-white underline decoration-white/30 underline-offset-2"
+            >
               Sign in
             </a>{" "}
-            to post a message
+            to join
           </p>
         </div>
       )}

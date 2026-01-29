@@ -1,81 +1,88 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { format, addDays } from "date-fns";
+import { useQuery, useAction } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { useEffect, useState } from "react";
+import { format } from "date-fns";
+import { Loader2 } from "lucide-react";
 
 interface ForecastDay {
-  date: Date;
-  high: number;
-  low: number;
-  condition: string;
-  icon?: string;
+  date: string;
+  day: {
+    maxtemp_f: number;
+    mintemp_f: number;
+    condition: {
+      text: string;
+    };
+  };
 }
 
 export function WeatherForecast() {
-  const [forecast, setForecast] = useState<ForecastDay[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchForecast = useCallback(async () => {
-    try {
-      // This will be replaced with actual API call via Convex action
-      // For now, using placeholder data
-      const today = new Date();
-      const mockForecast: ForecastDay[] = Array.from({ length: 5 }, (_, i) => ({
-        date: addDays(today, i),
-        high: 75 + Math.floor(Math.random() * 10),
-        low: 55 + Math.floor(Math.random() * 10),
-        condition: ["Sunny", "Cloudy", "Partly Cloudy", "Rain", "Clear"][i % 5],
-      }));
-      setForecast(mockForecast);
-      setError(null);
-    } catch {
-      setError("Failed to load forecast");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const forecastData = useQuery(api.weather.get, { type: "forecast" });
+  const fetchForecast = useAction(api.weather.fetchForecast);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    fetchForecast();
-    // Refresh every 20 minutes
-    const interval = setInterval(fetchForecast, 20 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [fetchForecast]);
+    // If no data or stale, fetch new data
+    if (forecastData === undefined) return; // Loading initial state
 
-  if (loading) {
+    if (!forecastData || forecastData.isStale) {
+      const refresh = async () => {
+        setIsRefreshing(true);
+        try {
+          await fetchForecast();
+        } catch (e) {
+          console.error("Failed to auto-refresh forecast:", e);
+        } finally {
+          setIsRefreshing(false);
+        }
+      };
+      void refresh();
+    }
+
+    const timer = setInterval(
+      () => {
+        void fetchForecast();
+      },
+      30 * 60 * 1000,
+    ); // 30 minutes
+
+    return () => clearInterval(timer);
+  }, [forecastData, fetchForecast]);
+
+  // Loading state (initial load only)
+  if (forecastData === undefined) {
     return (
-      <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 flex items-center justify-center h-24">
-        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white" />
+      <div className="flex items-center justify-center p-2">
+        <Loader2 className="w-4 h-4 text-white/40 animate-spin" />
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 flex items-center justify-center h-24">
-        <p className="text-gray-400 text-sm">{error}</p>
-      </div>
-    );
+  // Error/Empty state
+  if (!forecastData && !isRefreshing) {
+    return null; // Just hide it if empty to keep look clean
   }
+
+  const forecastDays: ForecastDay[] =
+    forecastData?.data?.forecast?.forecastday || [];
 
   return (
-    <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 border border-white/10">
-      <div className="flex gap-4 overflow-x-auto scrollbar-hide">
-        {forecast.map((day, index) => (
+    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-2 border border-white/5 transition-all hover:bg-black/30">
+      <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+        {forecastDays.map((day, index) => (
           <div
             key={index}
-            className="shrink-0 text-center px-4 py-2 rounded-lg bg-white/5 min-w-[80px]"
+            className="shrink-0 text-center px-3 py-1.5 rounded-md min-w-[60px] hover:bg-white/5 transition-colors"
           >
-            <div className="text-xs text-gray-400 uppercase">
-              {format(day.date, "EEE")}
+            <div className="text-[10px] text-white/50 uppercase font-medium">
+              {format(new Date(day.date + "T00:00:00"), "EEE")}
             </div>
-            <div className="text-2xl font-light text-white mt-1">
-              {day.high}°
+            <div className="text-lg font-normal text-white my-0.5">
+              {Math.round(day.day.maxtemp_f)}°
             </div>
-            <div className="text-xs text-gray-500">{day.low}°</div>
-            <div className="text-xs text-gray-400 mt-1 truncate">
-              {day.condition}
+            <div className="text-[10px] text-white/40">
+              {Math.round(day.day.mintemp_f)}°
             </div>
           </div>
         ))}
