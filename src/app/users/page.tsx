@@ -3,11 +3,12 @@
 import { useQuery, useMutation } from "convex/react";
 import { useConvexAuth } from "convex/react";
 import { useRouter } from "next/navigation";
-import { api } from "../../../../convex/_generated/api";
-import { Id } from "../../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Shield, User } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { api } from "../../../convex/_generated/api";
+import { Id } from "../../../convex/_generated/dataModel";
 
 export default function UsersPage() {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -15,6 +16,7 @@ export default function UsersPage() {
   const users = useQuery(api.profile.listUsers);
   const profile = useQuery(api.profile.getProfile);
   const setUserRole = useMutation(api.profile.setUserRole);
+  const updateUserLimit = useMutation(api.profile.updateUserLimit);
 
   if (isLoading) {
     return (
@@ -44,6 +46,10 @@ export default function UsersPage() {
     }
   };
 
+  const handleLimitChange = async (userId: Id<"users">, newLimit: number) => {
+    await updateUserLimit({ userId, limit: newLimit });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
       <div className="max-w-4xl mx-auto">
@@ -65,9 +71,10 @@ export default function UsersPage() {
             <div className="divide-y divide-white/10">
               {/* Header */}
               <div className="grid grid-cols-12 gap-4 p-4 text-sm font-medium text-gray-400">
-                <div className="col-span-4">Name</div>
-                <div className="col-span-4">Email</div>
+                <div className="col-span-3">Name</div>
+                <div className="col-span-3">Email</div>
                 <div className="col-span-2">Role</div>
+                <div className="col-span-2">Usage</div>
                 <div className="col-span-2 text-right">Actions</div>
               </div>
 
@@ -77,21 +84,21 @@ export default function UsersPage() {
                   key={user._id}
                   className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors"
                 >
-                  <div className="col-span-4 flex items-center gap-2">
+                  <div className="col-span-3 flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white text-xs">
                       {user.name?.[0]?.toUpperCase() ||
                         user?.email?.[0]?.toUpperCase()}
                     </div>
-                    <div>
-                      <div className="text-white font-medium">
+                    <div className="overflow-hidden">
+                      <div className="text-white font-medium truncate">
                         {user.name || "No name"}
                       </div>
-                      <div className="text-xs text-gray-500 md:hidden">
+                      <div className="text-xs text-gray-500 md:hidden truncate">
                         {user.email}
                       </div>
                     </div>
                   </div>
-                  <div className="col-span-4 text-gray-300 hidden md:block">
+                  <div className="col-span-3 text-gray-300 hidden md:block truncate">
                     {user.email}
                   </div>
                   <div className="col-span-2">
@@ -109,6 +116,27 @@ export default function UsersPage() {
                       )}
                       {user.role === "admin" ? "Admin" : "User"}
                     </span>
+                  </div>
+                  <div className="col-span-2 flex items-center gap-2">
+                    <span className="text-sm text-gray-300">
+                      {user.imageCount} /
+                    </span>
+                    <Input
+                      type="number"
+                      defaultValue={user.maxUploads}
+                      className="w-16 h-8 text-xs bg-black/20 border-white/10 text-white"
+                      onBlur={(e) => {
+                        const val = parseInt(e.target.value);
+                        if (!isNaN(val) && val !== user.maxUploads) {
+                          handleLimitChange(user._id, val);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.currentTarget.blur();
+                        }
+                      }}
+                    />
                   </div>
                   <div className="col-span-2 text-right">
                     {user._id !== profile?._id ? (

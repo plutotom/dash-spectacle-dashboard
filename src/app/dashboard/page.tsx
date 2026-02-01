@@ -12,8 +12,9 @@ import {
   WeatherForecast,
   MessagesFeed,
   CalendarWidget,
+  BackgroundSlideshow,
 } from "@/components/dashboard";
-import { Shield } from "lucide-react";
+import { Shield, Image as ImageIcon } from "lucide-react";
 
 export default function DashboardPage() {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -37,17 +38,8 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1741715421791-c08283c8b7d2?ixlib=rb-4.1.0')",
-        }}
-      />
-
-      {/* Dark Overlay for contrast */}
-      <div className="absolute inset-0 z-0 bg-black/60" />
+      {/* Background Slideshow */}
+      <BackgroundSlideshow />
 
       {/* Content Container */}
       <div className="relative z-10 p-6 min-h-screen">
@@ -59,13 +51,22 @@ export default function DashboardPage() {
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => router.push("/dashboard/users")}
+                  onClick={() => router.push("/users")}
                   className="bg-purple-600/30 hover:bg-purple-600/40 text-purple-200 border border-purple-500/30 shadow-lg backdrop-blur-md transition-all hover:scale-105"
                 >
                   <Shield className="w-4 h-4 mr-2" />
                   Manage Users
                 </Button>
               )}
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => router.push("/gallery")}
+                className="bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all hover:scale-105"
+              >
+                <ImageIcon className="w-4 h-4 mr-2" />
+                Gallery
+              </Button>
               <Button
                 variant="secondary"
                 size="sm"

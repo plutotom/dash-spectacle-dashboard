@@ -13,7 +13,19 @@ const schema = defineSchema({
     phoneVerificationTime: v.optional(v.number()),
     isAnonymous: v.optional(v.boolean()),
     role: v.optional(v.string()),
+    imageCount: v.optional(v.number()),
+    maxUploads: v.optional(v.number()),
   }).index("email", ["email"]),
+
+  // User uploaded images
+  images: defineTable({
+    userId: v.id("users"),
+    url: v.string(),
+    storageId: v.optional(v.string()),
+    uploadedAt: v.number(),
+    name: v.string(),
+    size: v.number(),
+  }).index("by_user", ["userId"]),
 
   // Messages for the family message feed
   messages: defineTable({

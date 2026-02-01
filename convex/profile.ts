@@ -22,6 +22,8 @@ export const getProfile = query({
       email: user.email,
       name: user.name ?? "",
       role: (user.role as UserRole) ?? "user",
+      imageCount: user.imageCount || 0,
+      maxUploads: user.maxUploads ?? 5,
     };
   },
 });
@@ -80,6 +82,29 @@ export const setUserRole = mutation({
   },
 });
 
+// Admin only: Update a user's upload limit
+export const updateUserLimit = mutation({
+  args: {
+    userId: v.id("users"),
+    limit: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const currentUserId = await auth.getUserId(ctx);
+    if (!currentUserId) {
+      throw new Error("Not authenticated");
+    }
+
+    const currentUser = await ctx.db.get(currentUserId);
+    if (currentUser?.role !== "admin") {
+      throw new Error("Only admins can change user limits");
+    }
+
+    await ctx.db.patch(args.userId, {
+      maxUploads: args.limit,
+    });
+  },
+});
+
 // Admin only: Get all users with their roles
 export const listUsers = query({
   args: {},
@@ -101,6 +126,8 @@ export const listUsers = query({
       email: user.email,
       name: user.name ?? "",
       role: (user.role as UserRole) ?? "user",
+      imageCount: user.imageCount || 0,
+      maxUploads: user.maxUploads ?? 5, // Default to 5 if not set
     }));
   },
 });
