@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { internalMutation, query, action } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { v } from "convex/values";
@@ -87,7 +88,6 @@ export const fetchCurrent = action({
       const haToken = process.env.HOMEASSISTANT_TOKEN;
       const haSensor = process.env.HOMEASSISTANT_LOCAL_TEMPERATURE_ID;
 
-      /* eslint-disable no-console */
       if (haUrl && haToken) {
         console.log("Attempting to fetch from Home Assistant...");
         try {
@@ -121,7 +121,6 @@ export const fetchCurrent = action({
       } else {
         console.log("Home Assistant credentials missing (URL or Token).");
       }
-      /* eslint-enable no-console */
 
       // 3. Save to DB
       await ctx.runMutation(internal.weather.updateWeather, {

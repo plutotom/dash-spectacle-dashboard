@@ -1,11 +1,6 @@
 "use client";
 
-import { useAuthActions } from "@convex-dev/auth/react";
-import { useQuery } from "convex/react";
 import { useConvexAuth } from "convex/react";
-import { useRouter } from "next/navigation";
-import { api } from "../../../convex/_generated/api";
-import { Button } from "@/components/ui/button";
 import {
   DateTimeDisplay,
   CurrentWeather,
@@ -14,18 +9,10 @@ import {
   CalendarWidget,
   BackgroundSlideshow,
 } from "@/components/dashboard";
-import { Shield, Image as ImageIcon } from "lucide-react";
+import ButtonNavigation from "../section/ButtonNavigation";
 
 export default function DashboardPage() {
-  const { isAuthenticated, isLoading } = useConvexAuth();
-  const { signOut } = useAuthActions();
-  const router = useRouter();
-  const isAdmin = useQuery(api.profile.isAdmin);
-
-  const handleSignOut = async () => {
-    await signOut();
-    router.push("/signin");
-  };
+  const { isLoading } = useConvexAuth();
 
   // Show loading spinner only briefly
   if (isLoading) {
@@ -45,55 +32,7 @@ export default function DashboardPage() {
       <div className="relative z-10 p-6 min-h-screen">
         {/* Header with auth buttons */}
         <div className="absolute top-4 right-4 flex gap-2">
-          {isAuthenticated ? (
-            <>
-              {isAdmin && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => router.push("/users")}
-                  className="bg-purple-600/30 hover:bg-purple-600/40 text-purple-200 border border-purple-500/30 shadow-lg backdrop-blur-md transition-all hover:scale-105"
-                >
-                  <Shield className="w-4 h-4 mr-2" />
-                  Manage Users
-                </Button>
-              )}
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => router.push("/gallery")}
-                className="bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all hover:scale-105"
-              >
-                <ImageIcon className="w-4 h-4 mr-2" />
-                Gallery
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => router.push("/profile")}
-                className="bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all hover:scale-105"
-              >
-                Profile
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleSignOut}
-                className="bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all hover:scale-105"
-              >
-                Sign Out
-              </Button>
-            </>
-          ) : (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => router.push("/signin")}
-              className="bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all hover:scale-105"
-            >
-              Sign In
-            </Button>
-          )}
+          <ButtonNavigation />
         </div>
 
         {/* Main Dashboard Layout */}

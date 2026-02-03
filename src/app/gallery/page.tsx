@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Trash2, Upload } from "lucide-react";
 import { useConvexAuth } from "convex/react";
 import { useRouter } from "next/navigation";
+import ButtonNavigation from "../section/ButtonNavigation";
 
 export default function GalleryPage() {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -386,6 +387,9 @@ export default function GalleryPage() {
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h1 className="text-3xl font-bold text-white">Gallery</h1>
+          <div className="flex gap-2">
+            <ButtonNavigation />
+          </div>
 
           {isAdmin ? (
             <div className="flex gap-2 bg-white/5 p-1 rounded-lg backdrop-blur-sm">

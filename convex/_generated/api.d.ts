@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as calendar from "../calendar.js";
 import type * as http from "../http.js";
 import type * as images from "../images.js";
 import type * as messages from "../messages.js";
@@ -26,6 +27,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  calendar: typeof calendar;
   http: typeof http;
   images: typeof images;
   messages: typeof messages;

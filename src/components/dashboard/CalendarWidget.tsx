@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { format, addDays, isSameDay } from "date-fns";
+import { format, addDays, isSameDay, parseISO } from "date-fns";
+import { useAction } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 interface CalendarEvent {
   id: string;
@@ -21,51 +23,54 @@ export function CalendarWidget() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const getEvents = useAction(api.calendar.getEvents);
+
   const fetchEvents = useCallback(async () => {
     try {
-      // This will be replaced with actual Google Calendar API call via Convex action
-      // For now, using placeholder data
+      const rawEvents = await getEvents();
+
       const today = new Date();
-      const mockDays: DayEvents[] = Array.from({ length: 5 }, (_, i) => ({
-        date: addDays(today, i),
-        events:
-          i === 0
-            ? [
-                {
-                  id: "1",
-                  title: "Team Meeting",
-                  start: today,
-                  end: today,
-                  allDay: false,
-                },
-                {
-                  id: "2",
-                  title: "Lunch",
-                  start: today,
-                  end: today,
-                  allDay: false,
-                },
-              ]
-            : i === 1
-              ? [
-                  {
-                    id: "3",
-                    title: "Doctor Appointment",
-                    start: addDays(today, 1),
-                    end: addDays(today, 1),
-                    allDay: false,
-                  },
-                ]
-              : [],
-      }));
-      setDays(mockDays);
+      // Generate next 5 days
+      const upcomingDays: DayEvents[] = Array.from({ length: 5 }, (_, i) => {
+        const date = addDays(today, i);
+        return {
+          date,
+          events: [],
+        };
+      });
+
+      // Distribute events to days
+      if (rawEvents && Array.isArray(rawEvents)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        rawEvents.forEach((event: any) => {
+          if (!event.start) return;
+          const eventStart = parseISO(event.start);
+          // Find which day bucket this falls into
+          const dayBucket = upcomingDays.find((d) =>
+            isSameDay(d.date, eventStart),
+          );
+          if (dayBucket) {
+            dayBucket.events.push({
+              id: event.id,
+              title: event.title,
+              start: eventStart,
+              end: event.end ? parseISO(event.end) : eventStart,
+              allDay: event.allDay,
+            });
+          }
+        });
+      }
+
+      setDays(upcomingDays);
       setError(null);
-    } catch {
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
       setError("Failed to load calendar");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getEvents]);
 
   useEffect(() => {
     fetchEvents();
@@ -123,7 +128,7 @@ export function CalendarWidget() {
                       {event.title}
                     </div>
                     <div className="text-[9px] text-white/40">
-                      {format(event.start, "h:mm a")}
+                      {event.allDay ? "All Day" : format(event.start, "h:mm a")}
                     </div>
                   </div>
                 ))

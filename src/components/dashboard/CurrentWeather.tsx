@@ -20,6 +20,7 @@ export function CurrentWeather() {
         try {
           await fetchCurrent();
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error("Failed to auto-refresh weather:", e);
         } finally {
           setIsRefreshing(false);

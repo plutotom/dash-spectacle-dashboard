@@ -32,6 +32,7 @@ export function WeatherForecast() {
         try {
           await fetchForecast();
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error("Failed to auto-refresh forecast:", e);
         } finally {
           setIsRefreshing(false);
