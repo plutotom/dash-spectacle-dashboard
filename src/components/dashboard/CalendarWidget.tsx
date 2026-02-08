@@ -39,6 +39,11 @@ export function CalendarWidget() {
         };
       });
 
+      console.log(
+        "[CalendarWidget] Raw events received:",
+        rawEvents?.length || 0,
+      );
+
       // Distribute events to days
       if (rawEvents && Array.isArray(rawEvents)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,16 +62,32 @@ export function CalendarWidget() {
               end: event.end ? parseISO(event.end) : eventStart,
               allDay: event.allDay,
             });
+          } else {
+            console.log(
+              "[CalendarWidget] Event skipped (not in 5-day range):",
+              event.title,
+              event.start,
+            );
           }
         });
       }
 
+      console.log(
+        "[CalendarWidget] Processed days:",
+        upcomingDays.map((d) => ({
+          date: format(d.date, "yyyy-MM-dd"),
+          count: d.events.length,
+        })),
+      );
+
       setDays(upcomingDays);
       setError(null);
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err);
-      setError("Failed to load calendar");
+      console.error("[CalendarWidget] Error fetching calendar events:", err);
+      // Extract error message if it's a Convex error or standard Error
+      const errorMessage =
+        (err as { message?: string })?.message || "Failed to load calendar";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -89,8 +110,13 @@ export function CalendarWidget() {
 
   if (error) {
     return (
-      <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 flex items-center justify-center h-40">
-        <p className="text-gray-400 text-sm">{error}</p>
+      <div className="bg-red-500/10 backdrop-blur-sm rounded-lg p-3 border border-red-500/20 flex items-center justify-center h-full min-h-[140px] mt-4">
+        <div className="flex flex-col items-center text-center">
+          <span className="text-red-400 font-medium text-xs uppercase tracking-wider mb-1">
+            Calendar Error
+          </span>
+          <p className="text-red-300/70 text-[10px]">{error}</p>
+        </div>
       </div>
     );
   }
