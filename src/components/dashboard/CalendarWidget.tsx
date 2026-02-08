@@ -39,11 +39,6 @@ export function CalendarWidget() {
         };
       });
 
-      console.log(
-        "[CalendarWidget] Raw events received:",
-        rawEvents?.length || 0,
-      );
-
       // Distribute events to days
       if (rawEvents && Array.isArray(rawEvents)) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -62,23 +57,9 @@ export function CalendarWidget() {
               end: event.end ? parseISO(event.end) : eventStart,
               allDay: event.allDay,
             });
-          } else {
-            console.log(
-              "[CalendarWidget] Event skipped (not in 5-day range):",
-              event.title,
-              event.start,
-            );
           }
         });
       }
-
-      console.log(
-        "[CalendarWidget] Processed days:",
-        upcomingDays.map((d) => ({
-          date: format(d.date, "yyyy-MM-dd"),
-          count: d.events.length,
-        })),
-      );
 
       setDays(upcomingDays);
       setError(null);

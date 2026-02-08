@@ -100,7 +100,6 @@ export const fetchCurrent = action({
 
           if (haRes.ok) {
             const haData = await haRes.json();
-            console.log("HA Data received:", haData); // Safe to log structure, ensure no token in response usually
             // Inject HA data into the response structure to match PHP logic
             if (!weatherData.current) weatherData.current = {};
             weatherData.current.home_assistant_current_temp = parseFloat(

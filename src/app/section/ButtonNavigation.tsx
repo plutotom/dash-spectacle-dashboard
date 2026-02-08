@@ -29,6 +29,7 @@ interface NavButtonsProps {
   isAdmin?: boolean;
   onNavigate: (path: string) => void;
   onSignOut: () => void;
+  isIdle?: boolean;
 }
 
 const NavButtons = ({
@@ -37,8 +38,13 @@ const NavButtons = ({
   isAdmin,
   onNavigate,
   onSignOut,
+  isIdle = false,
 }: NavButtonsProps) => (
-  <>
+  <div
+    className={`flex ${mobile ? "flex-col gap-3" : "gap-2"} transition-all duration-1000 ${
+      isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
+    }`}
+  >
     {!isOnDashboard && (
       <Button
         variant="secondary"
@@ -99,7 +105,7 @@ const NavButtons = ({
       <LogOut className="w-4 h-4 mr-2" />
       Sign Out
     </Button>
-  </>
+  </div>
 );
 
 export default function ButtonNavigation() {
@@ -124,7 +130,7 @@ export default function ButtonNavigation() {
     const handleActivity = () => {
       resetIdleTimer();
       clearTimeout(idleTimeout);
-      idleTimeout = setTimeout(() => setIsIdle(true), 10000); // 20 seconds
+      idleTimeout = setTimeout(() => setIsIdle(true), 10000); // 10 seconds per user change, revert to 20s if needed
     };
 
     window.addEventListener("mousemove", handleActivity);
@@ -179,6 +185,7 @@ export default function ButtonNavigation() {
           isAdmin={isAdmin}
           onNavigate={handleNavigation}
           onSignOut={handleSignOut}
+          isIdle={isIdle}
         />
       </div>
 

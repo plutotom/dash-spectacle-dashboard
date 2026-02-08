@@ -32,11 +32,6 @@ export const getEvents = action({
       const timeMax = new Date(now);
       timeMax.setDate(timeMax.getDate() + 4);
 
-      console.log(
-        `[Calendar] Fetching events from ${now.toISOString()} to ${timeMax.toISOString()}`,
-      );
-      console.log(`[Calendar] Using Calendar ID: ${calendarId}`);
-
       // 3. Fetch events
       const response = await calendar.events.list({
         calendarId,
@@ -45,10 +40,6 @@ export const getEvents = action({
         singleEvents: true,
         orderBy: "startTime",
       });
-
-      console.log(
-        `[Calendar] Received ${response.data.items?.length || 0} raw events from Google`,
-      );
 
       // 4. Transform events
       const events =
@@ -66,8 +57,6 @@ export const getEvents = action({
             allDay,
           };
         }) || [];
-
-      console.log(`[Calendar] Returning ${events.length} transformed events`);
 
       return events;
     } catch (error) {
