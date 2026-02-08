@@ -21,7 +21,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 interface NavButtonsProps {
   mobile?: boolean;
@@ -111,6 +111,39 @@ export default function ButtonNavigation() {
   const isOnDashboard = pathname === "/dashboard";
   const [open, setOpen] = useState(false);
 
+  // Idle detection
+  const [isIdle, setIsIdle] = useState(false);
+
+  const resetIdleTimer = useCallback(() => {
+    setIsIdle(false);
+  }, []);
+
+  useEffect(() => {
+    let idleTimeout: NodeJS.Timeout;
+
+    const handleActivity = () => {
+      resetIdleTimer();
+      clearTimeout(idleTimeout);
+      idleTimeout = setTimeout(() => setIsIdle(true), 10000); // 20 seconds
+    };
+
+    window.addEventListener("mousemove", handleActivity);
+    window.addEventListener("keydown", handleActivity);
+    window.addEventListener("touchstart", handleActivity);
+    window.addEventListener("scroll", handleActivity);
+
+    // Start the idle timer
+    idleTimeout = setTimeout(() => setIsIdle(true), 10000);
+
+    return () => {
+      window.removeEventListener("mousemove", handleActivity);
+      window.removeEventListener("keydown", handleActivity);
+      window.removeEventListener("touchstart", handleActivity);
+      window.removeEventListener("scroll", handleActivity);
+      clearTimeout(idleTimeout);
+    };
+  }, [resetIdleTimer]);
+
   const handleSignOut = async () => {
     await signOut();
     router.push("/signin");
@@ -128,7 +161,9 @@ export default function ButtonNavigation() {
         variant="secondary"
         size="sm"
         onClick={() => router.push("/signin")}
-        className="bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all hover:scale-105"
+        className={`bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all duration-1000 hover:scale-105 ${
+          isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
       >
         Sign In
       </Button>
