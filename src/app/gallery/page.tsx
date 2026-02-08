@@ -1,32 +1,33 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { upload } from "@vercel/blob/client";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Loader2, Trash2, Upload } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { useConvexAuth } from "convex/react";
 import { useRouter } from "next/navigation";
 import ButtonNavigation from "../section/ButtonNavigation";
+import { MultiImageUpload } from "@/components/MultiImageUpload";
 
 export default function GalleryPage() {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/signin");
+    }
+  }, [isLoading, isAuthenticated, router]);
   const profile = useQuery(api.profile.getProfile);
   const images = useQuery(api.images.getImages, {});
   // Only query all images if user is admin
   const isAdmin = profile?.role === "admin";
   const allImages = useQuery(api.images.getAllImages, isAdmin ? {} : "skip");
 
-  const saveImage = useMutation(api.images.saveImage);
   const deleteImage = useMutation(api.images.deleteImage);
   const deleteImages = useMutation(api.images.deleteImages);
 
-  const inputFileRef = useRef<HTMLInputElement>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<"gallery" | "admin">("gallery");
 
   // Multi-select state for admin view
@@ -37,79 +38,6 @@ export default function GalleryPage() {
   // Derive counts from profile
   const count = profile?.imageCount || 0;
   const max = profile?.maxUploads || 5;
-
-  if (!isAuthenticated) {
-    router.push("/signin");
-  }
-
-  const handleUpload = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!inputFileRef.current?.files) {
-      return;
-    }
-
-    const file = inputFileRef.current.files[0];
-    if (!file) return;
-
-    if (count >= max) {
-      alert("Upload limit reached.");
-      return;
-    }
-
-    setIsUploading(true);
-
-    try {
-      // First attempt
-      let blobUrl = "";
-      const blobSize = file.size;
-      try {
-        const newBlob = await upload(file.name, file, {
-          access: "public",
-          handleUploadUrl: "/api/upload",
-        });
-        blobUrl = newBlob.url;
-      } catch (error) {
-        // Check for "already exists" error
-        const msg = (error as Error).message;
-        if (msg.includes("already exists")) {
-          if (
-            confirm(
-              "A file with this name already exists. Do you want to overwrite it?",
-            )
-          ) {
-            // Retry with overwrite flag
-            const newBlob = await upload(file.name, file, {
-              access: "public",
-              handleUploadUrl: "/api/upload?overwrite=true",
-            });
-            blobUrl = newBlob.url;
-          } else {
-            // User cancelled overwrite
-            setIsUploading(false);
-            return;
-          }
-        } else {
-          throw error;
-        }
-      }
-
-      await saveImage({
-        url: blobUrl,
-        name: file.name,
-        size: blobSize,
-      });
-
-      // Clear input
-      if (inputFileRef.current) {
-        inputFileRef.current.value = "";
-      }
-    } catch (error) {
-      alert("Error: " + (error as Error).message);
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   // Handle image click with modifier keys
   const handleImageClick = (
@@ -187,37 +115,7 @@ export default function GalleryPage() {
   const MyGalleryContent = () => (
     <div className="space-y-8">
       {/* Upload Section */}
-      <Card className="bg-white/10 border-white/10 backdrop-blur-xl">
-        <CardContent className="p-6">
-          <form onSubmit={handleUpload} className="flex gap-4 items-center">
-            <Input
-              ref={inputFileRef}
-              type="file"
-              accept="image/*"
-              disabled={isUploading || count >= max}
-              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50, file:text-purple-700 hover:file:bg-purple-100 text-gray-300"
-            />
-            <Button
-              type="submit"
-              disabled={isUploading || count >= max}
-              className="bg-purple-600 hover:bg-purple-700"
-            >
-              {isUploading ? (
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-              ) : (
-                <Upload className="w-4 h-4 mr-2" />
-              )}
-              Upload
-            </Button>
-          </form>
-          {count >= max && (
-            <p className="text-red-400 text-sm mt-2">
-              You have reached your upload limit. Please delete some images to
-              upload more.
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      <MultiImageUpload maxFiles={max} currentCount={count} />
 
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
