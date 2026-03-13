@@ -44,7 +44,7 @@ export default function DashboardPage() {
                 <DateTimeDisplay />
               </div>
               {/* Weather Stack - Right Aligned and Compact */}
-              <div className="w-full md:w-auto flex flex-col gap-2 min-w-[200px]">
+              <div className="w-full md:w-auto flex flex-col gap-2 min-w-[240px]">
                 <CurrentWeather />
                 <WeatherForecast />
               </div>
@@ -53,7 +53,7 @@ export default function DashboardPage() {
             {/* Middle Row: Content */}
             <div className="flex justify-start w-full">
               {/* Messages - Constrained width, taller via component styles */}
-              <div className="w-full max-w-md">
+              <div className="w-full max-w-lg">
                 <MessagesFeed />
               </div>
             </div>

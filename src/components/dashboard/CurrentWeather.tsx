@@ -73,19 +73,19 @@ export function CurrentWeather() {
         <div className="flex items-center gap-4">
           {/* Main Temp */}
           <div className="flex flex-col">
-            <div className="text-3xl font-light text-white leading-none">
+            <div className="text-4xl font-light text-white leading-none">
               {apiTemp !== undefined ? Math.round(apiTemp) : "--"}°
             </div>
-            <div className="text-white/60 text-xs mt-1">{condition}</div>
+            <div className="text-white/60 text-sm mt-1">{condition}</div>
           </div>
 
           {/* Indoor Temp (Small) */}
           {haTemp !== undefined && (
             <div className="border-l border-white/10 pl-3 flex flex-col justify-center">
-              <span className="text-[10px] text-green-400/80 uppercase tracking-wider font-medium">
+              <span className="text-xs text-green-400/80 uppercase tracking-wider font-medium">
                 Indoor
               </span>
-              <span className="text-lg font-light text-white/90 leading-none mt-0.5">
+              <span className="text-xl font-light text-white/90 leading-none mt-0.5">
                 {Math.round(haTemp)}°
               </span>
             </div>
