@@ -30,7 +30,7 @@ export function BackgroundSlideshow() {
             backgroundImage: `url('${DEFAULT_BG}')`,
           }}
         />
-        <div className="absolute inset-0 z-0 bg-black/30" />
+        <div className="absolute inset-0 z-0 bg-black/40" />
       </>
     );
   }
@@ -44,7 +44,7 @@ export function BackgroundSlideshow() {
           backgroundImage: `url('${image.url}')`,
         }}
       />
-      <div className="absolute inset-0 z-0 bg-black/30" />
+      <div className="absolute inset-0 z-0 bg-black/40" />
     </>
   );
 }

@@ -106,7 +106,7 @@ export function CalendarWidget() {
 
   return (
     <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 border border-white/5 flex flex-col mt-4">
-      <h3 className="text-sm font-medium text-white/70 mb-3 uppercase tracking-wider">
+      <h3 className="text-base font-medium text-white/70 mb-3 uppercase tracking-wider">
         Upcoming Events
       </h3>
       <div className="grid grid-cols-5 gap-4">
@@ -119,7 +119,7 @@ export function CalendarWidget() {
                 : "bg-white/5 border border-white/5"
             }`}
           >
-            <div className="text-[10px] text-white/40 uppercase mb-1.5 font-medium tracking-wide border-b border-white/5 pb-1">
+            <div className="text-xs text-white/40 uppercase mb-1.5 font-medium tracking-wide border-b border-white/5 pb-1">
               {isSameDay(day.date, today)
                 ? "Today"
                 : isSameDay(day.date, addDays(today, 1))
@@ -131,10 +131,10 @@ export function CalendarWidget() {
               {day.events.length > 0 ? (
                 day.events.map((event) => (
                   <div key={event.id} className="group">
-                    <div className="text-xs font-medium text-white/90 truncate leading-tight">
+                    <div className="text-sm font-medium text-white/90 truncate leading-tight">
                       {event.title}
                     </div>
-                    <div className="text-[9px] text-white/40">
+                    <div className="text-[10px] text-white/40">
                       {event.allDay ? "All Day" : format(event.start, "h:mm a")}
                     </div>
                   </div>

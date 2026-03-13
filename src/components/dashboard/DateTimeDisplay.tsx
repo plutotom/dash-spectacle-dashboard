@@ -22,9 +22,9 @@ export function DateTimeDisplay() {
 
   return (
     <div className="text-white">
-      <div className="text-8xl font-light tracking-tight">{timeString}</div>
-      <div className="text-3xl font-medium mt-2">{weekday}</div>
-      <div className="text-lg text-gray-300 mt-1">{dateString}</div>
+      <div className="text-9xl font-light tracking-tight">{timeString}</div>
+      <div className="text-4xl font-medium mt-2">{weekday}</div>
+      <div className="text-xl text-gray-300 mt-1">{dateString}</div>
     </div>
   );
 }

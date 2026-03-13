@@ -67,7 +67,7 @@ export function MessagesFeed() {
   };
 
   return (
-    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-0 border border-white/5 flex flex-col h-[250px] relative overflow-hidden group/feed">
+    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-0 border border-white/5 flex flex-col h-[320px] relative overflow-hidden group/feed">
       <h3 className="absolute top-4 left-4 z-10 text-sm font-medium text-white/70 uppercase tracking-wider bg-black/40 backdrop-blur-md px-2 py-1 rounded text-xs pointer-events-none">
         Messages
       </h3>
@@ -83,16 +83,16 @@ export function MessagesFeed() {
         {messages?.map((message) => (
           <div key={message._id} className="group">
             <div className="flex items-baseline justify-between mb-1">
-              <span className="text-sm font-medium text-white/90">
+              <span className="text-base font-medium text-white/90">
                 {message.name}
               </span>
-              <span className="text-[10px] text-white/30 ml-2">
+              <span className="text-xs text-white/30 ml-2">
                 {formatDistanceToNow(new Date(message._creationTime), {
                   addSuffix: true,
                 })}
               </span>
             </div>
-            <p className="text-white/70 text-sm leading-relaxed font-light">
+            <p className="text-white/70 text-base leading-relaxed font-light">
               {message.content}
             </p>
           </div>
