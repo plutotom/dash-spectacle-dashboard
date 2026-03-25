@@ -105,7 +105,7 @@ export function CalendarWidget() {
   const today = new Date();
 
   return (
-    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 border border-white/5 flex flex-col mt-4">
+    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 border border-white/5 flex flex-col">
       <h3 className="text-base font-medium text-white/70 mb-3 uppercase tracking-wider">
         Upcoming Events
       </h3>
