@@ -49,19 +49,18 @@ export default function DashboardPage() {
                 <WeatherForecast />
               </div>
             </div>
+          </div>
 
-            {/* Middle Row: Content */}
-            <div className="flex justify-start w-full">
-              {/* Messages - Constrained width, taller via component styles */}
+          {/* Bottom area: Messages above calendar */}
+          <div className="w-full mt-auto">
+            <div className="flex justify-start w-full pb-4">
               <div className="w-full max-w-lg">
                 <MessagesFeed />
               </div>
             </div>
-          </div>
-
-          {/* Bottom Row: Calendar (Full Width, Sticky Bottom) */}
-          <div className="w-full pb-8 mt-auto pt-8">
-            <CalendarWidget />
+            <div className="w-full pb-8">
+              <CalendarWidget />
+            </div>
           </div>
         </div>
       </div>
