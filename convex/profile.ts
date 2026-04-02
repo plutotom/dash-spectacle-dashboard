@@ -23,7 +23,7 @@ export const getProfile = query({
       name: user.name ?? "",
       role: (user.role as UserRole) ?? "user",
       imageCount: user.imageCount || 0,
-      maxUploads: user.maxUploads ?? 5,
+      maxUploads: user.maxUploads ?? 0,
     };
   },
 });
@@ -127,7 +127,7 @@ export const listUsers = query({
       name: user.name ?? "",
       role: (user.role as UserRole) ?? "user",
       imageCount: user.imageCount || 0,
-      maxUploads: user.maxUploads ?? 5, // Default to 5 if not set
+      maxUploads: user.maxUploads ?? 0, // Default to 0 if not set (admin must approve)
     }));
   },
 });

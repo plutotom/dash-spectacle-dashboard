@@ -37,7 +37,7 @@ export default function GalleryPage() {
 
   // Derive counts from profile
   const count = profile?.imageCount || 0;
-  const max = profile?.maxUploads || 5;
+  const max = profile?.maxUploads ?? 0;
 
   // Handle image click with modifier keys
   const handleImageClick = (

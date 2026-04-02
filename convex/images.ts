@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { auth } from "./auth";
 
-const DEFAULT_MAX_UPLOADS = 5;
+const DEFAULT_MAX_UPLOADS = 0;
 
 export const getImages = query({
   args: { userId: v.optional(v.id("users")) },
