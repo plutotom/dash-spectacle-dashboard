@@ -115,7 +115,7 @@ export function CalendarWidget() {
             key={index}
             className={`rounded-md p-2 flex flex-col h-full ${
               isSameDay(day.date, today)
-                ? "bg-purple-500/10 border border-purple-500/20"
+                ? "bg-teal-500/10 border border-teal-500/20"
                 : "bg-white/5 border border-white/5"
             }`}
           >

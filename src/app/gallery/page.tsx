@@ -171,7 +171,7 @@ export default function GalleryPage() {
         </div>
         <div className="flex items-center gap-3">
           {selectedIds.size > 0 && (
-            <span className="text-sm text-purple-300">
+            <span className="text-sm text-teal-300">
               {selectedIds.size} selected
             </span>
           )}
@@ -214,7 +214,7 @@ export default function GalleryPage() {
               onClick={(e) => handleImageClick(img._id, index, e)}
               className={`group relative aspect-square rounded-xl overflow-hidden bg-black/40 border-2 cursor-pointer transition-all duration-200 ${
                 isSelected
-                  ? "border-purple-500 ring-2 ring-purple-500/50"
+                  ? "border-teal-500 ring-2 ring-teal-500/50"
                   : "border-white/10 hover:border-white/30"
               }`}
             >
@@ -222,7 +222,7 @@ export default function GalleryPage() {
               <div
                 className={`absolute top-2 right-2 w-6 h-6 rounded-full border-2 z-10 flex items-center justify-center transition-all ${
                   isSelected
-                    ? "bg-purple-500 border-purple-500"
+                    ? "bg-teal-500 border-teal-500"
                     : "bg-black/40 border-white/40"
                 }`}
               >
@@ -273,7 +273,7 @@ export default function GalleryPage() {
 
   if (isLoading)
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
         Loading
       </div>
     );
@@ -281,7 +281,7 @@ export default function GalleryPage() {
   if (!isAuthenticated) return <div>Not authenticated</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h1 className="text-3xl font-bold text-white">Gallery</h1>
@@ -297,7 +297,7 @@ export default function GalleryPage() {
                 onClick={() => setActiveTab("gallery")}
                 className={
                   activeTab === "gallery"
-                    ? "bg-purple-600"
+                    ? "bg-teal-600"
                     : "text-gray-300 hover:text-white"
                 }
               >
@@ -309,7 +309,7 @@ export default function GalleryPage() {
                 onClick={() => setActiveTab("admin")}
                 className={
                   activeTab === "admin"
-                    ? "bg-purple-600"
+                    ? "bg-teal-600"
                     : "text-gray-300 hover:text-white"
                 }
               >
@@ -323,7 +323,7 @@ export default function GalleryPage() {
               </div>
               <div className="w-32 h-2 bg-gray-700 rounded-full mt-1 overflow-hidden">
                 <div
-                  className="h-full bg-purple-500 transition-all duration-300"
+                  className="h-full bg-teal-500 transition-all duration-300"
                   style={{ width: `${Math.min((count / max) * 100, 100)}%` }}
                 />
               </div>
@@ -341,7 +341,7 @@ export default function GalleryPage() {
                   </div>
                   <div className="w-32 h-2 bg-gray-700 rounded-full mt-1 overflow-hidden">
                     <div
-                      className="h-full bg-purple-500 transition-all duration-300"
+                      className="h-full bg-teal-500 transition-all duration-300"
                       style={{
                         width: `${Math.min((count / max) * 100, 100)}%`,
                       }}

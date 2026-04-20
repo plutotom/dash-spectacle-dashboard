@@ -20,8 +20,8 @@ export default function UsersPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500" />
       </div>
     );
   }
@@ -51,7 +51,7 @@ export default function UsersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <Button
@@ -105,7 +105,7 @@ export default function UsersPage() {
                     <span
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
                         user.role === "admin"
-                          ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                          ? "bg-teal-500/20 text-teal-300 border border-teal-500/30"
                           : "bg-gray-500/20 text-gray-300 border border-gray-500/30"
                       }`}
                     >

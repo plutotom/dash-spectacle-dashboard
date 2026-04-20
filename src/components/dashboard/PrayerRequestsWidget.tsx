@@ -39,7 +39,7 @@ export function PrayerRequestsWidget() {
                   </div>
                 )}
                 {request.prayerFor && (
-                  <div className="text-sm text-purple-400 font-medium">
+                  <div className="text-sm text-teal-400 font-medium">
                     For: {request.prayerFor}
                   </div>
                 )}

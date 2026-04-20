@@ -194,7 +194,7 @@ export function MultiImageUpload({
         return <AlertCircle className="h-4 w-4 text-red-400" />;
       case "uploading":
         return (
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-purple-400 border-t-transparent" />
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-teal-400 border-t-transparent" />
         );
       default:
         return <File className="h-4 w-4 text-gray-400" />;
@@ -229,9 +229,9 @@ export function MultiImageUpload({
         <div
           className={`cursor-pointer rounded-xl border-2 border-dashed p-8 text-center transition-all duration-200 ${
             isDragging
-              ? "border-purple-400 bg-purple-500/10"
+              ? "border-teal-400 bg-teal-500/10"
               : canAddMore
-                ? "border-white/20 hover:border-purple-400/50 hover:bg-white/5"
+                ? "border-white/20 hover:border-teal-400/50 hover:bg-white/5"
                 : "border-white/10 opacity-50 cursor-not-allowed"
           }`}
           onDrop={canAddMore ? handleDrop : undefined}
@@ -241,7 +241,7 @@ export function MultiImageUpload({
         >
           <Upload
             className={`mx-auto mb-3 h-10 w-10 ${
-              isDragging ? "text-purple-400" : "text-gray-400"
+              isDragging ? "text-teal-400" : "text-gray-400"
             }`}
           />
           <p className="mb-1 font-medium text-white">
@@ -305,7 +305,7 @@ export function MultiImageUpload({
                         <div className="flex-1">
                           <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
                             <div
-                              className="h-full bg-purple-500 transition-all duration-300"
+                              className="h-full bg-teal-500 transition-all duration-300"
                               style={{ width: `${f.progress}%` }}
                             />
                           </div>
@@ -343,7 +343,7 @@ export function MultiImageUpload({
                 size="sm"
                 onClick={handleUpload}
                 disabled={isUploading || pendingCount === 0}
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-teal-600 hover:bg-teal-700"
               >
                 {isUploading
                   ? "Uploading..."

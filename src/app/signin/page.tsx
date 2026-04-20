@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { getPasswordAuthErrorMessage } from "@/lib/auth-errors";
 
 export default function SignInPage() {
   const { signIn } = useAuthActions();
@@ -47,28 +48,16 @@ export default function SignInPage() {
       // Use full page navigation to ensure auth state is fresh
       window.location.href = "/dashboard";
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(
-          err.message ||
-            (flow === "signIn"
-              ? "Invalid credentials"
-              : "Could not create account"),
-        );
-      } else {
-        setError(
-          flow === "signIn"
-            ? "Invalid credentials"
-            : "Could not create account",
-        );
-      }
+      console.error("[error] signin error", err);
+      setError(getPasswordAuthErrorMessage(err, flow));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
-      <Card className="w-full max-w-md bg-background/80 backdrop-blur-xl border-white/10">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4">
+      <Card className="w-full max-w-md bg-background/90 backdrop-blur-xl border-border/60 shadow-lg shadow-slate-950/20">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">
             {flow === "signIn" ? "Welcome Back" : "Create Account"}
@@ -130,7 +119,7 @@ export default function SignInPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white"
             >
               {loading
                 ? "Loading..."
@@ -148,7 +137,7 @@ export default function SignInPage() {
               setFlow(flow === "signIn" ? "signUp" : "signIn");
               setError("");
             }}
-            className="text-purple-400 hover:text-purple-300"
+            className="text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
           >
             {flow === "signIn"
               ? "Don't have an account? Sign up"

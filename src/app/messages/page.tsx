@@ -39,8 +39,8 @@ export default function MessagesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500" />
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500" />
       </div>
     );
   }
@@ -106,7 +106,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -122,7 +122,7 @@ export default function MessagesPage() {
             </Button>
             <h1 className="text-2xl font-bold text-white">Messages</h1>
             {isAdmin && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-teal-500/20 text-teal-300 text-xs rounded-full">
                 <Shield className="w-3 h-3" />
                 Admin
               </span>
@@ -138,7 +138,7 @@ export default function MessagesPage() {
             )}
             <Button
               onClick={handleShowNewForm}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-teal-600 hover:bg-teal-700"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Message
@@ -155,7 +155,7 @@ export default function MessagesPage() {
             <CardContent className="space-y-4">
               <p className="text-sm text-gray-400">
                 Posting as{" "}
-                <span className="text-purple-400">
+                <span className="text-teal-400">
                   {profile?.name || profile?.email || "..."}
                 </span>
               </p>
@@ -250,7 +250,7 @@ export default function MessagesPage() {
                       <div className="col-span-4 text-gray-300 text-sm truncate">
                         {message.content}
                       </div>
-                      <div className="col-span-2 text-purple-400 text-xs truncate">
+                      <div className="col-span-2 text-teal-400 text-xs truncate">
                         {message.userEmail}
                       </div>
                       <div className="col-span-2 text-gray-500 text-sm">

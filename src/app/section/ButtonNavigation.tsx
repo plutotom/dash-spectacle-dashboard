@@ -63,7 +63,7 @@ const NavButtons = ({
         variant="secondary"
         size="sm"
         onClick={() => onNavigate("/users")}
-        className={`bg-purple-600/30 hover:bg-purple-600/40 text-purple-200 border border-purple-500/30 shadow-lg backdrop-blur-md transition-all hover:scale-105 ${
+        className={`bg-teal-600/30 hover:bg-teal-600/40 text-teal-100 border border-teal-500/30 shadow-lg backdrop-blur-md transition-all hover:scale-105 ${
           mobile ? "w-full justify-start" : ""
         }`}
       >

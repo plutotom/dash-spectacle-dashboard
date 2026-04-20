@@ -49,8 +49,8 @@ export default function PrayerRequestsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500" />
       </div>
     );
   }
@@ -113,7 +113,7 @@ export default function PrayerRequestsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -129,7 +129,7 @@ export default function PrayerRequestsPage() {
             </Button>
             <h1 className="text-2xl font-bold text-white">Prayer Requests</h1>
             {isAdmin && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-teal-500/20 text-teal-300 text-xs rounded-full">
                 <Shield className="w-3 h-3" />
                 Admin
               </span>
@@ -138,7 +138,7 @@ export default function PrayerRequestsPage() {
           {isAdmin && (
             <Button
               onClick={() => setShowNewForm(!showNewForm)}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-teal-600 hover:bg-teal-700"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Request
@@ -153,7 +153,7 @@ export default function PrayerRequestsPage() {
               key={f}
               variant={filter === f ? "default" : "ghost"}
               onClick={() => setFilter(f)}
-              className={filter === f ? "bg-purple-600" : "text-gray-400"}
+              className={filter === f ? "bg-teal-600" : "text-gray-400"}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)}
             </Button>
@@ -290,7 +290,7 @@ export default function PrayerRequestsPage() {
                         {request.isAnswered ? (
                           <CheckCircle className="w-6 h-6 text-green-400" />
                         ) : (
-                          <Circle className="w-6 h-6 text-gray-500 hover:text-purple-400" />
+                          <Circle className="w-6 h-6 text-gray-500 hover:text-teal-400" />
                         )}
                       </button>
                     ) : (
@@ -312,7 +312,7 @@ export default function PrayerRequestsPage() {
                           </span>
                         )}
                         {request.prayerFor && (
-                          <span className="text-sm text-purple-400 font-medium">
+                          <span className="text-sm text-teal-400 font-medium">
                             For: {request.prayerFor}
                           </span>
                         )}

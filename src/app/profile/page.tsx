@@ -99,8 +99,8 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
       </div>
     );
   }
@@ -112,7 +112,7 @@ export default function ProfilePage() {
   const isAdmin = profile?.role === "admin";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4">
       <Card className="w-full max-w-md bg-background/80 backdrop-blur-xl border-white/10">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Profile Settings</CardTitle>
@@ -126,7 +126,7 @@ export default function ProfilePage() {
               <div
                 className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
                   isAdmin
-                    ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                    ? "bg-teal-500/20 text-teal-300 border border-teal-500/30"
                     : "bg-gray-500/20 text-gray-300 border border-gray-500/30"
                 }`}
               >
@@ -233,7 +233,7 @@ export default function ProfilePage() {
               <Button
                 type="submit"
                 disabled={saving}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                className="flex-1 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </Button>

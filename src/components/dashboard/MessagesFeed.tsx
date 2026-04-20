@@ -129,7 +129,7 @@ export function MessagesFeed() {
               type="submit"
               size="sm"
               disabled={submitting || !newMessage.trim()}
-              className="absolute right-1 top-0.5 h-8 bg-purple-600/80 hover:bg-purple-600 text-white border-none scale-90"
+              className="absolute right-1 top-0.5 h-8 bg-teal-600/80 hover:bg-teal-600 text-white border-none scale-90"
             >
               Send
             </Button>
