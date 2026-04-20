@@ -5,3 +5,5 @@ export { MessagesFeed } from "./MessagesFeed";
 export { PrayerRequestsWidget } from "./PrayerRequestsWidget";
 export { CalendarWidget } from "./CalendarWidget";
 export { BackgroundSlideshow } from "./BackgroundSlideshow";
+export { EspressoGlassTile } from "./espresso/EspressoGlassTile";
+export { EspressoTickerStrip } from "./espresso/EspressoTickerStrip";

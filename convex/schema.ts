@@ -55,6 +55,15 @@ const schema = defineSchema({
     data: v.any(), // JSON response from API
     updatedAt: v.number(),
   }).index("by_type", ["type"]),
+
+  // Espresso shots cache (visualizer.coffee)
+  // kind: "list" = recent shots summary array
+  // kind: "detail" = single shot with full curves (latest one)
+  espressoShots: defineTable({
+    kind: v.string(),
+    data: v.any(),
+    updatedAt: v.number(),
+  }).index("by_kind", ["kind"]),
 });
 
 export default schema;

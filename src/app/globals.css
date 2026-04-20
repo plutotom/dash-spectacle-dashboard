@@ -123,6 +123,68 @@
   }
 }
 
+/* ============================================================
+   Espresso theme tokens — used by espresso shot widgets.
+   Warm coffee palette + telemetry accents (pressure/flow).
+   Exposed as CSS vars + tailwind utilities via @theme inline.
+   ============================================================ */
+:root {
+  --espresso-ink: oklch(0.18 0.04 50); /* deep coffee-black */
+  --espresso-ink-soft: oklch(0.24 0.05 50);
+  --espresso-crema: oklch(0.86 0.09 75); /* tan/cream foam */
+  --espresso-crema-soft: oklch(0.92 0.04 80);
+  --espresso-honey: oklch(0.78 0.16 70); /* amber accent */
+  --espresso-honey-glow: oklch(0.82 0.2 75);
+  --espresso-roast: oklch(0.42 0.1 45); /* mid roast */
+  --espresso-pressure: oklch(0.82 0.13 175); /* teal — pressure curve */
+  --espresso-flow: oklch(0.82 0.12 235); /* sky — flow curve */
+  --espresso-good: oklch(0.78 0.16 155); /* on-target green */
+  --espresso-warn: oklch(0.78 0.17 55); /* off-target amber */
+  --espresso-bad: oklch(0.7 0.2 25); /* bad shot red */
+
+  /* Glass surfaces tuned for the family-photo background */
+  --espresso-glass: oklch(0.16 0.02 50 / 0.55);
+  --espresso-glass-soft: oklch(0.16 0.02 50 / 0.35);
+  --espresso-edge: oklch(0.86 0.09 75 / 0.18);
+}
+
+@theme inline {
+  --color-espresso-ink: var(--espresso-ink);
+  --color-espresso-ink-soft: var(--espresso-ink-soft);
+  --color-espresso-crema: var(--espresso-crema);
+  --color-espresso-crema-soft: var(--espresso-crema-soft);
+  --color-espresso-honey: var(--espresso-honey);
+  --color-espresso-honey-glow: var(--espresso-honey-glow);
+  --color-espresso-roast: var(--espresso-roast);
+  --color-espresso-pressure: var(--espresso-pressure);
+  --color-espresso-flow: var(--espresso-flow);
+  --color-espresso-good: var(--espresso-good);
+  --color-espresso-warn: var(--espresso-warn);
+  --color-espresso-bad: var(--espresso-bad);
+  --color-espresso-glass: var(--espresso-glass);
+  --color-espresso-glass-soft: var(--espresso-glass-soft);
+  --color-espresso-edge: var(--espresso-edge);
+}
+
+/* Subtle pulse for "fresh shot just landed" state */
+@keyframes espresso-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.78 0.16 70 / 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 6px oklch(0.78 0.16 70 / 0);
+  }
+}
+.espresso-fresh {
+  animation: espresso-pulse 2.4s ease-in-out infinite;
+}
+
+/* Honey ring used by the ticker shot rings */
+.espresso-ring-glow {
+  filter: drop-shadow(0 0 4px oklch(0.82 0.2 75 / 0.45));
+}
+
 /* Scrollbar hiding utility */
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */

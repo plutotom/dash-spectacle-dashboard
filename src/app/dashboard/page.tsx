@@ -8,6 +8,7 @@ import {
   MessagesFeed,
   CalendarWidget,
   BackgroundSlideshow,
+  EspressoGlassTile,
 } from "@/components/dashboard";
 import ButtonNavigation from "../section/ButtonNavigation";
 
@@ -43,10 +44,11 @@ export default function DashboardPage() {
               <div className="flex-1">
                 <DateTimeDisplay />
               </div>
-              {/* Weather Stack - Right Aligned and Compact */}
-              <div className="w-full md:w-auto flex flex-col gap-2 min-w-[240px]">
+              {/* Morning ritual stack: weather + espresso */}
+              <div className="w-full md:w-auto flex flex-col gap-2 min-w-[280px] md:max-w-[340px]">
                 <CurrentWeather />
                 <WeatherForecast />
+                <EspressoGlassTile />
               </div>
             </div>
           </div>
