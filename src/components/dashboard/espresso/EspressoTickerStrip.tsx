@@ -13,33 +13,27 @@ import {
   type Shot,
 } from "./shared";
 
-const REFRESH_MS = 5 * 60 * 1000;
-
 export function EspressoTickerStrip() {
   const list = useQuery(api.espresso.getList);
   const fetchShots = useAction(api.espresso.fetchShots);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (list === undefined) return;
-    if (!list || list.isStale) {
-      const run = async () => {
-        setRefreshing(true);
-        try {
-          await fetchShots();
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error("espresso ticker refresh failed", e);
-        } finally {
-          setRefreshing(false);
-        }
-      };
-      void run();
-    }
-    const t = setInterval(() => {
-      void fetchShots();
-    }, REFRESH_MS);
-    return () => clearInterval(t);
+    // A Convex cron (convex/crons.ts) keeps the cache fresh every 5 min. The
+    // client only kicks a fetch on a cold start, when nothing is cached yet.
+    if (list !== null) return; // undefined = loading, object = have data
+    const run = async () => {
+      setRefreshing(true);
+      try {
+        await fetchShots();
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("espresso ticker refresh failed", e);
+      } finally {
+        setRefreshing(false);
+      }
+    };
+    void run();
   }, [list, fetchShots]);
 
   if (list === undefined) {

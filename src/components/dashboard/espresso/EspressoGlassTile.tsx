@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore, useState } from "react";
 import { useQuery, useAction } from "convex/react";
 import { Coffee, Loader2, WifiOff } from "lucide-react";
 import { api } from "../../../../convex/_generated/api";
@@ -16,34 +16,34 @@ import {
   type Shot,
 } from "./shared";
 
-const REFRESH_MS = 5 * 60 * 1000;
-
 export function EspressoGlassTile() {
   const list = useQuery(api.espresso.getList);
   const detail = useQuery(api.espresso.getLatestDetail);
   const fetchShots = useAction(api.espresso.fetchShots);
   const [refreshing, setRefreshing] = useState(false);
+  const headDateMs =
+    list?.shots?.[0]?.start_time != null
+      ? new Date(String(list.shots[0].start_time)).getTime()
+      : null;
+  const now = useNow();
+  const isFresh = headDateMs !== null && now - headDateMs < 10 * 60 * 1000;
 
   useEffect(() => {
-    if (list === undefined) return;
-    if (!list || list.isStale) {
-      const run = async () => {
-        setRefreshing(true);
-        try {
-          await fetchShots();
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error("espresso refresh failed", e);
-        } finally {
-          setRefreshing(false);
-        }
-      };
-      void run();
-    }
-    const t = setInterval(() => {
-      void fetchShots();
-    }, REFRESH_MS);
-    return () => clearInterval(t);
+    // A Convex cron (convex/crons.ts) keeps the cache fresh every 5 min. The
+    // client only kicks a fetch on a cold start, when nothing is cached yet.
+    if (list !== null) return; // undefined = loading, object = have data
+    const run = async () => {
+      setRefreshing(true);
+      try {
+        await fetchShots();
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("espresso refresh failed", e);
+      } finally {
+        setRefreshing(false);
+      }
+    };
+    void run();
   }, [list, fetchShots]);
 
   // Loading
@@ -66,7 +66,6 @@ export function EspressoGlassTile() {
   // lag one refresh — only merge detail curves/stats when it matches the list head.
   const listFirstRaw = list.shots[0] as RawShot;
   const detailRaw = detail?.shot as RawShot | undefined;
-  console.log("detailRaw", detailRaw);
   const detailMatchesHead =
     detailRaw !== undefined && String(detailRaw.id) === String(listFirstRaw.id);
   const latestRaw = (
@@ -76,9 +75,6 @@ export function EspressoGlassTile() {
   ) as RawShot;
   const latest: Shot = normalizeShot(latestRaw);
   const recent = shots.slice(1, 5);
-
-  const isFresh =
-    latest.date && Date.now() - latest.date.getTime() < 10 * 60 * 1000;
 
   return (
     <div
@@ -162,6 +158,17 @@ export function EspressoGlassTile() {
         </div>
       )}
     </div>
+  );
+}
+
+function useNow(tickMs = 60_000) {
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      const id = setInterval(onStoreChange, tickMs);
+      return () => clearInterval(id);
+    },
+    () => Date.now(),
+    () => 0,
   );
 }
 

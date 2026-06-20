@@ -6,7 +6,14 @@ import { v } from "convex/values";
 // --- Constants ---
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const SHOT_LIMIT = 8; // how many recent shots to keep
+const SHOT_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // drop shots older than a week
 const API_BASE = "https://visualizer.coffee/api";
+// Curve resolution to cache. The UI downsamples to 64 points for rendering, so
+// storing the full (multi-hundred-point, many-channel) visualizer payload just
+// burns DB write + read I/O and websocket egress. We keep a small superset.
+const CURVE_POINTS = 128;
+const PRESSURE_KEYS = ["espresso_pressure", "pressure", "p"];
+const FLOW_KEYS = ["espresso_flow", "flow", "f"];
 
 // --- Types (kept loose: visualizer payloads vary) ---
 type ShotSummary = {
@@ -55,6 +62,40 @@ function buildAuthHeader(): string | null {
   return `Basic ${base64Utf8(`${email}:${password}`)}`;
 }
 
+// --- Payload trimming ---
+function downsampleArray(values: unknown, maxPoints = CURVE_POINTS): number[] {
+  if (!Array.isArray(values)) return [];
+  if (values.length <= maxPoints) return values as number[];
+  const step = values.length / maxPoints;
+  const out: number[] = [];
+  for (let i = 0; i < maxPoints; i++) {
+    out.push((values[Math.floor(i * step)] as number) ?? 0);
+  }
+  return out;
+}
+
+/**
+ * Shrink a shot detail to only what the dashboard renders: the pressure/flow
+ * curves (downsampled) and a downsampled timeframe. Drops the other visualizer
+ * channels (temperature, weight, resistance, …) the UI never reads.
+ */
+function trimDetail(detail: ShotDetail): ShotDetail {
+  const series = detail.data?.data;
+  if (!series) return detail;
+  const kept: Record<string, number[]> = {};
+  for (const key of [...PRESSURE_KEYS, ...FLOW_KEYS]) {
+    if (Array.isArray(series[key])) kept[key] = downsampleArray(series[key]);
+  }
+  return {
+    ...detail,
+    data: {
+      ...detail.data,
+      timeframe: downsampleArray(detail.data?.timeframe),
+      data: kept,
+    },
+  };
+}
+
 // --- Queries ---
 
 export const getList = query({
@@ -99,6 +140,12 @@ export const upsertCache = internalMutation({
       .withIndex("by_kind", (q) => q.eq("kind", args.kind))
       .first();
     if (existing) {
+      // Skip no-op writes. The cache is refreshed every 5 min but shots rarely
+      // change, and rewriting an identical document still bills full write I/O
+      // and pushes a websocket update to every subscribed client.
+      if (JSON.stringify(existing.data) === JSON.stringify(args.data)) {
+        return;
+      }
       await ctx.db.patch(existing._id, {
         data: args.data,
         updatedAt: Date.now(),
@@ -182,7 +229,23 @@ export const fetchShots = action({
         return tb - ta;
       });
 
-      const trimmed = sorted.slice(0, SHOT_LIMIT);
+      // Drop shots older than a week — the dashboard only shows recent activity,
+      // and there's no reason to keep stale shots in the cache.
+      const cutoff = Date.now() - SHOT_MAX_AGE_MS;
+      const recent = sorted.filter((s) => {
+        const t = s.start_time ? Date.parse(s.start_time) : NaN;
+        return Number.isFinite(t) && t >= cutoff;
+      });
+
+      const trimmed = recent.slice(0, SHOT_LIMIT);
+
+      if (trimmed.length === 0) {
+        await ctx.runMutation(internal.espresso.upsertCache, {
+          kind: "list",
+          data: [],
+        });
+        return { count: 0 };
+      }
 
       await ctx.runMutation(internal.espresso.upsertCache, {
         kind: "list",
@@ -208,7 +271,7 @@ export const fetchShots = action({
             } else {
               await ctx.runMutation(internal.espresso.upsertCache, {
                 kind: "detail",
-                data: { ...latest, ...detail },
+                data: trimDetail({ ...latest, ...detail }),
               });
             }
           } else {
