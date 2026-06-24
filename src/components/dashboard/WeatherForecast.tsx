@@ -1,8 +1,7 @@
 "use client";
 
-import { useQuery, useAction } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 
@@ -19,48 +18,7 @@ interface ForecastDay {
 
 export function WeatherForecast() {
   const forecastData = useQuery(api.weather.get, { type: "forecast" });
-  const fetchForecast = useAction(api.weather.fetchForecast);
-  const fetchForecastRef = useRef(fetchForecast);
-  const fetchInFlightRef = useRef(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  useEffect(() => {
-    fetchForecastRef.current = fetchForecast;
-  }, [fetchForecast]);
-
-  useEffect(() => {
-    if (forecastData === undefined) return;
-
-    const refresh = async () => {
-      if (fetchInFlightRef.current) return;
-      fetchInFlightRef.current = true;
-      setIsRefreshing(true);
-      try {
-        await fetchForecastRef.current();
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error("Failed to auto-refresh forecast:", e);
-      } finally {
-        setIsRefreshing(false);
-        fetchInFlightRef.current = false;
-      }
-    };
-
-    if (!forecastData || forecastData.isStale) {
-      void refresh();
-    }
-
-    const timer = setInterval(
-      () => {
-        void refresh();
-      },
-      30 * 60 * 1000,
-    );
-
-    return () => clearInterval(timer);
-  }, [forecastData]);
-
-  // Loading state (initial load only)
   if (forecastData === undefined) {
     return (
       <div className="flex items-center justify-center p-2">
@@ -69,13 +27,12 @@ export function WeatherForecast() {
     );
   }
 
-  // Error/Empty state
-  if (!forecastData && !isRefreshing) {
-    return null; // Just hide it if empty to keep look clean
+  if (!forecastData) {
+    return null;
   }
 
   const forecastDays: ForecastDay[] =
-    forecastData?.data?.forecast?.forecastday || [];
+    forecastData.data?.forecast?.forecastday || [];
 
   return (
     <div className="bg-black/20 backdrop-blur-sm rounded-lg p-2 border border-white/5 transition-all hover:bg-black/30">

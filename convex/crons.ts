@@ -13,4 +13,19 @@ crons.interval(
   {},
 );
 
+// Weather is refreshed server-side so kiosk clients never poll in a loop.
+crons.interval(
+  "refresh weather current",
+  { minutes: 5 },
+  api.weather.fetchCurrent,
+  {},
+);
+
+crons.interval(
+  "refresh weather forecast",
+  { minutes: 20 },
+  api.weather.fetchForecast,
+  {},
+);
+
 export default crons;

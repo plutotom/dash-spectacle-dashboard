@@ -21,7 +21,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface NavButtonsProps {
   mobile?: boolean;
@@ -117,20 +117,23 @@ export default function ButtonNavigation() {
   const isOnDashboard = pathname === "/dashboard";
   const [open, setOpen] = useState(false);
 
-  // Idle detection
+  // Idle detection — only setState when idle status actually changes
   const [isIdle, setIsIdle] = useState(false);
-
-  const resetIdleTimer = useCallback(() => {
-    setIsIdle(false);
-  }, []);
+  const isIdleRef = useRef(false);
 
   useEffect(() => {
-    let idleTimeout: NodeJS.Timeout;
+    let idleTimeout: ReturnType<typeof setTimeout>;
 
     const handleActivity = () => {
-      resetIdleTimer();
       clearTimeout(idleTimeout);
-      idleTimeout = setTimeout(() => setIsIdle(true), 10000); // 10 seconds per user change, revert to 20s if needed
+      if (isIdleRef.current) {
+        isIdleRef.current = false;
+        setIsIdle(false);
+      }
+      idleTimeout = setTimeout(() => {
+        isIdleRef.current = true;
+        setIsIdle(true);
+      }, 10000);
     };
 
     window.addEventListener("mousemove", handleActivity);
@@ -138,8 +141,10 @@ export default function ButtonNavigation() {
     window.addEventListener("touchstart", handleActivity);
     window.addEventListener("scroll", handleActivity);
 
-    // Start the idle timer
-    idleTimeout = setTimeout(() => setIsIdle(true), 10000);
+    idleTimeout = setTimeout(() => {
+      isIdleRef.current = true;
+      setIsIdle(true);
+    }, 10000);
 
     return () => {
       window.removeEventListener("mousemove", handleActivity);
@@ -148,7 +153,7 @@ export default function ButtonNavigation() {
       window.removeEventListener("scroll", handleActivity);
       clearTimeout(idleTimeout);
     };
-  }, [resetIdleTimer]);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();

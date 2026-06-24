@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { useConvexAuth } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -16,19 +16,23 @@ export function MessagesFeed() {
   const [isIdle, setIsIdle] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const isIdleRef = useRef(false);
 
-  // Idle detection
-  const resetIdleTimer = useCallback(() => {
-    setIsIdle(false);
-  }, []);
+  // Idle detection — only setState when idle status actually changes
 
   useEffect(() => {
-    let idleTimeout: NodeJS.Timeout;
+    let idleTimeout: ReturnType<typeof setTimeout>;
 
     const handleActivity = () => {
-      resetIdleTimer();
       clearTimeout(idleTimeout);
-      idleTimeout = setTimeout(() => setIsIdle(true), 10000); // 10 seconds
+      if (isIdleRef.current) {
+        isIdleRef.current = false;
+        setIsIdle(false);
+      }
+      idleTimeout = setTimeout(() => {
+        isIdleRef.current = true;
+        setIsIdle(true);
+      }, 10000);
     };
 
     window.addEventListener("mousemove", handleActivity);
@@ -36,8 +40,10 @@ export function MessagesFeed() {
     window.addEventListener("touchstart", handleActivity);
     window.addEventListener("scroll", handleActivity);
 
-    // Start the idle timer
-    idleTimeout = setTimeout(() => setIsIdle(true), 10000);
+    idleTimeout = setTimeout(() => {
+      isIdleRef.current = true;
+      setIsIdle(true);
+    }, 10000);
 
     return () => {
       window.removeEventListener("mousemove", handleActivity);
@@ -46,7 +52,7 @@ export function MessagesFeed() {
       window.removeEventListener("scroll", handleActivity);
       clearTimeout(idleTimeout);
     };
-  }, [resetIdleTimer]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

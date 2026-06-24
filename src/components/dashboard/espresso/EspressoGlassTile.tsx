@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useQuery, useAction } from "convex/react";
 import { Coffee, Loader2, WifiOff } from "lucide-react";
 import { api } from "../../../../convex/_generated/api";
@@ -22,7 +22,6 @@ export function EspressoGlassTile() {
   const fetchShots = useAction(api.espresso.fetchShots);
   const fetchShotsRef = useRef(fetchShots);
   const fetchInFlightRef = useRef(false);
-  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchShotsRef.current = fetchShots;
@@ -35,24 +34,18 @@ export function EspressoGlassTile() {
   const isFresh = headDateMs !== null && now - headDateMs < 10 * 60 * 1000;
 
   useEffect(() => {
-    // A Convex cron (convex/crons.ts) keeps the cache fresh every 5 min. The
-    // client only kicks a fetch on a cold start, when nothing is cached yet.
-    if (list !== null) return; // undefined = loading, object = have data
+    // Cron keeps cache warm; client only nudges a fetch on a totally cold cache.
+    if (list !== null) return;
     if (fetchInFlightRef.current) return;
-    const run = async () => {
-      fetchInFlightRef.current = true;
-      setRefreshing(true);
-      try {
-        await fetchShotsRef.current();
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error("espresso refresh failed", e);
-      } finally {
-        setRefreshing(false);
+    fetchInFlightRef.current = true;
+
+    const timeoutId = window.setTimeout(() => {
+      void fetchShotsRef.current().finally(() => {
         fetchInFlightRef.current = false;
-      }
-    };
-    void run();
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, [list]);
 
   // Loading
@@ -100,9 +93,6 @@ export function EspressoGlassTile() {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          {refreshing && (
-            <Loader2 className="w-3 h-3 animate-spin text-espresso-crema/50" />
-          )}
           <span className="text-[11px] text-espresso-crema/50 truncate max-w-[140px]">
             {latest.profile}
           </span>
