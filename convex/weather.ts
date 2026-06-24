@@ -88,10 +88,14 @@ export const fetchCurrent = action({
       const haToken = process.env.HOMEASSISTANT_TOKEN;
       const haSensor = process.env.HOMEASSISTANT_LOCAL_TEMPERATURE_ID;
 
-      if (haUrl && haToken) {
+      if (haUrl && haToken && haSensor) {
         console.log("Attempting to fetch from Home Assistant...");
         try {
-          const haRes = await fetch(`${haUrl}/api/states/sensor.${haSensor}`, {
+          // Accept full entity id (e.g. sensor.living_room_temp) or bare slug
+          const entityId = haSensor.includes(".")
+            ? haSensor
+            : `sensor.${haSensor}`;
+          const haRes = await fetch(`${haUrl}/api/states/${entityId}`, {
             headers: {
               Authorization: `Bearer ${haToken}`,
               "Content-Type": "application/json",

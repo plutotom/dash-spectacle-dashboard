@@ -9,6 +9,200 @@ import { useConvexAuth } from "convex/react";
 import { useRouter } from "next/navigation";
 import ButtonNavigation from "../section/ButtonNavigation";
 import { MultiImageUpload } from "@/components/MultiImageUpload";
+import type { Doc } from "../../../convex/_generated/dataModel";
+
+function MyGalleryContent({
+  max,
+  count,
+  images,
+  onDeleteImage,
+}: {
+  max: number;
+  count: number;
+  images: Doc<"images">[] | undefined;
+  onDeleteImage: (imageId: Doc<"images">["_id"]) => void;
+}) {
+  return (
+    <div className="space-y-8">
+      <MultiImageUpload maxFiles={max} currentCount={count} />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {images?.map((img) => (
+          <div
+            key={img._id}
+            className="group relative aspect-square rounded-xl overflow-hidden bg-black/40 border border-white/10"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={img.url}
+              alt={img.name}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
+              <Button
+                variant="destructive"
+                size="icon"
+                onClick={() => {
+                  if (confirm("Delete this image?")) {
+                    onDeleteImage(img._id);
+                  }
+                }}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+              <p className="text-white text-sm truncate">{img.name}</p>
+              <p className="text-gray-400 text-xs">
+                {(img.size / 1024).toFixed(1)} KB
+              </p>
+            </div>
+          </div>
+        ))}
+        {!images?.length && (
+          <div className="col-span-full py-12 text-center text-gray-500">
+            No images uploaded yet.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+type AdminImage = Doc<"images"> & {
+  authorName?: string;
+  authorEmail?: string;
+};
+
+function AdminContent({
+  allImages,
+  selectedIds,
+  isDeleting,
+  onImageClick,
+  onSelectAll,
+  onDeleteSelected,
+}: {
+  allImages: AdminImage[] | undefined;
+  selectedIds: Set<string>;
+  isDeleting: boolean;
+  onImageClick: (
+    imageId: string,
+    index: number,
+    event: React.MouseEvent,
+  ) => void;
+  onSelectAll: () => void;
+  onDeleteSelected: () => void;
+}) {
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap justify-between items-center gap-4">
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-semibold text-white">All User Images</h2>
+          <span className="text-sm text-gray-400">
+            Total: {allImages?.length || 0}
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          {selectedIds.size > 0 && (
+            <span className="text-sm text-teal-300">
+              {selectedIds.size} selected
+            </span>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onSelectAll}
+            className="border-white/20 text-gray-300 hover:text-white hover:bg-white/10"
+          >
+            {selectedIds.size === allImages?.length
+              ? "Deselect All"
+              : "Select All"}
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={onDeleteSelected}
+            disabled={selectedIds.size === 0 || isDeleting}
+          >
+            {isDeleting ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            ) : (
+              <Trash2 className="w-4 h-4 mr-2" />
+            )}
+            Delete Selected
+          </Button>
+        </div>
+      </div>
+
+      <p className="text-xs text-gray-500">
+        Tip: Cmd/Ctrl+Click to toggle selection, Shift+Click to select range
+      </p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {allImages?.map((img, index) => {
+          const isSelected = selectedIds.has(img._id);
+          return (
+            <div
+              key={img._id}
+              onClick={(e) => onImageClick(img._id, index, e)}
+              className={`group relative aspect-square rounded-xl overflow-hidden bg-black/40 border-2 cursor-pointer transition-all duration-200 ${
+                isSelected
+                  ? "border-teal-500 ring-2 ring-teal-500/50"
+                  : "border-white/10 hover:border-white/30"
+              }`}
+            >
+              <div
+                className={`absolute top-2 right-2 w-6 h-6 rounded-full border-2 z-10 flex items-center justify-center transition-all ${
+                  isSelected
+                    ? "bg-teal-500 border-teal-500"
+                    : "bg-black/40 border-white/40"
+                }`}
+              >
+                {isSelected && (
+                  <svg
+                    className="w-4 h-4 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={img.url}
+                alt={img.name}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute top-2 left-2 right-10 flex justify-between items-start">
+                <span className="bg-black/60 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm truncate max-w-[90%]">
+                  {img.authorName || "Unknown"}
+                </span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-black/80 to-transparent">
+                <p className="text-white text-sm truncate">{img.name}</p>
+                <p className="text-gray-400 text-xs truncate">
+                  User: {img.authorEmail || "Unknown"}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+        {!allImages?.length && (
+          <div className="col-span-full py-12 text-center text-gray-500">
+            No images found.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function GalleryPage() {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -112,165 +306,6 @@ export default function GalleryPage() {
     }
   };
 
-  const MyGalleryContent = () => (
-    <div className="space-y-8">
-      {/* Upload Section */}
-      <MultiImageUpload maxFiles={max} currentCount={count} />
-
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {images?.map((img) => (
-          <div
-            key={img._id}
-            className="group relative aspect-square rounded-xl overflow-hidden bg-black/40 border border-white/10"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={img.url}
-              alt={img.name}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
-              <Button
-                variant="destructive"
-                size="icon"
-                onClick={() => {
-                  if (confirm("Delete this image?")) {
-                    deleteImage({ imageId: img._id });
-                  }
-                }}
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
-              <p className="text-white text-sm truncate">{img.name}</p>
-              <p className="text-gray-400 text-xs">
-                {(img.size / 1024).toFixed(1)} KB
-              </p>
-            </div>
-          </div>
-        ))}
-        {!images?.length && (
-          <div className="col-span-full py-12 text-center text-gray-500">
-            No images uploaded yet.
-          </div>
-        )}
-      </div>
-    </div>
-  );
-
-  const AdminContent = () => (
-    <div className="space-y-6">
-      <div className="flex flex-wrap justify-between items-center gap-4">
-        <div className="flex items-center gap-4">
-          <h2 className="text-xl font-semibold text-white">All User Images</h2>
-          <span className="text-sm text-gray-400">
-            Total: {allImages?.length || 0}
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          {selectedIds.size > 0 && (
-            <span className="text-sm text-teal-300">
-              {selectedIds.size} selected
-            </span>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSelectAll}
-            className="border-white/20 text-gray-300 hover:text-white hover:bg-white/10"
-          >
-            {selectedIds.size === allImages?.length
-              ? "Deselect All"
-              : "Select All"}
-          </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleDeleteSelected}
-            disabled={selectedIds.size === 0 || isDeleting}
-          >
-            {isDeleting ? (
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-            ) : (
-              <Trash2 className="w-4 h-4 mr-2" />
-            )}
-            Delete Selected
-          </Button>
-        </div>
-      </div>
-
-      <p className="text-xs text-gray-500">
-        Tip: Cmd/Ctrl+Click to toggle selection, Shift+Click to select range
-      </p>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {allImages?.map((img, index) => {
-          const isSelected = selectedIds.has(img._id);
-          return (
-            <div
-              key={img._id}
-              onClick={(e) => handleImageClick(img._id, index, e)}
-              className={`group relative aspect-square rounded-xl overflow-hidden bg-black/40 border-2 cursor-pointer transition-all duration-200 ${
-                isSelected
-                  ? "border-teal-500 ring-2 ring-teal-500/50"
-                  : "border-white/10 hover:border-white/30"
-              }`}
-            >
-              {/* Selection indicator */}
-              <div
-                className={`absolute top-2 right-2 w-6 h-6 rounded-full border-2 z-10 flex items-center justify-center transition-all ${
-                  isSelected
-                    ? "bg-teal-500 border-teal-500"
-                    : "bg-black/40 border-white/40"
-                }`}
-              >
-                {isSelected && (
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                )}
-              </div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={img.url}
-                alt={img.name}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <div className="absolute top-2 left-2 right-10 flex justify-between items-start">
-                <span className="bg-black/60 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm truncate max-w-[90%]">
-                  {img.authorName || "Unknown"}
-                </span>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-black/80 to-transparent">
-                <p className="text-white text-sm truncate">{img.name}</p>
-                <p className="text-gray-400 text-xs truncate">
-                  User: {img.authorEmail || "Unknown"}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-        {!allImages?.length && (
-          <div className="col-span-full py-12 text-center text-gray-500">
-            No images found.
-          </div>
-        )}
-      </div>
-    </div>
-  );
-
   if (isLoading)
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
@@ -350,11 +385,25 @@ export default function GalleryPage() {
                 </div>
               </div>
             )}
-            <MyGalleryContent />
+            <MyGalleryContent
+              max={max}
+              count={count}
+              images={images}
+              onDeleteImage={(imageId) => deleteImage({ imageId })}
+            />
           </>
         )}
 
-        {activeTab === "admin" && isAdmin && <AdminContent />}
+        {activeTab === "admin" && isAdmin && (
+          <AdminContent
+            allImages={allImages}
+            selectedIds={selectedIds}
+            isDeleting={isDeleting}
+            onImageClick={handleImageClick}
+            onSelectAll={handleSelectAll}
+            onDeleteSelected={handleDeleteSelected}
+          />
+        )}
       </div>
     </div>
   );

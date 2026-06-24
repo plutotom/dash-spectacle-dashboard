@@ -36,7 +36,8 @@ export default function ProfilePage() {
   const updateProfile = useMutation(api.profile.updateProfile);
   const claimAdmin = useMutation(api.profile.claimAdmin);
 
-  const [name, setName] = useState("");
+  const [nameOverride, setNameOverride] = useState<string | null>(null);
+  const name = nameOverride ?? profile?.name ?? "";
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -51,13 +52,6 @@ export default function ProfilePage() {
     }
   }, [isAuthenticated, isLoading, router]);
 
-  // Populate form with current profile data
-  useEffect(() => {
-    if (profile) {
-      setName(profile.name || "");
-    }
-  }, [profile]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -71,6 +65,7 @@ export default function ProfilePage() {
     setSaving(true);
     try {
       await updateProfile({ name: name.trim() });
+      setNameOverride(null);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
@@ -198,7 +193,7 @@ export default function ProfilePage() {
                 id="name"
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setNameOverride(e.target.value)}
                 placeholder="Your name"
                 required
               />

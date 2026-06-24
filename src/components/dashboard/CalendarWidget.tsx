@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { format, addDays, isSameDay, parseISO } from "date-fns";
 import { useAction } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -18,68 +18,92 @@ interface DayEvents {
   events: CalendarEvent[];
 }
 
+interface RawCalendarEvent {
+  id: string;
+  title: string;
+  start?: string | null;
+  end?: string | null;
+  allDay?: boolean;
+}
+
+function buildUpcomingDays(rawEvents: RawCalendarEvent[] | null): DayEvents[] {
+  const today = new Date();
+  const upcomingDays: DayEvents[] = Array.from({ length: 5 }, (_, i) => ({
+    date: addDays(today, i),
+    events: [],
+  }));
+
+  if (!rawEvents || !Array.isArray(rawEvents)) {
+    return upcomingDays;
+  }
+
+  for (const event of rawEvents) {
+    if (!event.start) continue;
+    const eventStart = parseISO(event.start);
+    const dayBucket = upcomingDays.find((d) => isSameDay(d.date, eventStart));
+    if (!dayBucket) continue;
+
+    dayBucket.events.push({
+      id: event.id,
+      title: event.title,
+      start: eventStart,
+      end: event.end ? parseISO(event.end) : eventStart,
+      allDay: event.allDay,
+    });
+  }
+
+  return upcomingDays;
+}
+
 export function CalendarWidget() {
   const [days, setDays] = useState<DayEvents[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const getEvents = useAction(api.calendar.getEvents);
+  const getEventsRef = useRef(getEvents);
 
-  const fetchEvents = useCallback(async () => {
-    try {
-      const rawEvents = await getEvents();
-
-      const today = new Date();
-      // Generate next 5 days
-      const upcomingDays: DayEvents[] = Array.from({ length: 5 }, (_, i) => {
-        const date = addDays(today, i);
-        return {
-          date,
-          events: [],
-        };
-      });
-
-      // Distribute events to days
-      if (rawEvents && Array.isArray(rawEvents)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        rawEvents.forEach((event: any) => {
-          if (!event.start) return;
-          const eventStart = parseISO(event.start);
-          // Find which day bucket this falls into
-          const dayBucket = upcomingDays.find((d) =>
-            isSameDay(d.date, eventStart),
-          );
-          if (dayBucket) {
-            dayBucket.events.push({
-              id: event.id,
-              title: event.title,
-              start: eventStart,
-              end: event.end ? parseISO(event.end) : eventStart,
-              allDay: event.allDay,
-            });
-          }
-        });
-      }
-
-      setDays(upcomingDays);
-      setError(null);
-    } catch (err) {
-      console.error("[CalendarWidget] Error fetching calendar events:", err);
-      // Extract error message if it's a Convex error or standard Error
-      const errorMessage =
-        (err as { message?: string })?.message || "Failed to load calendar";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    getEventsRef.current = getEvents;
   }, [getEvents]);
 
   useEffect(() => {
-    fetchEvents();
-    // Refresh every 20 minutes
-    const interval = setInterval(fetchEvents, 20 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [fetchEvents]);
+    let cancelled = false;
+
+    const loadEvents = async (showLoading: boolean) => {
+      if (showLoading) setLoading(true);
+      try {
+        const rawEvents = await getEventsRef.current();
+        if (cancelled) return;
+        setDays(buildUpcomingDays(rawEvents));
+        setError(null);
+      } catch (err) {
+        if (cancelled) return;
+        const errorMessage =
+          (err as { message?: string })?.message || "Failed to load calendar";
+        setError(errorMessage);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    const initialTimeout = window.setTimeout(() => {
+      void loadEvents(true);
+    }, 0);
+
+    const interval = window.setInterval(
+      () => {
+        void loadEvents(false);
+      },
+      20 * 60 * 1000,
+    );
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(initialTimeout);
+      window.clearInterval(interval);
+    };
+  }, []);
 
   if (loading) {
     return (

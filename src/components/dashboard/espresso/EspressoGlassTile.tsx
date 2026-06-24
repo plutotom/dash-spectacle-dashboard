@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useSyncExternalStore, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore, useState } from "react";
 import { useQuery, useAction } from "convex/react";
 import { Coffee, Loader2, WifiOff } from "lucide-react";
 import { api } from "../../../../convex/_generated/api";
@@ -20,7 +20,13 @@ export function EspressoGlassTile() {
   const list = useQuery(api.espresso.getList);
   const detail = useQuery(api.espresso.getLatestDetail);
   const fetchShots = useAction(api.espresso.fetchShots);
+  const fetchShotsRef = useRef(fetchShots);
+  const fetchInFlightRef = useRef(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    fetchShotsRef.current = fetchShots;
+  }, [fetchShots]);
   const headDateMs =
     list?.shots?.[0]?.start_time != null
       ? new Date(String(list.shots[0].start_time)).getTime()
@@ -32,19 +38,22 @@ export function EspressoGlassTile() {
     // A Convex cron (convex/crons.ts) keeps the cache fresh every 5 min. The
     // client only kicks a fetch on a cold start, when nothing is cached yet.
     if (list !== null) return; // undefined = loading, object = have data
+    if (fetchInFlightRef.current) return;
     const run = async () => {
+      fetchInFlightRef.current = true;
       setRefreshing(true);
       try {
-        await fetchShots();
+        await fetchShotsRef.current();
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error("espresso refresh failed", e);
       } finally {
         setRefreshing(false);
+        fetchInFlightRef.current = false;
       }
     };
     void run();
-  }, [list, fetchShots]);
+  }, [list]);
 
   // Loading
   if (list === undefined || detail === undefined) {

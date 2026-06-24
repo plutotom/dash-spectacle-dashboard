@@ -2,42 +2,51 @@
 
 import { useQuery, useAction } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Wifi, WifiOff, Loader2 } from "lucide-react";
 
 export function CurrentWeather() {
   const weatherData = useQuery(api.weather.get, { type: "current" });
   const fetchCurrent = useAction(api.weather.fetchCurrent);
+  const fetchCurrentRef = useRef(fetchCurrent);
+  const fetchInFlightRef = useRef(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    // If no data or stale, fetch new data
-    if (weatherData === undefined) return; // Loading initial state
+    fetchCurrentRef.current = fetchCurrent;
+  }, [fetchCurrent]);
+
+  useEffect(() => {
+    if (weatherData === undefined) return;
+
+    const refresh = async () => {
+      if (fetchInFlightRef.current) return;
+      fetchInFlightRef.current = true;
+      setIsRefreshing(true);
+      try {
+        await fetchCurrentRef.current();
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to auto-refresh weather:", e);
+      } finally {
+        setIsRefreshing(false);
+        fetchInFlightRef.current = false;
+      }
+    };
 
     if (!weatherData || weatherData.isStale) {
-      const refresh = async () => {
-        setIsRefreshing(true);
-        try {
-          await fetchCurrent();
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error("Failed to auto-refresh weather:", e);
-        } finally {
-          setIsRefreshing(false);
-        }
-      };
       void refresh();
     }
 
     const timer = setInterval(
       () => {
-        void fetchCurrent();
+        void refresh();
       },
       15 * 60 * 1000,
-    ); // 15 minutes
+    );
 
     return () => clearInterval(timer);
-  }, [weatherData, fetchCurrent]);
+  }, [weatherData]);
 
   // Loading state (initial load only)
   if (weatherData === undefined) {

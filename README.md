@@ -81,7 +81,7 @@ These are read inside Convex functions (`process.env` in `convex/`). Configure t
 | `WEATHER_ZIP_CODE`                   | `convex/weather.ts`     | Optional ZIP for forecast defaults.                                                                                                                                               |
 | `HOMEASSISTANT_URL`                  | `convex/weather.ts`     | Optional Home Assistant integration.                                                                                                                                              |
 | `HOMEASSISTANT_TOKEN`                | `convex/weather.ts`     | Optional HA token.                                                                                                                                                                |
-| `HOMEASSISTANT_LOCAL_TEMPERATURE_ID` | `convex/weather.ts`     | Optional HA entity id.                                                                                                                                                            |
+| `HOMEASSISTANT_LOCAL_TEMPERATURE_ID` | `convex/weather.ts`     | Optional HA temperature entity — full id (e.g. `sensor.living_room_temperature`) or bare slug (e.g. `living_room_temperature`).                                                   |
 | `GOOGLE_SERVICE_ACCOUNT_CREDENTIALS` | `convex/calendar.ts`    | JSON string of a Google service account (calendar read).                                                                                                                          |
 | `GOOGLE_CALENDAR_ID`                 | `convex/calendar.ts`    | Calendar id to read events from.                                                                                                                                                  |
 
@@ -140,3 +140,69 @@ If sign-in fails with **`POST /api/action` 404**, the Next.js side of Convex Aut
 - [Convex documentation](https://docs.convex.dev)
 - [Convex Auth](https://labs.convex.dev/auth)
 - [Next.js documentation](https://nextjs.org/docs)
+
+⏺ Perfect — staying in idea mode. Here's a tighter, ranked shortlist focused on your three picks (family
+glanceables, practical, playful), with rough effort so you can pick later:
+
+🏆 Top picks (best bang-for-buck on a wall TV)
+
+1. Countdown tile — "🎄 24 days till Christmas," birthdays, vacations, anniversaries. Add events in a
+   settings table, it auto-counts down. Emotionally satisfying daily and dead simple. (Easy — new Convex table +
+   small widget.)
+2. Trash & recycling reminder — "🗑️ Trash goes out tonight" that lights up only on the right evening. Tiny,
+   but the kind of thing everyone in the house actually thanks you for. (Easy — just a weekly schedule, no API.)
+3. "What's for dinner" / weekly meal plan — tonight in big text, the week below. Kills the 5pm "what are we
+   eating" question. (Easy–medium — Convex table + simple edit UI.)
+
+Family glanceables
+
+4. Chore board — rotating weekly chores per person, tap to check off. Kids love seeing their name and the
+   satisfaction of marking it done. (Medium — needs per-user assignment + reset logic.)
+5. Verse / quote of the day — sits naturally beside prayer requests; daily rotating Bible verse or
+   family-chosen quotes. (Easy — static list or a free verse API.)
+
+Practical
+
+6. Sunrise / sunset arc — a little sun moving along an arc with the times. Beautiful and useful, and you
+   already have weather/location. (Easy — math + SVG, no new data.)
+7. Commute / traffic tile — morning drive time to work/school. (Medium — needs a maps API key.)
+
+Playful
+
+8. Weather mascot — a character/emoji that "dresses" for the day ("☔ grab an umbrella," "🥵 it's a
+   scorcher"). Reuses weather data, adds personality. (Easy.)
+9. Daily affirmation / compliment — a kind rotating message ("You're doing great today 💛"). Warm touch for a
+   family wall. (Easy.)
+10. Family trivia / would-you-rather — a rotating conversation starter at dinner. (Easy.)
+
+If I had to recommend one to start with: the countdown tile (high emotional payoff, trivially easy, looks
+great big on a wall) or trash day (smallest effort, genuinely useful). Whenever you're ready to build one,
+just say which and I'll wire it into the dashboard.
+
+---
+
+# To debug the dashboard Pie on the wall you can do this
+
+Fastest path: launch Chrome with remote debugging
+If you can restart the kiosk browser, do this from SSH:
+
+`pkill -f chromium || pkill -f chrome`
+
+Then relaunch it with logging + remote debugging:
+DISPLAY=:0 chromium-browser \
+ --kiosk "https://dash-spectacle-dashboard.vercel.app/dashboard" \
+ --remote-debugging-port=9222 \
+ --enable-logging=stderr \
+ --v=1 \
+ --user-data-dir=/tmp/chrome-kiosk \
+
+> /tmp/chrome-kiosk.log 2>&1 &
+
+If your Pi uses chromium instead of chromium-browser, swap the command.
+Then tunnel the debug port to your laptop
+From your laptop:
+
+`ssh -L 9222:localhost:9222 pi@your-pi-ip`
+Now open one of these:
+`http://localhost:9222/json`
+`chrome://inspect`

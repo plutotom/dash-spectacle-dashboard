@@ -2,7 +2,7 @@
 
 import { useQuery, useAction } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 
@@ -20,36 +20,45 @@ interface ForecastDay {
 export function WeatherForecast() {
   const forecastData = useQuery(api.weather.get, { type: "forecast" });
   const fetchForecast = useAction(api.weather.fetchForecast);
+  const fetchForecastRef = useRef(fetchForecast);
+  const fetchInFlightRef = useRef(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    // If no data or stale, fetch new data
-    if (forecastData === undefined) return; // Loading initial state
+    fetchForecastRef.current = fetchForecast;
+  }, [fetchForecast]);
+
+  useEffect(() => {
+    if (forecastData === undefined) return;
+
+    const refresh = async () => {
+      if (fetchInFlightRef.current) return;
+      fetchInFlightRef.current = true;
+      setIsRefreshing(true);
+      try {
+        await fetchForecastRef.current();
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to auto-refresh forecast:", e);
+      } finally {
+        setIsRefreshing(false);
+        fetchInFlightRef.current = false;
+      }
+    };
 
     if (!forecastData || forecastData.isStale) {
-      const refresh = async () => {
-        setIsRefreshing(true);
-        try {
-          await fetchForecast();
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error("Failed to auto-refresh forecast:", e);
-        } finally {
-          setIsRefreshing(false);
-        }
-      };
       void refresh();
     }
 
     const timer = setInterval(
       () => {
-        void fetchForecast();
+        void refresh();
       },
       30 * 60 * 1000,
-    ); // 30 minutes
+    );
 
     return () => clearInterval(timer);
-  }, [forecastData, fetchForecast]);
+  }, [forecastData]);
 
   // Loading state (initial load only)
   if (forecastData === undefined) {

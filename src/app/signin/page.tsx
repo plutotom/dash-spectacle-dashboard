@@ -48,6 +48,7 @@ export default function SignInPage() {
       // Use full page navigation to ensure auth state is fresh
       window.location.href = "/dashboard";
     } catch (err: unknown) {
+      // eslint-disable-next-line no-console
       console.error("[error] signin error", err);
       setError(getPasswordAuthErrorMessage(err, flow));
     } finally {
