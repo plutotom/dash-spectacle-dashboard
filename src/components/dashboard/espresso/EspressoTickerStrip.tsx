@@ -4,14 +4,7 @@ import { useEffect, useState } from "react";
 import { useQuery, useAction } from "convex/react";
 import { Coffee, Loader2, TrendingUp, WifiOff } from "lucide-react";
 import { api } from "../../../../convex/_generated/api";
-import {
-  fmtTime,
-  normalizeShot,
-  ratio,
-  ratioStatusVar,
-  type RawShot,
-  type Shot,
-} from "./shared";
+import { fmtTime, normalizeShot, ratio, ratioStatusVar, type RawShot, type Shot } from "./shared";
 
 export function EspressoTickerStrip() {
   const list = useQuery(api.espresso.getList);
@@ -49,9 +42,7 @@ export function EspressoTickerStrip() {
     );
   }
 
-  const shots: Shot[] = list.shots
-    .slice(0, 5)
-    .map((r) => normalizeShot(r as RawShot));
+  const shots: Shot[] = list.shots.slice(0, 5).map((r) => normalizeShot(r as RawShot));
 
   const todayCount = shots.filter((s) => s.date && isToday(s.date)).length;
 
@@ -73,9 +64,7 @@ export function EspressoTickerStrip() {
             <span className="text-[10px] uppercase tracking-[0.22em] text-espresso-crema/65">
               Espresso · today
             </span>
-            {refreshing && (
-              <Loader2 className="w-3 h-3 animate-spin text-espresso-crema/50 ml-1" />
-            )}
+            {refreshing && <Loader2 className="w-3 h-3 animate-spin text-espresso-crema/50 ml-1" />}
           </div>
           <div className="text-2xl font-extralight tabular-nums leading-tight mt-0.5">
             {todayCount}{" "}
@@ -89,9 +78,7 @@ export function EspressoTickerStrip() {
             <div className="text-[10px] uppercase tracking-[0.22em] text-espresso-crema/65 flex items-center gap-1 justify-end">
               <TrendingUp className="w-3 h-3" /> avg ratio
             </div>
-            <div className="text-2xl font-extralight tabular-nums">
-              1:{avgRatio.toFixed(2)}
-            </div>
+            <div className="text-2xl font-extralight tabular-nums">1:{avgRatio.toFixed(2)}</div>
           </div>
         )}
       </div>
@@ -127,13 +114,9 @@ function ShotRow({ shot, latest }: { shot: Shot; latest: boolean }) {
         </div>
         <div className="text-sm font-light truncate text-espresso-crema-soft">
           {shot.bean}
-          {shot.roaster ? (
-            <span className="text-espresso-crema/45"> · {shot.roaster}</span>
-          ) : null}
+          {shot.roaster ? <span className="text-espresso-crema/45"> · {shot.roaster}</span> : null}
         </div>
-        <div className="text-[11px] text-espresso-crema/55 truncate">
-          {shot.profile}
-        </div>
+        <div className="text-[11px] text-espresso-crema/55 truncate">{shot.profile}</div>
       </div>
       <div className="text-right tabular-nums shrink-0">
         <div className="text-base font-light leading-none">
@@ -158,20 +141,9 @@ function ShotRing({ shot, latest }: { shot: Shot; latest: boolean }) {
   const stroke = ratioStatusVar(shot);
   const ratioLabel = ratio(shot);
   return (
-    <div
-      className={`relative w-12 h-12 shrink-0 ${
-        latest ? "espresso-ring-glow" : ""
-      }`}
-    >
+    <div className={`relative w-12 h-12 shrink-0 ${latest ? "espresso-ring-glow" : ""}`}>
       <svg viewBox="0 0 44 44" className="w-12 h-12 -rotate-90">
-        <circle
-          cx="22"
-          cy="22"
-          r={r}
-          fill="none"
-          stroke="var(--espresso-edge)"
-          strokeWidth="3"
-        />
+        <circle cx="22" cy="22" r={r} fill="none" stroke="var(--espresso-edge)" strokeWidth="3" />
         <circle
           cx="22"
           cy="22"

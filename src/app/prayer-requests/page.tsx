@@ -87,10 +87,7 @@ export default function PrayerRequestsPage() {
     setEditingId(null);
   };
 
-  const handleToggleAnswered = async (
-    id: Id<"prayerRequests">,
-    currentStatus: boolean,
-  ) => {
+  const handleToggleAnswered = async (id: Id<"prayerRequests">, currentStatus: boolean) => {
     await markAnswered({ id, isAnswered: !currentStatus });
   };
 
@@ -164,9 +161,7 @@ export default function PrayerRequestsPage() {
         {showNewForm && isAdmin && (
           <Card className="mb-6 bg-white/10 border-white/10 backdrop-blur-xl">
             <CardHeader>
-              <CardTitle className="text-white text-lg">
-                New Prayer Request
-              </CardTitle>
+              <CardTitle className="text-white text-lg">New Prayer Request</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -199,10 +194,7 @@ export default function PrayerRequestsPage() {
                 />
               </div>
               <div className="flex gap-2">
-                <Button
-                  onClick={handleCreate}
-                  className="bg-green-600 hover:bg-green-700"
-                >
+                <Button onClick={handleCreate} className="bg-green-600 hover:bg-green-700">
                   Create
                 </Button>
                 <Button
@@ -221,8 +213,7 @@ export default function PrayerRequestsPage() {
         {!isAdmin && (
           <Card className="mb-6 bg-yellow-500/10 border-yellow-500/30 backdrop-blur-xl">
             <CardContent className="p-4 text-center text-yellow-300 text-sm">
-              You are viewing prayer requests in read-only mode. Contact an
-              admin to make changes.
+              You are viewing prayer requests in read-only mode. Contact an admin to make changes.
             </CardContent>
           </Card>
         )}
@@ -233,9 +224,7 @@ export default function PrayerRequestsPage() {
             <Card
               key={request._id}
               className={`bg-white/10 border backdrop-blur-xl transition-all ${
-                request.isAnswered
-                  ? "border-green-500/30 bg-green-500/5"
-                  : "border-white/10"
+                request.isAnswered ? "border-green-500/30 bg-green-500/5" : "border-white/10"
               }`}
             >
               <CardContent className="p-4">
@@ -268,11 +257,7 @@ export default function PrayerRequestsPage() {
                       >
                         <Check className="w-4 h-4 mr-1" /> Save
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={handleCancelEdit}
-                      >
+                      <Button size="sm" variant="ghost" onClick={handleCancelEdit}>
                         <X className="w-4 h-4 mr-1" /> Cancel
                       </Button>
                     </div>
@@ -282,9 +267,7 @@ export default function PrayerRequestsPage() {
                     {/* Status Icon - Admin can toggle */}
                     {isAdmin ? (
                       <button
-                        onClick={() =>
-                          handleToggleAnswered(request._id, request.isAnswered)
-                        }
+                        onClick={() => handleToggleAnswered(request._id, request.isAnswered)}
                         className="mt-1 transition-colors"
                       >
                         {request.isAnswered ? (
@@ -324,19 +307,11 @@ export default function PrayerRequestsPage() {
                       </p>
                       <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                         <span>
-                          Created{" "}
-                          {format(
-                            new Date(request._creationTime),
-                            "MMM d, yyyy",
-                          )}
+                          Created {format(new Date(request._creationTime), "MMM d, yyyy")}
                         </span>
                         {request.isAnswered && request.answeredAt && (
                           <span className="text-green-400">
-                            ✅ Answered{" "}
-                            {format(
-                              new Date(request.answeredAt),
-                              "MMM d, yyyy",
-                            )}
+                            ✅ Answered {format(new Date(request.answeredAt), "MMM d, yyyy")}
                           </span>
                         )}
                       </div>

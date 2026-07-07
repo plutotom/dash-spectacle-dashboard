@@ -89,25 +89,19 @@ export function MessagesFeed() {
         {messages?.map((message) => (
           <div key={message._id} className="group">
             <div className="flex items-baseline justify-between mb-1">
-              <span className="text-base font-medium text-white/90">
-                {message.name}
-              </span>
+              <span className="text-base font-medium text-white/90">{message.name}</span>
               <span className="text-xs text-white/30 ml-2">
                 {formatDistanceToNow(new Date(message._creationTime), {
                   addSuffix: true,
                 })}
               </span>
             </div>
-            <p className="text-white/70 text-base leading-relaxed font-light">
-              {message.content}
-            </p>
+            <p className="text-white/70 text-base leading-relaxed font-light">{message.content}</p>
           </div>
         ))}
 
         {messages?.length === 0 && (
-          <p className="text-white/30 text-sm text-center py-10 italic">
-            No messages yet
-          </p>
+          <p className="text-white/30 text-sm text-center py-10 italic">No messages yet</p>
         )}
 
         {/* Spacer at bottom for when input is visible */}
@@ -118,9 +112,7 @@ export function MessagesFeed() {
       {isAuthenticated ? (
         <div
           className={`absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 via-black/80 to-transparent border-t border-white/5 transition-all duration-500 transform ${
-            isIdle
-              ? "translate-y-full opacity-0 pointer-events-none"
-              : "translate-y-0 opacity-100"
+            isIdle ? "translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
           }`}
         >
           <form onSubmit={handleSubmit} className="relative">
@@ -144,9 +136,7 @@ export function MessagesFeed() {
       ) : (
         <div
           className={`absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 to-transparent border-t border-white/5 transition-all duration-500 ${
-            isIdle
-              ? "translate-y-full opacity-0 pointer-events-none"
-              : "translate-y-0 opacity-100"
+            isIdle ? "translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
           }`}
         >
           <p className="text-[10px] text-white/50 text-center backdrop-blur-md py-1">

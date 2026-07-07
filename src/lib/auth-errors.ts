@@ -19,10 +19,7 @@ function looksLikeHtmlDocument(text: string): boolean {
     return false;
   }
   return (
-    t.includes("<head") ||
-    t.includes("<body") ||
-    t.includes("</html>") ||
-    t.includes("<script")
+    t.includes("<head") || t.includes("<body") || t.includes("</html>") || t.includes("<script")
   );
 }
 
@@ -41,10 +38,7 @@ function extractRawMessage(err: unknown): string | undefined {
     if (typeof rec.error === "string") {
       return rec.error;
     }
-    if (
-      rec.data !== undefined &&
-      (typeof rec.data === "string" || typeof rec.data === "number")
-    ) {
+    if (rec.data !== undefined && (typeof rec.data === "string" || typeof rec.data === "number")) {
       return String(rec.data);
     }
   }
@@ -74,25 +68,18 @@ function tryParseJsonMessage(text: string): string | undefined {
   return undefined;
 }
 
-function normalizeKnownAuthMessage(
-  raw: string,
-  flow: PasswordAuthFlow,
-): string {
+function normalizeKnownAuthMessage(raw: string, flow: PasswordAuthFlow): string {
   const lower = raw.toLowerCase();
 
   if (
     lower.includes("invalid") &&
-    (lower.includes("password") ||
-      lower.includes("credential") ||
-      lower.includes("email"))
+    (lower.includes("password") || lower.includes("credential") || lower.includes("email"))
   ) {
     return "Invalid email or password.";
   }
   if (
     flow === "signUp" &&
-    (lower.includes("already") ||
-      lower.includes("exists") ||
-      lower.includes("registered"))
+    (lower.includes("already") || lower.includes("exists") || lower.includes("registered"))
   ) {
     return "An account with this email already exists. Try signing in.";
   }
@@ -114,10 +101,7 @@ function normalizeKnownAuthMessage(
  * Turns thrown values from password sign-in / sign-up into short, user-safe copy.
  * Avoids dumping HTML error pages or huge stack blobs into the UI.
  */
-export function getPasswordAuthErrorMessage(
-  err: unknown,
-  flow: PasswordAuthFlow,
-): string {
+export function getPasswordAuthErrorMessage(err: unknown, flow: PasswordAuthFlow): string {
   const raw = extractRawMessage(err);
   if (!raw) {
     return defaultMessage(flow);

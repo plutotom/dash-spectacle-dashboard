@@ -68,6 +68,19 @@ Family / home dashboard built with **Next.js** (App Router) and **Convex** (data
 
 Set these locally and in your hosting provider (e.g. Vercel) for production.
 
+**Sentry** (error monitoring for the Pi dashboard and local dev):
+
+| Variable                 | Purpose                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN for browser errors (public, required for client capture).                                         |
+| `SENTRY_DSN`             | Same DSN for server/edge runtimes (can match `NEXT_PUBLIC_SENTRY_DSN`).                                      |
+| `SENTRY_ORG`             | Org slug — used at build time for source map uploads.                                                        |
+| `SENTRY_PROJECT`         | Project slug — used at build time for source map uploads.                                                    |
+| `SENTRY_AUTH_TOKEN`      | Build-time token for source map uploads ([create one](https://sentry.io/settings/account/api/auth-tokens/)). |
+| `SENTRY_ENVIRONMENT`     | Optional label (e.g. `pi-dashboard`, `production`). Defaults to `NODE_ENV`.                                  |
+
+Tracing and session replay are set to **100%** in this repo (personal single-user dashboard). Events are tunneled through `/monitoring` to reduce ad-blocker drops on the Pi.
+
 ### Convex (dashboard or `pnpm exec convex env set …`)
 
 These are read inside Convex functions (`process.env` in `convex/`). Configure them in the Convex dashboard **Environment Variables** for your deployment, or via the CLI.

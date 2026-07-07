@@ -6,21 +6,8 @@ import { useConvexAuth } from "convex/react";
 import { useRouter, usePathname } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import {
-  Shield,
-  Image as ImageIcon,
-  Menu,
-  LogOut,
-  User,
-  LayoutDashboard,
-} from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Shield, Image as ImageIcon, Menu, LogOut, User, LayoutDashboard } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useState, useEffect, useRef } from "react";
 
 interface NavButtonsProps {

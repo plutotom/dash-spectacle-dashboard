@@ -11,9 +11,7 @@ export const getEvents = action({
 
     if (!credentialsJson || !calendarId) {
       // eslint-disable-next-line no-console
-      console.warn(
-        "Missing GOOGLE_SERVICE_ACCOUNT_CREDENTIALS or GOOGLE_CALENDAR_ID",
-      );
+      console.warn("Missing GOOGLE_SERVICE_ACCOUNT_CREDENTIALS or GOOGLE_CALENDAR_ID");
       return []; // Or throw error, but for dashboard stability return empty
     }
 

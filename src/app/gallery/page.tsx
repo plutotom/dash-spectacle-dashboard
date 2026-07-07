@@ -53,9 +53,7 @@ function MyGalleryContent({
             </div>
             <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
               <p className="text-white text-sm truncate">{img.name}</p>
-              <p className="text-gray-400 text-xs">
-                {(img.size / 1024).toFixed(1)} KB
-              </p>
+              <p className="text-gray-400 text-xs">{(img.size / 1024).toFixed(1)} KB</p>
             </div>
           </div>
         ))}
@@ -85,11 +83,7 @@ function AdminContent({
   allImages: AdminImage[] | undefined;
   selectedIds: Set<string>;
   isDeleting: boolean;
-  onImageClick: (
-    imageId: string,
-    index: number,
-    event: React.MouseEvent,
-  ) => void;
+  onImageClick: (imageId: string, index: number, event: React.MouseEvent) => void;
   onSelectAll: () => void;
   onDeleteSelected: () => void;
 }) {
@@ -98,15 +92,11 @@ function AdminContent({
       <div className="flex flex-wrap justify-between items-center gap-4">
         <div className="flex items-center gap-4">
           <h2 className="text-xl font-semibold text-white">All User Images</h2>
-          <span className="text-sm text-gray-400">
-            Total: {allImages?.length || 0}
-          </span>
+          <span className="text-sm text-gray-400">Total: {allImages?.length || 0}</span>
         </div>
         <div className="flex items-center gap-3">
           {selectedIds.size > 0 && (
-            <span className="text-sm text-teal-300">
-              {selectedIds.size} selected
-            </span>
+            <span className="text-sm text-teal-300">{selectedIds.size} selected</span>
           )}
           <Button
             variant="outline"
@@ -114,9 +104,7 @@ function AdminContent({
             onClick={onSelectAll}
             className="border-white/20 text-gray-300 hover:text-white hover:bg-white/10"
           >
-            {selectedIds.size === allImages?.length
-              ? "Deselect All"
-              : "Select All"}
+            {selectedIds.size === allImages?.length ? "Deselect All" : "Select All"}
           </Button>
           <Button
             variant="destructive"
@@ -153,9 +141,7 @@ function AdminContent({
             >
               <div
                 className={`absolute top-2 right-2 w-6 h-6 rounded-full border-2 z-10 flex items-center justify-center transition-all ${
-                  isSelected
-                    ? "bg-teal-500 border-teal-500"
-                    : "bg-black/40 border-white/40"
+                  isSelected ? "bg-teal-500 border-teal-500" : "bg-black/40 border-white/40"
                 }`}
               >
                 {isSelected && (
@@ -195,9 +181,7 @@ function AdminContent({
           );
         })}
         {!allImages?.length && (
-          <div className="col-span-full py-12 text-center text-gray-500">
-            No images found.
-          </div>
+          <div className="col-span-full py-12 text-center text-gray-500">No images found.</div>
         )}
       </div>
     </div>
@@ -234,11 +218,7 @@ export default function GalleryPage() {
   const max = profile?.maxUploads ?? 0;
 
   // Handle image click with modifier keys
-  const handleImageClick = (
-    imageId: string,
-    index: number,
-    event: React.MouseEvent,
-  ) => {
+  const handleImageClick = (imageId: string, index: number, event: React.MouseEvent) => {
     const isMeta = event.metaKey || event.ctrlKey;
     const isShift = event.shiftKey;
 
@@ -282,20 +262,14 @@ export default function GalleryPage() {
 
   const handleDeleteSelected = async () => {
     if (selectedIds.size === 0) return;
-    if (
-      !confirm(
-        `Delete ${selectedIds.size} selected image(s)? This cannot be undone.`,
-      )
-    ) {
+    if (!confirm(`Delete ${selectedIds.size} selected image(s)? This cannot be undone.`)) {
       return;
     }
 
     setIsDeleting(true);
     try {
       await deleteImages({
-        imageIds: Array.from(selectedIds) as Parameters<
-          typeof deleteImages
-        >[0]["imageIds"],
+        imageIds: Array.from(selectedIds) as Parameters<typeof deleteImages>[0]["imageIds"],
       });
       setSelectedIds(new Set());
       setLastClickedIndex(null);
@@ -331,9 +305,7 @@ export default function GalleryPage() {
                 size="sm"
                 onClick={() => setActiveTab("gallery")}
                 className={
-                  activeTab === "gallery"
-                    ? "bg-teal-600"
-                    : "text-gray-300 hover:text-white"
+                  activeTab === "gallery" ? "bg-teal-600" : "text-gray-300 hover:text-white"
                 }
               >
                 My Gallery
@@ -342,11 +314,7 @@ export default function GalleryPage() {
                 variant={activeTab === "admin" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setActiveTab("admin")}
-                className={
-                  activeTab === "admin"
-                    ? "bg-teal-600"
-                    : "text-gray-300 hover:text-white"
-                }
+                className={activeTab === "admin" ? "bg-teal-600" : "text-gray-300 hover:text-white"}
               >
                 Admin Management
               </Button>

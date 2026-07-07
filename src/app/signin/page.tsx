@@ -64,9 +64,7 @@ export default function SignInPage() {
             {flow === "signIn" ? "Welcome Back" : "Create Account"}
           </CardTitle>
           <CardDescription>
-            {flow === "signIn"
-              ? "Sign in to continue"
-              : "Sign up to get started"}
+            {flow === "signIn" ? "Sign in to continue" : "Sign up to get started"}
           </CardDescription>
         </CardHeader>
 
@@ -122,11 +120,7 @@ export default function SignInPage() {
               disabled={loading}
               className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white"
             >
-              {loading
-                ? "Loading..."
-                : flow === "signIn"
-                  ? "Sign In"
-                  : "Sign Up"}
+              {loading ? "Loading..." : flow === "signIn" ? "Sign In" : "Sign Up"}
             </Button>
           </form>
         </CardContent>

@@ -10,16 +10,7 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Pencil,
-  Trash2,
-  X,
-  Check,
-  Plus,
-  ArrowLeft,
-  User,
-  Shield,
-} from "lucide-react";
+import { Pencil, Trash2, X, Check, Plus, ArrowLeft, User, Shield } from "lucide-react";
 
 export default function MessagesPage() {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -60,11 +51,7 @@ export default function MessagesPage() {
     return isAdmin || isMessageOwner(messageUserId);
   };
 
-  const handleEdit = (message: {
-    _id: Id<"messages">;
-    name: string;
-    content: string;
-  }) => {
+  const handleEdit = (message: { _id: Id<"messages">; name: string; content: string }) => {
     setEditingId(message._id);
     setEditName(message.name);
     setEditContent(message.content);
@@ -136,10 +123,7 @@ export default function MessagesPage() {
                 {profile.name || profile.email}
               </div>
             )}
-            <Button
-              onClick={handleShowNewForm}
-              className="bg-teal-600 hover:bg-teal-700"
-            >
+            <Button onClick={handleShowNewForm} className="bg-teal-600 hover:bg-teal-700">
               <Plus className="w-4 h-4 mr-2" />
               Add Message
             </Button>
@@ -155,9 +139,7 @@ export default function MessagesPage() {
             <CardContent className="space-y-4">
               <p className="text-sm text-gray-400">
                 Posting as{" "}
-                <span className="text-teal-400">
-                  {profile?.name || profile?.email || "..."}
-                </span>
+                <span className="text-teal-400">{profile?.name || profile?.email || "..."}</span>
               </p>
               <Input
                 placeholder="Message content"
@@ -166,10 +148,7 @@ export default function MessagesPage() {
                 className="bg-white/5 border-white/10 text-white"
               />
               <div className="flex gap-2">
-                <Button
-                  onClick={handleCreate}
-                  className="bg-green-600 hover:bg-green-700"
-                >
+                <Button onClick={handleCreate} className="bg-green-600 hover:bg-green-700">
                   Create
                 </Button>
                 <Button
@@ -199,10 +178,7 @@ export default function MessagesPage() {
 
               {/* Message Rows */}
               {messages?.map((message) => (
-                <div
-                  key={message._id}
-                  className="grid grid-cols-12 gap-4 p-4 items-center"
-                >
+                <div key={message._id} className="grid grid-cols-12 gap-4 p-4 items-center">
                   {editingId === message._id ? (
                     <>
                       <div className="col-span-2">
@@ -233,20 +209,14 @@ export default function MessagesPage() {
                         >
                           <Check className="w-4 h-4" />
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={handleCancelEdit}
-                        >
+                        <Button size="sm" variant="ghost" onClick={handleCancelEdit}>
                           <X className="w-4 h-4" />
                         </Button>
                       </div>
                     </>
                   ) : (
                     <>
-                      <div className="col-span-2 text-white text-sm">
-                        {message.name}
-                      </div>
+                      <div className="col-span-2 text-white text-sm">{message.name}</div>
                       <div className="col-span-4 text-gray-300 text-sm truncate">
                         {message.content}
                       </div>

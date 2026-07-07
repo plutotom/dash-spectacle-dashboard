@@ -14,9 +14,7 @@ export const listForDashboard = query({
 // Get all prayer requests with optional filter (authenticated)
 export const listAll = query({
   args: {
-    filter: v.optional(
-      v.union(v.literal("all"), v.literal("answered"), v.literal("unanswered")),
-    ),
+    filter: v.optional(v.union(v.literal("all"), v.literal("answered"), v.literal("unanswered"))),
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
@@ -99,11 +97,9 @@ export const update = mutation({
     }
 
     const updates: Record<string, unknown> = {};
-    if (args.prayerRequestFrom !== undefined)
-      updates.prayerRequestFrom = args.prayerRequestFrom;
+    if (args.prayerRequestFrom !== undefined) updates.prayerRequestFrom = args.prayerRequestFrom;
     if (args.prayerFor !== undefined) updates.prayerFor = args.prayerFor;
-    if (args.prayerRequest !== undefined)
-      updates.prayerRequest = args.prayerRequest;
+    if (args.prayerRequest !== undefined) updates.prayerRequest = args.prayerRequest;
     if (args.isAnswered !== undefined) {
       updates.isAnswered = args.isAnswered;
       updates.answeredAt = args.isAnswered ? Date.now() : undefined;

@@ -20,12 +20,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         const overwrite = url.searchParams.get("overwrite") === "true";
 
         return {
-          allowedContentTypes: [
-            "image/jpeg",
-            "image/png",
-            "image/gif",
-            "image/webp",
-          ],
+          allowedContentTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
           addRandomSuffix: !overwrite,
           tokenPayload: JSON.stringify({
             // optional payload
@@ -40,9 +35,6 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
-    return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: (error as Error).message }, { status: 400 });
   }
 }

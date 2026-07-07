@@ -39,9 +39,7 @@ export default function UsersPage() {
     }
 
     const newRole = currentRole === "admin" ? "user" : "admin";
-    if (
-      confirm(`Are you sure you want to change this user's role to ${newRole}?`)
-    ) {
+    if (confirm(`Are you sure you want to change this user's role to ${newRole}?`)) {
       await setUserRole({ userId, role: newRole });
     }
   };
@@ -86,16 +84,13 @@ export default function UsersPage() {
                 >
                   <div className="col-span-3 flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white text-xs">
-                      {user.name?.[0]?.toUpperCase() ||
-                        user?.email?.[0]?.toUpperCase()}
+                      {user.name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase()}
                     </div>
                     <div className="overflow-hidden">
                       <div className="text-white font-medium truncate">
                         {user.name || "No name"}
                       </div>
-                      <div className="text-xs text-gray-500 md:hidden truncate">
-                        {user.email}
-                      </div>
+                      <div className="text-xs text-gray-500 md:hidden truncate">{user.email}</div>
                     </div>
                   </div>
                   <div className="col-span-3 text-gray-300 hidden md:block truncate">
@@ -118,9 +113,7 @@ export default function UsersPage() {
                     </span>
                   </div>
                   <div className="col-span-2 flex items-center gap-2">
-                    <span className="text-sm text-gray-300">
-                      {user.imageCount} /
-                    </span>
+                    <span className="text-sm text-gray-300">{user.imageCount} /</span>
                     <Input
                       type="number"
                       defaultValue={user.maxUploads}
@@ -156,9 +149,7 @@ export default function UsersPage() {
               ))}
 
               {users?.length === 0 && (
-                <div className="p-8 text-center text-gray-500">
-                  No users found.
-                </div>
+                <div className="p-8 text-center text-gray-500">No users found.</div>
               )}
             </div>
           </CardContent>

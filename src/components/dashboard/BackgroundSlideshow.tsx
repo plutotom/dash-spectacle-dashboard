@@ -4,8 +4,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useEffect, useState } from "react";
 
-const DEFAULT_BG =
-  "https://images.unsplash.com/photo-1741715421791-c08283c8b7d2?ixlib=rb-4.1.0";
+const DEFAULT_BG = "https://images.unsplash.com/photo-1741715421791-c08283c8b7d2?ixlib=rb-4.1.0";
 const INTERVAL_MS = 60 * 5 * 1000; // 5 minutes
 
 export function BackgroundSlideshow() {

@@ -92,9 +92,7 @@ export const fetchCurrent = action({
         console.log("Attempting to fetch from Home Assistant...");
         try {
           // Accept full entity id (e.g. sensor.living_room_temp) or bare slug
-          const entityId = haSensor.includes(".")
-            ? haSensor
-            : `sensor.${haSensor}`;
+          const entityId = haSensor.includes(".") ? haSensor : `sensor.${haSensor}`;
           const haRes = await fetch(`${haUrl}/api/states/${entityId}`, {
             headers: {
               Authorization: `Bearer ${haToken}`,
@@ -106,9 +104,7 @@ export const fetchCurrent = action({
             const haData = await haRes.json();
             // Inject HA data into the response structure to match PHP logic
             if (!weatherData.current) weatherData.current = {};
-            weatherData.current.home_assistant_current_temp = parseFloat(
-              haData.state,
-            );
+            weatherData.current.home_assistant_current_temp = parseFloat(haData.state);
             weatherData.current.home_assistant_updated = haData.last_updated;
           } else {
             console.error(

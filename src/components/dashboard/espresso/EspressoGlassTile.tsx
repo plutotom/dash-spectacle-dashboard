@@ -71,9 +71,7 @@ export function EspressoGlassTile() {
   const detailMatchesHead =
     detailRaw !== undefined && String(detailRaw.id) === String(listFirstRaw.id);
   const latestRaw = (
-    detailMatchesHead
-      ? ({ ...listFirstRaw, ...detailRaw } as RawShot)
-      : listFirstRaw
+    detailMatchesHead ? ({ ...listFirstRaw, ...detailRaw } as RawShot) : listFirstRaw
   ) as RawShot;
   const latest: Shot = normalizeShot(latestRaw);
   const recent = shots.slice(1, 5);
@@ -101,22 +99,9 @@ export function EspressoGlassTile() {
 
       {/* main stats — portrait-friendly 2x2 grid */}
       <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-3">
-        <Stat
-          label="Yield"
-          value={latest.yieldG?.toFixed(1) ?? "--"}
-          unit="g"
-          big
-        />
-        <Stat
-          label="Time"
-          value={latest.durationS?.toFixed(1) ?? "--"}
-          unit="s"
-          big
-        />
-        <Stat
-          label="Ratio"
-          value={ratio(latest) ? `1:${ratio(latest)}` : "--"}
-        />
+        <Stat label="Yield" value={latest.yieldG?.toFixed(1) ?? "--"} unit="g" big />
+        <Stat label="Time" value={latest.durationS?.toFixed(1) ?? "--"} unit="s" big />
+        <Stat label="Ratio" value={ratio(latest) ? `1:${ratio(latest)}` : "--"} />
         <Stat label="Dose" value={latest.doseG?.toFixed(1) ?? "--"} unit="g" />
       </div>
 
@@ -193,21 +178,13 @@ function Stat({
         }`}
       >
         {value}
-        {unit && (
-          <span className="text-espresso-crema/45 text-sm ml-0.5">{unit}</span>
-        )}
+        {unit && <span className="text-espresso-crema/45 text-sm ml-0.5">{unit}</span>}
       </span>
     </div>
   );
 }
 
-function CurveChart({
-  pressure,
-  flow,
-}: {
-  pressure: number[];
-  flow: number[];
-}) {
+function CurveChart({ pressure, flow }: { pressure: number[]; flow: number[] }) {
   const w = 320;
   const h = 64;
   return (
@@ -216,11 +193,7 @@ function CurveChart({
       className="w-full h-16 overflow-visible"
       preserveAspectRatio="none"
     >
-      <path
-        d={buildArea(pressure, w, h)}
-        fill="var(--espresso-pressure)"
-        opacity={0.12}
-      />
+      <path d={buildArea(pressure, w, h)} fill="var(--espresso-pressure)" opacity={0.12} />
       <path
         d={buildPath(pressure, w, h)}
         fill="none"

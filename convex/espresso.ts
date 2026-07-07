@@ -198,11 +198,7 @@ export const fetchShots = action({
       });
 
       if (!listRes.ok) {
-        console.error(
-          "visualizer /shots failed",
-          listRes.status,
-          await listRes.text(),
-        );
+        console.error("visualizer /shots failed", listRes.status, await listRes.text());
         return null;
       }
 
@@ -256,18 +252,17 @@ export const fetchShots = action({
       const latest = trimmed[0];
       if (latest?.id) {
         try {
-          const detailRes = await fetch(
-            `${API_BASE}/shots/${latest.id}/download`,
-            { headers: authHeaders },
-          );
+          const detailRes = await fetch(`${API_BASE}/shots/${latest.id}/download`, {
+            headers: authHeaders,
+          });
           if (detailRes.ok) {
             const detail = (await detailRes.json()) as ShotDetail;
             // download/show is public for any shot id; confirm ownership.
             if (detail.user_id && detail.user_id !== me.id) {
-              console.error(
-                "visualizer detail user_id mismatch /me — not caching detail",
-                { meId: me.id, shotUserId: detail.user_id },
-              );
+              console.error("visualizer detail user_id mismatch /me — not caching detail", {
+                meId: me.id,
+                shotUserId: detail.user_id,
+              });
             } else {
               await ctx.runMutation(internal.espresso.upsertCache, {
                 kind: "detail",
@@ -275,10 +270,7 @@ export const fetchShots = action({
               });
             }
           } else {
-            console.error(
-              "visualizer /shots/:id/download failed",
-              detailRes.status,
-            );
+            console.error("visualizer /shots/:id/download failed", detailRes.status);
           }
         } catch (e) {
           console.error("detail fetch failed", e);

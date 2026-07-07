@@ -8,13 +8,7 @@ import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Shield, User, Crown } from "lucide-react";
 import {
@@ -85,9 +79,7 @@ export default function ProfilePage() {
       alert("Successfully claimed admin access! The page will now refresh.");
       window.location.href = window.location.href;
     } catch (err) {
-      setClaimError(
-        err instanceof Error ? err.message : "Failed to claim admin access",
-      );
+      setClaimError(err instanceof Error ? err.message : "Failed to claim admin access");
       setClaimingAdmin(false);
     }
   };
@@ -125,11 +117,7 @@ export default function ProfilePage() {
                     : "bg-gray-500/20 text-gray-300 border border-gray-500/30"
                 }`}
               >
-                {isAdmin ? (
-                  <Shield className="w-4 h-4" />
-                ) : (
-                  <User className="w-4 h-4" />
-                )}
+                {isAdmin ? <Shield className="w-4 h-4" /> : <User className="w-4 h-4" />}
                 {isAdmin ? "Admin" : "User"}
               </div>
 
@@ -151,9 +139,8 @@ export default function ProfilePage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Claim Admin Access?</AlertDialogTitle>
                       <AlertDialogDescription className="text-gray-400">
-                        This action will grant you Super Admin privileges. It is
-                        only available because no other admins exist in the
-                        system.
+                        This action will grant you Super Admin privileges. It is only available
+                        because no other admins exist in the system.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -170,9 +157,7 @@ export default function ProfilePage() {
                   </AlertDialogContent>
                 </AlertDialog>
               )}
-              {claimError && (
-                <p className="text-xs text-red-400">{claimError}</p>
-              )}
+              {claimError && <p className="text-xs text-red-400">{claimError}</p>}
             </div>
 
             <div className="space-y-2">
@@ -197,9 +182,7 @@ export default function ProfilePage() {
                 placeholder="Your name"
                 required
               />
-              <p className="text-xs text-gray-500">
-                This name will appear on your messages
-              </p>
+              <p className="text-xs text-gray-500">This name will appear on your messages</p>
             </div>
 
             {error && (
@@ -210,9 +193,7 @@ export default function ProfilePage() {
 
             {success && (
               <Alert className="border-green-500/50 bg-green-500/10 text-green-400">
-                <AlertDescription>
-                  Profile updated successfully!
-                </AlertDescription>
+                <AlertDescription>Profile updated successfully!</AlertDescription>
               </Alert>
             )}
 

@@ -31,8 +31,7 @@ export function WeatherForecast() {
     return null;
   }
 
-  const forecastDays: ForecastDay[] =
-    forecastData.data?.forecast?.forecastday || [];
+  const forecastDays: ForecastDay[] = forecastData.data?.forecast?.forecastday || [];
 
   return (
     <div className="bg-black/20 backdrop-blur-sm rounded-lg p-2 border border-white/5 transition-all hover:bg-black/30">
@@ -48,9 +47,7 @@ export function WeatherForecast() {
             <div className="text-xl font-normal text-white my-1">
               {Math.round(day.day.maxtemp_f)}°
             </div>
-            <div className="text-xs text-white/40">
-              {Math.round(day.day.mintemp_f)}°
-            </div>
+            <div className="text-xs text-white/40">{Math.round(day.day.mintemp_f)}°</div>
           </div>
         ))}
       </div>

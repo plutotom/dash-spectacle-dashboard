@@ -25,28 +25,20 @@ export function PrayerRequestsWidget() {
           <div
             key={request._id}
             className={`bg-white/5 rounded-lg p-3 border transition-all ${
-              request.isAnswered
-                ? "border-green-500/30 opacity-60"
-                : "border-white/5"
+              request.isAnswered ? "border-green-500/30 opacity-60" : "border-white/5"
             }`}
           >
             <div className="flex items-start gap-2">
               <span className="text-lg">{request.isAnswered ? "●" : "○"}</span>
               <div className="flex-1 min-w-0">
                 {request.prayerRequestFrom && (
-                  <div className="text-xs text-gray-400">
-                    From: {request.prayerRequestFrom}
-                  </div>
+                  <div className="text-xs text-gray-400">From: {request.prayerRequestFrom}</div>
                 )}
                 {request.prayerFor && (
-                  <div className="text-sm text-teal-400 font-medium">
-                    For: {request.prayerFor}
-                  </div>
+                  <div className="text-sm text-teal-400 font-medium">For: {request.prayerFor}</div>
                 )}
                 <p
-                  className={`text-sm text-white mt-1 ${
-                    request.isAnswered ? "line-through" : ""
-                  }`}
+                  className={`text-sm text-white mt-1 ${request.isAnswered ? "line-through" : ""}`}
                 >
                   {request.prayerRequest}
                 </p>
@@ -64,9 +56,7 @@ export function PrayerRequestsWidget() {
         ))}
 
         {requests?.length === 0 && (
-          <p className="text-gray-500 text-sm text-center py-4">
-            No prayer requests
-          </p>
+          <p className="text-gray-500 text-sm text-center py-4">No prayer requests</p>
         )}
       </div>
     </div>

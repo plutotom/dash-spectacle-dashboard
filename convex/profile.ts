@@ -148,9 +148,7 @@ export const claimAdmin = mutation({
       .first();
 
     if (adminUser) {
-      throw new Error(
-        "Admin already exists. Request access from an existing admin.",
-      );
+      throw new Error("Admin already exists. Request access from an existing admin.");
     }
 
     // Make current user admin

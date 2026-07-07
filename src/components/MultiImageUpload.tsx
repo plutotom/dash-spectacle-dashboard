@@ -43,9 +43,7 @@ export function MultiImageUpload({
       const fileArray = Array.from(selectedFiles);
 
       // Filter to only image files
-      const imageFiles = fileArray.filter((file) =>
-        file.type.startsWith("image/"),
-      );
+      const imageFiles = fileArray.filter((file) => file.type.startsWith("image/"));
 
       // Check how many we can add
       const pendingCount = files.filter((f) => f.status === "pending").length;
@@ -97,15 +95,11 @@ export function MultiImageUpload({
 
     // Update status to uploading
     setFiles((prev) =>
-      prev.map((f) =>
-        f.id === id ? { ...f, status: "uploading" as const, progress: 10 } : f,
-      ),
+      prev.map((f) => (f.id === id ? { ...f, status: "uploading" as const, progress: 10 } : f)),
     );
 
     try {
-      setFiles((prev) =>
-        prev.map((f) => (f.id === id ? { ...f, progress: 30 } : f)),
-      );
+      setFiles((prev) => prev.map((f) => (f.id === id ? { ...f, progress: 30 } : f)));
 
       // Upload to Vercel Blob
       let blobUrl = "";
@@ -131,9 +125,7 @@ export function MultiImageUpload({
         }
       }
 
-      setFiles((prev) =>
-        prev.map((f) => (f.id === id ? { ...f, progress: 70 } : f)),
-      );
+      setFiles((prev) => prev.map((f) => (f.id === id ? { ...f, progress: 70 } : f)));
 
       // Save to Convex
       await saveImage({
@@ -144,9 +136,7 @@ export function MultiImageUpload({
 
       // Update status to success
       setFiles((prev) =>
-        prev.map((f) =>
-          f.id === id ? { ...f, status: "success" as const, progress: 100 } : f,
-        ),
+        prev.map((f) => (f.id === id ? { ...f, status: "success" as const, progress: 100 } : f)),
       );
     } catch (error) {
       setFiles((prev) =>
@@ -211,8 +201,7 @@ export function MultiImageUpload({
 
   const pendingCount = files.filter((f) => f.status === "pending").length;
   const hasCompletedFiles = files.some((f) => f.status === "success");
-  const canAddMore =
-    remainingSlots - files.filter((f) => f.status === "pending").length > 0;
+  const canAddMore = remainingSlots - files.filter((f) => f.status === "pending").length > 0;
 
   return (
     <Card className="bg-white/10 border-white/10 backdrop-blur-xl">
@@ -240,14 +229,10 @@ export function MultiImageUpload({
           onClick={() => canAddMore && fileInputRef.current?.click()}
         >
           <Upload
-            className={`mx-auto mb-3 h-10 w-10 ${
-              isDragging ? "text-teal-400" : "text-gray-400"
-            }`}
+            className={`mx-auto mb-3 h-10 w-10 ${isDragging ? "text-teal-400" : "text-gray-400"}`}
           />
           <p className="mb-1 font-medium text-white">
-            {canAddMore
-              ? "Drop images here or click to browse"
-              : "Upload limit reached"}
+            {canAddMore ? "Drop images here or click to browse" : "Upload limit reached"}
           </p>
           <p className="text-sm text-gray-400">
             {canAddMore
@@ -269,9 +254,7 @@ export function MultiImageUpload({
         {files.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-300">
-                Selected Files ({files.length})
-              </p>
+              <p className="text-sm font-medium text-gray-300">Selected Files ({files.length})</p>
               <div className="flex gap-2">
                 {hasCompletedFiles && (
                   <Button
@@ -294,13 +277,9 @@ export function MultiImageUpload({
                 >
                   {getStatusIcon(f.status)}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-white">
-                      {f.file.name}
-                    </p>
+                    <p className="truncate text-sm font-medium text-white">{f.file.name}</p>
                     <div className="flex items-center gap-2">
-                      <p className="text-xs text-gray-400">
-                        {formatFileSize(f.file.size)}
-                      </p>
+                      <p className="text-xs text-gray-400">{formatFileSize(f.file.size)}</p>
                       {f.status === "uploading" && (
                         <div className="flex-1">
                           <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
@@ -311,9 +290,7 @@ export function MultiImageUpload({
                           </div>
                         </div>
                       )}
-                      {f.error && (
-                        <p className="text-xs text-red-400">{f.error}</p>
-                      )}
+                      {f.error && <p className="text-xs text-red-400">{f.error}</p>}
                     </div>
                   </div>
                   {f.status !== "uploading" && (
@@ -345,9 +322,7 @@ export function MultiImageUpload({
                 disabled={isUploading || pendingCount === 0}
                 className="bg-teal-600 hover:bg-teal-700"
               >
-                {isUploading
-                  ? "Uploading..."
-                  : `Upload ${pendingCount} image(s)`}
+                {isUploading ? "Uploading..." : `Upload ${pendingCount} image(s)`}
               </Button>
             </div>
           </div>

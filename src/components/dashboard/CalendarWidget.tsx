@@ -79,8 +79,7 @@ export function CalendarWidget() {
         setError(null);
       } catch (err) {
         if (cancelled) return;
-        const errorMessage =
-          (err as { message?: string })?.message || "Failed to load calendar";
+        const errorMessage = (err as { message?: string })?.message || "Failed to load calendar";
         setError(errorMessage);
       } finally {
         if (!cancelled) setLoading(false);
@@ -165,9 +164,7 @@ export function CalendarWidget() {
                 ))
               ) : (
                 <div className="h-full flex items-center justify-center">
-                  <span className="text-[10px] text-white/20 italic">
-                    No events
-                  </span>
+                  <span className="text-[10px] text-white/20 italic">No events</span>
                 </div>
               )}
             </div>

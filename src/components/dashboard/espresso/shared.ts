@@ -64,9 +64,7 @@ function downsample(values: number[], maxPoints = 64): number[] {
 
 export function normalizeShot(raw: RawShot): Shot {
   const series = raw.data?.data ?? {};
-  const pressureKey = ["espresso_pressure", "pressure", "p"].find(
-    (k) => series[k],
-  );
+  const pressureKey = ["espresso_pressure", "pressure", "p"].find((k) => series[k]);
   const flowKey = ["espresso_flow", "flow", "f"].find((k) => series[k]);
 
   return {
@@ -82,9 +80,7 @@ export function normalizeShot(raw: RawShot): Shot {
       const e = toOptionalNumber(raw.espresso_enjoyment);
       return e === null ? null : Math.max(0, Math.min(1, e / 100));
     })(),
-    pressure: pressureKey
-      ? downsample(normalize(series[pressureKey], PRESSURE_MAX))
-      : [],
+    pressure: pressureKey ? downsample(normalize(series[pressureKey], PRESSURE_MAX)) : [],
     flow: flowKey ? downsample(normalize(series[flowKey], FLOW_MAX)) : [],
   };
 }
