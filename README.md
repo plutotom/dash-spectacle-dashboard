@@ -1,9 +1,3 @@
-[] - fix pnpm install
-
-- ssh spectral-dashboard then run the kiask restart command
-- review claude work in git diff
-- push
-
 # Dash Spectacle
 
 Family / home dashboard built with **Next.js** (App Router) and **Convex** (database + server functions). It includes authentication, a wall-style dashboard, gallery uploads, messages, prayer requests, and optional weather and Google Calendar data.
