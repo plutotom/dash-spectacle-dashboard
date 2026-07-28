@@ -1,3 +1,9 @@
+[] - fix pnpm install
+
+- ssh spectral-dashboard then run the kiask restart command
+- review claude work in git diff
+- push
+
 # Dash Spectacle
 
 Family / home dashboard built with **Next.js** (App Router) and **Convex** (database + server functions). It includes authentication, a wall-style dashboard, gallery uploads, messages, prayer requests, and optional weather and Google Calendar data.
@@ -21,8 +27,18 @@ Family / home dashboard built with **Next.js** (App Router) and **Convex** (data
 ## Prerequisites
 
 - **Node.js** (current LTS recommended)
-- **pnpm** (this repo uses pnpm; do not assume `npm`/`yarn` lockfiles)
+- **pnpm 10** (this repo uses pnpm; do not assume `npm`/`yarn` lockfiles)
 - A **Convex** account and project ([convex.dev](https://www.convex.dev))
+
+> **pnpm 10 is required, not optional.** `pnpm-workspace.yaml` uses
+> `onlyBuiltDependencies`, which is a pnpm 10 setting. Under pnpm 9 every script
+> fails immediately with `ERROR packages field missing or empty`, because pnpm 9
+> parses that file expecting a `packages:` key. The version is pinned via
+> `packageManager` in `package.json`; enable Corepack once so your shell honours it:
+>
+> ```bash
+> corepack enable
+> ```
 
 ## Getting started
 
@@ -79,7 +95,7 @@ Set these locally and in your hosting provider (e.g. Vercel) for production.
 | `SENTRY_AUTH_TOKEN`      | Build-time token for source map uploads ([create one](https://sentry.io/settings/account/api/auth-tokens/)). |
 | `SENTRY_ENVIRONMENT`     | Optional label (e.g. `pi-dashboard`, `production`). Defaults to `NODE_ENV`.                                  |
 
-Tracing and session replay are set to **100%** in this repo (personal single-user dashboard). Events are tunneled through `/monitoring` to reduce ad-blocker drops on the Pi.
+Errors and tracing are captured at **100%** in this repo (personal single-user dashboard). Session Replay is intentionally disabled — see [Sentry and the kiosk](#sentry-and-the-kiosk). Events are tunneled through `/monitoring` to reduce ad-blocker drops on the Pi.
 
 ### Convex (dashboard or `pnpm exec convex env set …`)
 
@@ -219,3 +235,36 @@ From your laptop:
 Now open one of these:
 `http://localhost:9222/json`
 `chrome://inspect`
+
+---
+
+# Nightly kiosk restart
+
+The dashboard page is opened once and never navigated away from, so Chromium
+never tears down the tab and the renderer grows over days of uptime. A nightly
+process restart keeps the Pi healthy.
+
+`scripts/kiosk-restart.sh` kills the running kiosk and relaunches it (with the
+same remote-debugging port as above). Install it on the Pi:
+
+```sh
+chmod +x scripts/kiosk-restart.sh
+crontab -e
+# add, for 4am nightly:
+0 4 * * * /home/pi/dash-spectacle-dashboard/scripts/kiosk-restart.sh
+```
+
+Override `KIOSK_URL`, `KIOSK_BROWSER`, or `DISPLAY` if your setup differs.
+
+Note this is a process restart, not an in-page `location.reload()`. When a tab
+is wedged its JavaScript is the thing that has stopped running, so a client-side
+timer cannot recover it — killing the process always can.
+
+## Sentry and the kiosk
+
+Errors and traces are captured, but **Session Replay is deliberately not
+enabled** (`sentry.shared.ts`). Replay records DOM mutations via rrweb and
+flushes them over the network continuously. On a page that runs for weeks and
+mutates every 60 seconds (clock, background swap, Convex pushes) that becomes a
+permanent upload stream from the Pi and will exhaust the replay quota. Do not
+re-add `replayIntegration()` to `src/instrumentation-client.ts`.

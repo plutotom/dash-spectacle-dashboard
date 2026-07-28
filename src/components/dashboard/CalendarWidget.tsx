@@ -106,7 +106,7 @@ export function CalendarWidget() {
 
   if (loading) {
     return (
-      <div className="bg-white/10 backdrop-blur-xl rounded-xl p-4 flex items-center justify-center h-40">
+      <div className="bg-white/10 rounded-xl p-4 flex items-center justify-center h-40">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white" />
       </div>
     );
@@ -114,7 +114,7 @@ export function CalendarWidget() {
 
   if (error) {
     return (
-      <div className="bg-red-500/10 backdrop-blur-sm rounded-lg p-3 border border-red-500/20 flex items-center justify-center h-full min-h-[140px] mt-4">
+      <div className="bg-red-500/20 rounded-lg p-3 border border-red-500/20 flex items-center justify-center h-full min-h-[140px] mt-4">
         <div className="flex flex-col items-center text-center">
           <span className="text-red-400 font-medium text-xs uppercase tracking-wider mb-1">
             Calendar Error
@@ -128,7 +128,7 @@ export function CalendarWidget() {
   const today = new Date();
 
   return (
-    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 border border-white/5 flex flex-col mt-4">
+    <div className="bg-black/40 rounded-lg p-3 border border-white/5 flex flex-col mt-4">
       <h3 className="text-base font-medium text-white/70 mb-3 uppercase tracking-wider">
         Upcoming Events
       </h3>

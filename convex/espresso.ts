@@ -166,8 +166,8 @@ export const fetchShots = action({
   args: {},
   handler: async (ctx) => {
     const auth = buildAuthHeader();
+    // Optional integration — skip quietly when unset (crons still fire).
     if (!auth) {
-      console.error("Missing VISUALIZER_EMAIL or VISUALIZER_PASSWORD env vars");
       return null;
     }
 

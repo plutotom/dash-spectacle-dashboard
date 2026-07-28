@@ -1,5 +1,8 @@
+packages:
+  - "."
+
 onlyBuiltDependencies:
-  - '@sentry/cli'
+  - "@sentry/cli"
   - esbuild
   - sharp
   - unrs-resolver

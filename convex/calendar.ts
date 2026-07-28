@@ -9,10 +9,9 @@ export const getEvents = action({
     const credentialsJson = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
     const calendarId = process.env.GOOGLE_CALENDAR_ID;
 
+    // Optional integration — skip quietly when unset.
     if (!credentialsJson || !calendarId) {
-      // eslint-disable-next-line no-console
-      console.warn("Missing GOOGLE_SERVICE_ACCOUNT_CREDENTIALS or GOOGLE_CALENDAR_ID");
-      return []; // Or throw error, but for dashboard stability return empty
+      return [];
     }
 
     try {

@@ -5,3 +5,7 @@ build
 coverage
 pnpm-lock.yaml
 convex/_generated
+
+# Local agent tooling state, not project source
+.claude
+.tokensave

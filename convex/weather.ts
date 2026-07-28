@@ -66,8 +66,8 @@ export const fetchCurrent = action({
       const apiKey = process.env.WEATHER_API_KEY;
       const zip = process.env.WEATHER_ZIP_CODE || DEFAULT_ZIP;
 
+      // Optional integration — skip quietly when unset (crons still fire).
       if (!apiKey) {
-        console.error("Missing WEATHER_API_KEY");
         return null;
       }
 
@@ -83,13 +83,12 @@ export const fetchCurrent = action({
 
       const weatherData = await weatherRes.json();
 
-      // 2. Fetch from Home Assistant (Optional)
+      // 2. Fetch from Home Assistant when configured (optional).
       const haUrl = process.env.HOMEASSISTANT_URL;
       const haToken = process.env.HOMEASSISTANT_TOKEN;
       const haSensor = process.env.HOMEASSISTANT_LOCAL_TEMPERATURE_ID;
 
       if (haUrl && haToken && haSensor) {
-        console.log("Attempting to fetch from Home Assistant...");
         try {
           // Accept full entity id (e.g. sensor.living_room_temp) or bare slug
           const entityId = haSensor.includes(".") ? haSensor : `sensor.${haSensor}`;
@@ -117,8 +116,6 @@ export const fetchCurrent = action({
           console.error("Home Assistant fetch failed", e);
           // Continue without HA data
         }
-      } else {
-        console.log("Home Assistant credentials missing (URL or Token).");
       }
 
       // 3. Save to DB
@@ -142,8 +139,8 @@ export const fetchForecast = action({
       const apiKey = process.env.WEATHER_API_KEY;
       const zip = process.env.WEATHER_ZIP_CODE || DEFAULT_ZIP;
 
+      // Optional integration — skip quietly when unset (crons still fire).
       if (!apiKey) {
-        console.error("Missing WEATHER_API_KEY");
         return null;
       }
 

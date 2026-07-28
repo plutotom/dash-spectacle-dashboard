@@ -73,8 +73,8 @@ export function MessagesFeed() {
   };
 
   return (
-    <div className="bg-black/20 backdrop-blur-sm rounded-lg p-0 border border-white/5 flex flex-col h-[320px] relative overflow-hidden group/feed">
-      <h3 className="absolute top-4 left-4 z-10 text-sm font-medium text-white/70 uppercase tracking-wider bg-black/40 backdrop-blur-md px-2 py-1 rounded text-xs pointer-events-none">
+    <div className="bg-black/40 rounded-lg p-0 border border-white/5 flex flex-col h-[320px] relative overflow-hidden group/feed">
+      <h3 className="absolute top-4 left-4 z-10 text-sm font-medium text-white/70 uppercase tracking-wider bg-black/60 px-2 py-1 rounded text-xs pointer-events-none">
         Messages
       </h3>
 
@@ -121,7 +121,7 @@ export function MessagesFeed() {
               placeholder="Type a message..."
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              className="w-full bg-white/10 border-white/10 text-white placeholder:text-white/40 focus:bg-black/60 focus:border-white/20 transition-colors pr-16 h-9 text-sm backdrop-blur-md shadow-xl"
+              className="w-full bg-white/10 border-white/10 text-white placeholder:text-white/40 focus:bg-black/60 focus:border-white/20 transition-colors pr-16 h-9 text-sm shadow-xl"
             />
             <Button
               type="submit"
@@ -139,7 +139,7 @@ export function MessagesFeed() {
             isIdle ? "translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
           }`}
         >
-          <p className="text-[10px] text-white/50 text-center backdrop-blur-md py-1">
+          <p className="text-[10px] text-white/50 text-center py-1">
             <a
               href="/signin"
               className="text-white/80 hover:text-white underline decoration-white/30 underline-offset-2"

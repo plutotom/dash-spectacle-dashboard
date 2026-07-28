@@ -37,7 +37,7 @@ const NavButtons = ({
         variant="secondary"
         size="sm"
         onClick={() => onNavigate("/dashboard")}
-        className={`bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all hover:scale-105 ${
+        className={`bg-white/20 hover:bg-white/30 text-white border border-white/10 shadow-lg transition-all hover:scale-105 ${
           mobile ? "w-full justify-start" : ""
         }`}
       >
@@ -50,7 +50,7 @@ const NavButtons = ({
         variant="secondary"
         size="sm"
         onClick={() => onNavigate("/users")}
-        className={`bg-teal-600/30 hover:bg-teal-600/40 text-teal-100 border border-teal-500/30 shadow-lg backdrop-blur-md transition-all hover:scale-105 ${
+        className={`bg-teal-600/40 hover:bg-teal-600/50 text-teal-100 border border-teal-500/30 shadow-lg transition-all hover:scale-105 ${
           mobile ? "w-full justify-start" : ""
         }`}
       >
@@ -63,7 +63,7 @@ const NavButtons = ({
       variant="secondary"
       size="sm"
       onClick={() => onNavigate("/gallery")}
-      className={`bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all hover:scale-105 ${
+      className={`bg-white/20 hover:bg-white/30 text-white border border-white/10 shadow-lg transition-all hover:scale-105 ${
         mobile ? "w-full justify-start" : ""
       }`}
     >
@@ -74,7 +74,7 @@ const NavButtons = ({
       variant="secondary"
       size="sm"
       onClick={() => onNavigate("/profile")}
-      className={`bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all hover:scale-105 ${
+      className={`bg-white/20 hover:bg-white/30 text-white border border-white/10 shadow-lg transition-all hover:scale-105 ${
         mobile ? "w-full justify-start" : ""
       }`}
     >
@@ -85,7 +85,7 @@ const NavButtons = ({
       variant="secondary"
       size="sm"
       onClick={onSignOut}
-      className={`bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all hover:scale-105 ${
+      className={`bg-white/20 hover:bg-white/30 text-white border border-white/10 shadow-lg transition-all hover:scale-105 ${
         mobile ? "w-full justify-start" : ""
       }`}
     >
@@ -159,7 +159,7 @@ export default function ButtonNavigation() {
         variant="secondary"
         size="sm"
         onClick={() => router.push("/signin")}
-        className={`bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md transition-all duration-1000 hover:scale-105 ${
+        className={`bg-white/20 hover:bg-white/30 text-white border border-white/10 shadow-lg transition-all duration-1000 hover:scale-105 ${
           isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       >
@@ -188,7 +188,7 @@ export default function ButtonNavigation() {
             <Button
               variant="secondary"
               size="icon"
-              className="bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg backdrop-blur-md"
+              className="bg-white/20 hover:bg-white/30 text-white border border-white/10 shadow-lg"
             >
               <Menu className="w-5 h-5" />
             </Button>

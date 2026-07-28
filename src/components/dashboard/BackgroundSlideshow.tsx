@@ -24,7 +24,7 @@ export function BackgroundSlideshow() {
     return (
       <>
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed transition-opacity duration-1000"
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000"
           style={{
             backgroundImage: `url('${DEFAULT_BG}')`,
           }}
@@ -38,7 +38,7 @@ export function BackgroundSlideshow() {
     <>
       <div
         key={image._id}
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-fixed transition-opacity duration-1000 opacity-100"
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 opacity-100"
         style={{
           backgroundImage: `url('${image.url}')`,
         }}
