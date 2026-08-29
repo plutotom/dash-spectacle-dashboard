@@ -21,11 +21,14 @@ type ShotSummary = {
   profile_title?: string;
   bean_brand?: string;
   bean_type?: string;
-  drink_weight?: number; // grams out
-  bean_weight?: number; // dose grams in (some payloads)
+  drink_weight?: number | string; // grams out
+  bean_weight?: number | string; // dose grams in (some payloads)
   espresso_enjoyment?: number; // 1..100 (visualizer scale)
   start_time?: string; // ISO
-  duration?: number; // seconds
+  /** Unix seconds — list endpoint often sends this instead of start_time */
+  clock?: number;
+  updated_at?: number;
+  duration?: number | string; // seconds
   user_id?: string;
 };
 
@@ -35,6 +38,64 @@ type ShotDetail = ShotSummary & {
     data?: Record<string, number[]>; // espresso_pressure, espresso_flow, etc
   };
 };
+
+const WEIGHT_KEYS = ["espresso_weight", "weight", "w"];
+
+/** Prefer start_time; fall back to Visualizer `clock` (unix seconds). */
+function shotTimestampMs(s: ShotSummary): number {
+  if (s.start_time) {
+    const t = Date.parse(s.start_time);
+    if (Number.isFinite(t)) return t;
+  }
+  if (typeof s.clock === "number" && Number.isFinite(s.clock) && s.clock > 0) {
+    return s.clock * 1000;
+  }
+  return NaN;
+}
+
+/** Ensure list rows always expose start_time so the UI can format pull time. */
+function withStartTime(s: ShotSummary): ShotSummary {
+  if (s.start_time) return s;
+  const ms = shotTimestampMs(s);
+  if (!Number.isFinite(ms)) return s;
+  return { ...s, start_time: new Date(ms).toISOString() };
+}
+
+/** List cache should stay slim — no curve arrays. */
+function toListSummary(s: ShotSummary): ShotSummary {
+  return {
+    id: s.id,
+    profile_title: s.profile_title,
+    bean_brand: s.bean_brand,
+    bean_type: s.bean_type,
+    drink_weight: s.drink_weight,
+    bean_weight: s.bean_weight,
+    espresso_enjoyment: s.espresso_enjoyment,
+    start_time: s.start_time,
+    clock: s.clock,
+    updated_at: s.updated_at,
+    duration: s.duration,
+    user_id: s.user_id,
+  };
+}
+
+/** Yield grams from drink_weight, or last espresso_weight sample. */
+function resolveDrinkWeight(detail: ShotDetail): number | string | undefined {
+  const fromField = detail.drink_weight;
+  if (fromField != null && fromField !== "") {
+    const n = typeof fromField === "number" ? fromField : Number(fromField);
+    if (Number.isFinite(n) && n > 0) return fromField;
+  }
+  const series = detail.data?.data;
+  if (!series) return undefined;
+  for (const key of WEIGHT_KEYS) {
+    const values = series[key];
+    if (!Array.isArray(values) || values.length === 0) continue;
+    const last = values[values.length - 1];
+    if (typeof last === "number" && Number.isFinite(last) && last > 0) return last;
+  }
+  return undefined;
+}
 
 /** Confirmed by GET /api/me — Visualizer still returns 200 + public shots when Basic auth is wrong. */
 type VisualizerMe = {
@@ -75,15 +136,16 @@ function downsampleArray(values: unknown, maxPoints = CURVE_POINTS): number[] {
 }
 
 /**
- * Shrink a shot detail to only what the dashboard renders: the pressure/flow
- * curves (downsampled) and a downsampled timeframe. Drops the other visualizer
- * channels (temperature, weight, resistance, …) the UI never reads.
+ * Shrink a shot detail to only what the dashboard renders: the pressure/flow/
+ * weight curves (downsampled) and a downsampled timeframe. Drops the other
+ * visualizer channels (temperature, resistance, …) the UI never reads.
+ * Weight is kept so yield can fall back when drink_weight is missing.
  */
 function trimDetail(detail: ShotDetail): ShotDetail {
   const series = detail.data?.data;
   if (!series) return detail;
   const kept: Record<string, number[]> = {};
-  for (const key of [...PRESSURE_KEYS, ...FLOW_KEYS]) {
+  for (const key of [...PRESSURE_KEYS, ...FLOW_KEYS, ...WEIGHT_KEYS]) {
     if (Array.isArray(series[key])) kept[key] = downsampleArray(series[key]);
   }
   return {
@@ -218,22 +280,21 @@ export const fetchShots = action({
         return { count: 0 };
       }
 
-      // Sort newest first just in case
-      const sorted = [...shots].sort((a, b) => {
-        const ta = a.start_time ? Date.parse(a.start_time) : 0;
-        const tb = b.start_time ? Date.parse(b.start_time) : 0;
-        return tb - ta;
-      });
+      // Sort newest first — list payloads often only have `clock`, not start_time.
+      const sorted = [...shots]
+        .map(withStartTime)
+        .sort((a, b) => shotTimestampMs(b) - shotTimestampMs(a));
 
-      // Drop shots older than a week — the dashboard only shows recent activity,
-      // and there's no reason to keep stale shots in the cache.
+      // Prefer shots from the last week, but never wipe the ribbon if everything
+      // is older — still keep the newest SHOT_LIMIT rows.
       const cutoff = Date.now() - SHOT_MAX_AGE_MS;
-      const recent = sorted.filter((s) => {
-        const t = s.start_time ? Date.parse(s.start_time) : NaN;
+      const withinWeek = sorted.filter((s) => {
+        const t = shotTimestampMs(s);
         return Number.isFinite(t) && t >= cutoff;
       });
-
-      const trimmed = recent.slice(0, SHOT_LIMIT);
+      const trimmed = (withinWeek.length > 0 ? withinWeek : sorted)
+        .filter((s) => Number.isFinite(shotTimestampMs(s)))
+        .slice(0, SHOT_LIMIT);
 
       if (trimmed.length === 0) {
         await ctx.runMutation(internal.espresso.upsertCache, {
@@ -243,41 +304,55 @@ export const fetchShots = action({
         return { count: 0 };
       }
 
+      // List endpoint is sparse (often just id/clock). Download each shot for
+      // yield/duration/start_time, but only cache slim summaries in the list.
+      const hydrated = await Promise.all(
+        trimmed.map(async (summary) => {
+          try {
+            const detailRes = await fetch(`${API_BASE}/shots/${summary.id}/download`, {
+              headers: authHeaders,
+            });
+            if (!detailRes.ok) {
+              console.error("visualizer /shots/:id/download failed", summary.id, detailRes.status);
+              return { summary: withStartTime(summary), detail: null as ShotDetail | null };
+            }
+            const detail = (await detailRes.json()) as ShotDetail;
+            if (detail.user_id && detail.user_id !== me.id) {
+              return { summary: withStartTime(summary), detail: null };
+            }
+            const merged = withStartTime({
+              ...summary,
+              ...detail,
+              drink_weight: resolveDrinkWeight(detail) ?? detail.drink_weight,
+            });
+            return {
+              summary: toListSummary(merged),
+              detail: merged,
+            };
+          } catch (e) {
+            console.error("visualizer /shots/:id/download failed", summary.id, e);
+            return { summary: withStartTime(summary), detail: null as ShotDetail | null };
+          }
+        }),
+      );
+
+      const enriched = hydrated.map((h) => h.summary);
+
       await ctx.runMutation(internal.espresso.upsertCache, {
         kind: "list",
-        data: trimmed,
+        data: enriched,
       });
 
-      // 3. Fetch full detail (with curves) for the latest shot.
-      const latest = trimmed[0];
-      if (latest?.id) {
-        try {
-          const detailRes = await fetch(`${API_BASE}/shots/${latest.id}/download`, {
-            headers: authHeaders,
-          });
-          if (detailRes.ok) {
-            const detail = (await detailRes.json()) as ShotDetail;
-            // download/show is public for any shot id; confirm ownership.
-            if (detail.user_id && detail.user_id !== me.id) {
-              console.error("visualizer detail user_id mismatch /me — not caching detail", {
-                meId: me.id,
-                shotUserId: detail.user_id,
-              });
-            } else {
-              await ctx.runMutation(internal.espresso.upsertCache, {
-                kind: "detail",
-                data: trimDetail({ ...latest, ...detail }),
-              });
-            }
-          } else {
-            console.error("visualizer /shots/:id/download failed", detailRes.status);
-          }
-        } catch (e) {
-          console.error("detail fetch failed", e);
-        }
+      // Cache curves for the latest shot (already downloaded above).
+      const latestDetail = hydrated[0]?.detail;
+      if (latestDetail) {
+        await ctx.runMutation(internal.espresso.upsertCache, {
+          kind: "detail",
+          data: trimDetail(latestDetail),
+        });
       }
 
-      return { count: trimmed.length };
+      return { count: enriched.length };
     } catch (e) {
       console.error("fetchShots failed", e);
       return null;

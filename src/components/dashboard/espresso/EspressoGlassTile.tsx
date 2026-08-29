@@ -9,7 +9,7 @@ import {
   buildPath,
   fmtDayShort,
   fmtRelative,
-  fmtTime,
+  fmtTimeCompact,
   normalizeShot,
   ratio,
   type RawShot,
@@ -26,10 +26,16 @@ export function EspressoGlassTile() {
   useEffect(() => {
     fetchShotsRef.current = fetchShots;
   }, [fetchShots]);
-  const headDateMs =
-    list?.shots?.[0]?.start_time != null
-      ? new Date(String(list.shots[0].start_time)).getTime()
-      : null;
+  const headRaw = list?.shots?.[0] as RawShot | undefined;
+  const headDateMs = (() => {
+    if (!headRaw) return null;
+    if (headRaw.start_time != null) {
+      const t = new Date(String(headRaw.start_time)).getTime();
+      return Number.isFinite(t) ? t : null;
+    }
+    const clock = Number(headRaw.clock);
+    return Number.isFinite(clock) && clock > 0 ? clock * 1000 : null;
+  })();
   const now = useNow();
   const isFresh = headDateMs !== null && now - headDateMs < 10 * 60 * 1000;
 
@@ -121,16 +127,16 @@ export function EspressoGlassTile() {
 
       {/* recent ribbon */}
       {recent.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-espresso-edge grid grid-cols-4 gap-2">
+        <div className="mt-3 pt-3 border-t border-espresso-edge grid grid-cols-4 gap-1.5">
           {recent.map((s) => (
             <div
               key={s.id}
-              className="rounded-md bg-espresso-ink-soft/30 hover:bg-espresso-ink-soft/45 transition px-2 py-1.5"
+              className="rounded-md bg-espresso-ink-soft/30 hover:bg-espresso-ink-soft/45 transition px-1.5 py-1 min-w-0"
             >
-              <div className="text-[9px] text-espresso-crema/45 uppercase tracking-wider">
-                {fmtDayShort(s.date)} · {fmtTime(s.date)}
+              <div className="text-[8px] leading-tight text-espresso-crema/45 uppercase tracking-wide whitespace-nowrap truncate">
+                {fmtDayShort(s.date)} · {fmtTimeCompact(s.date)}
               </div>
-              <div className="text-sm font-light tabular-nums">
+              <div className="text-[11px] leading-tight font-light tabular-nums whitespace-nowrap">
                 {s.yieldG?.toFixed(0) ?? "--"}g
                 <span className="text-espresso-crema/40">
                   {" "}
