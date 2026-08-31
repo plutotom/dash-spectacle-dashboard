@@ -8,6 +8,7 @@ import {
   CalendarWidget,
   BackgroundSlideshow,
   EspressoGlassTile,
+  EspressoShotGraphTile,
 } from "@/components/dashboard";
 import ButtonNavigation from "../section/ButtonNavigation";
 
@@ -37,6 +38,7 @@ export default function DashboardPage() {
                 <CurrentWeather />
                 <WeatherForecast />
                 <EspressoGlassTile />
+                <EspressoShotGraphTile />
               </div>
             </div>
           </div>

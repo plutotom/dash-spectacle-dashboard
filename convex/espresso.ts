@@ -8,12 +8,19 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const SHOT_LIMIT = 8; // how many recent shots to keep
 const SHOT_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // drop shots older than a week
 const API_BASE = "https://visualizer.coffee/api";
-// Curve resolution to cache. The UI downsamples to 64 points for rendering, so
-// storing the full (multi-hundred-point, many-channel) visualizer payload just
-// burns DB write + read I/O and websocket egress. We keep a small superset.
+// Curve resolution to cache. The UI downsamples to 64-96 points for rendering,
+// so storing the full (multi-hundred-point, many-channel) visualizer payload
+// just burns DB write + read I/O and websocket egress. We keep a small superset.
 const CURVE_POINTS = 128;
-const PRESSURE_KEYS = ["espresso_pressure", "pressure", "p"];
-const FLOW_KEYS = ["espresso_flow", "flow", "f"];
+const PRESSURE_KEYS = ["espresso_pressure", "pressure", "p", "espresso_pressure_goal"];
+const FLOW_KEYS = ["espresso_flow", "flow", "f", "espresso_flow_goal"];
+const TEMP_KEYS = [
+  "espresso_temperature_mix",
+  "espresso_temperature_basket",
+  "espresso_temperature_goal",
+  "temperature_mix",
+  "temperature",
+];
 
 // --- Types (kept loose: visualizer payloads vary) ---
 type ShotSummary = {
@@ -33,13 +40,42 @@ type ShotSummary = {
 };
 
 type ShotDetail = ShotSummary & {
-  data?: {
-    timeframe?: number[];
-    data?: Record<string, number[]>; // espresso_pressure, espresso_flow, etc
-  };
+  /** Sample times in seconds. Live payloads put this at the top level. */
+  timeframe?: number[];
+  /**
+   * Curve channels. Live Visualizer payloads use a flat map here
+   * (`data.espresso_pressure`); older payloads nest them under `data.data`.
+   */
+  data?: Record<string, unknown>;
 };
 
-const WEIGHT_KEYS = ["espresso_weight", "weight", "w"];
+const WEIGHT_KEYS = ["espresso_weight", "weight", "w", "espresso_flow_weight"];
+
+function isNumberArray(value: unknown): value is number[] {
+  return Array.isArray(value) && value.every((v) => typeof v === "number");
+}
+
+/** Flatten either payload shape into a plain channel -> samples map. */
+function resolveChannels(detail: ShotDetail): Record<string, number[]> {
+  const root = detail.data;
+  if (!root) return {};
+  const nested = root.data;
+  const source = nested && typeof nested === "object" ? (nested as Record<string, unknown>) : root;
+  const out: Record<string, number[]> = {};
+  for (const [key, value] of Object.entries(source)) {
+    if (isNumberArray(value)) out[key] = value;
+  }
+  return out;
+}
+
+function resolveTimeframe(detail: ShotDetail): number[] {
+  if (isNumberArray(detail.timeframe)) return detail.timeframe;
+  const nestedTimeframe = detail.data?.timeframe;
+  if (isNumberArray(nestedTimeframe)) return nestedTimeframe;
+  const inner = detail.data?.data as Record<string, unknown> | undefined;
+  if (inner && isNumberArray(inner.timeframe)) return inner.timeframe;
+  return [];
+}
 
 /** Prefer start_time; fall back to Visualizer `clock` (unix seconds). */
 function shotTimestampMs(s: ShotSummary): number {
@@ -86,11 +122,10 @@ function resolveDrinkWeight(detail: ShotDetail): number | string | undefined {
     const n = typeof fromField === "number" ? fromField : Number(fromField);
     if (Number.isFinite(n) && n > 0) return fromField;
   }
-  const series = detail.data?.data;
-  if (!series) return undefined;
+  const series = resolveChannels(detail);
   for (const key of WEIGHT_KEYS) {
     const values = series[key];
-    if (!Array.isArray(values) || values.length === 0) continue;
+    if (!values || values.length === 0) continue;
     const last = values[values.length - 1];
     if (typeof last === "number" && Number.isFinite(last) && last > 0) return last;
   }
@@ -137,24 +172,23 @@ function downsampleArray(values: unknown, maxPoints = CURVE_POINTS): number[] {
 
 /**
  * Shrink a shot detail to only what the dashboard renders: the pressure/flow/
- * weight curves (downsampled) and a downsampled timeframe. Drops the other
- * visualizer channels (temperature, resistance, …) the UI never reads.
- * Weight is kept so yield can fall back when drink_weight is missing.
+ * temperature/weight curves plus their goal traces, downsampled, alongside a
+ * downsampled timeframe. Drops the channels no widget reads (water dispensed,
+ * resistance, …). Weight is kept so yield can fall back when drink_weight is
+ * missing. Output is normalized to the flat `data` + top-level `timeframe`
+ * shape regardless of which shape came back from Visualizer.
  */
 function trimDetail(detail: ShotDetail): ShotDetail {
-  const series = detail.data?.data;
-  if (!series) return detail;
+  const series = resolveChannels(detail);
+  if (Object.keys(series).length === 0) return detail;
   const kept: Record<string, number[]> = {};
-  for (const key of [...PRESSURE_KEYS, ...FLOW_KEYS, ...WEIGHT_KEYS]) {
-    if (Array.isArray(series[key])) kept[key] = downsampleArray(series[key]);
+  for (const key of [...PRESSURE_KEYS, ...FLOW_KEYS, ...TEMP_KEYS, ...WEIGHT_KEYS]) {
+    if (series[key]) kept[key] = downsampleArray(series[key]);
   }
   return {
     ...detail,
-    data: {
-      ...detail.data,
-      timeframe: downsampleArray(detail.data?.timeframe),
-      data: kept,
-    },
+    timeframe: downsampleArray(resolveTimeframe(detail)),
+    data: kept,
   };
 }
 

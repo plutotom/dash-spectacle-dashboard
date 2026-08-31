@@ -19,10 +19,14 @@ export type RawShot = {
   clock?: number | string;
   updated_at?: number | string;
   duration?: number | string;
-  data?: {
-    timeframe?: number[];
-    data?: Record<string, number[]>;
-  };
+  /** Sample times in seconds. Live payloads put this at the top level. */
+  timeframe?: number[];
+  /**
+   * Curves. Live Visualizer payloads use a flat channel map here
+   * (`data.espresso_pressure`); older/nested payloads use `data.data`.
+   * Kept as `unknown` so both shapes can be resolved at runtime.
+   */
+  data?: Record<string, unknown>;
 };
 
 export type Shot = {
@@ -41,6 +45,56 @@ export type Shot = {
 
 const PRESSURE_MAX = 12; // bar
 const FLOW_MAX = 8; // ml/s
+
+const PRESSURE_KEYS = ["espresso_pressure", "pressure", "p"];
+const PRESSURE_GOAL_KEYS = ["espresso_pressure_goal", "pressure_goal"];
+const FLOW_KEYS = ["espresso_flow", "flow", "f"];
+const FLOW_GOAL_KEYS = ["espresso_flow_goal", "flow_goal"];
+const WEIGHT_KEYS = ["espresso_weight", "weight", "w"];
+const TEMP_KEYS = [
+  "espresso_temperature_mix",
+  "espresso_temperature_basket",
+  "temperature_mix",
+  "temperature",
+];
+const TEMP_GOAL_KEYS = ["espresso_temperature_goal", "temperature_goal"];
+
+function isNumberArray(value: unknown): value is number[] {
+  return Array.isArray(value) && value.every((v) => typeof v === "number");
+}
+
+/**
+ * Curves live either directly on `data` (current Visualizer shape) or nested
+ * under `data.data` (older shape). Return whichever holds numeric channels.
+ */
+function resolveChannels(raw: RawShot): Record<string, number[]> {
+  const root = raw.data;
+  if (!root) return {};
+  const nested = root.data;
+  const source = nested && typeof nested === "object" ? (nested as Record<string, unknown>) : root;
+  const out: Record<string, number[]> = {};
+  for (const [key, value] of Object.entries(source)) {
+    if (isNumberArray(value)) out[key] = value;
+  }
+  return out;
+}
+
+function resolveTimeframe(raw: RawShot): number[] {
+  if (isNumberArray(raw.timeframe)) return raw.timeframe;
+  const nestedTimeframe = raw.data?.timeframe;
+  if (isNumberArray(nestedTimeframe)) return nestedTimeframe;
+  const inner = raw.data?.data as Record<string, unknown> | undefined;
+  if (inner && isNumberArray(inner.timeframe)) return inner.timeframe;
+  return [];
+}
+
+function pickChannel(channels: Record<string, number[]>, keys: string[]): number[] {
+  for (const key of keys) {
+    const values = channels[key];
+    if (values && values.length > 0) return values;
+  }
+  return [];
+}
 
 /** Coerce loose JSON numbers (API may send strings) to finite number or null */
 export function toOptionalNumber(value: unknown): number | null {
@@ -68,12 +122,8 @@ function shotDate(raw: RawShot): Date | null {
 
 /** Last scale reading when drink_weight is missing from the payload. */
 function yieldFromWeightCurve(raw: RawShot): number | null {
-  const series = raw.data?.data;
-  if (!series) return null;
-  const weightKey = ["espresso_weight", "weight", "w"].find((k) => Array.isArray(series[k]));
-  if (!weightKey) return null;
-  const values = series[weightKey];
-  if (!values || values.length === 0) return null;
+  const values = pickChannel(resolveChannels(raw), WEIGHT_KEYS);
+  if (values.length === 0) return null;
   const last = values[values.length - 1];
   return typeof last === "number" && Number.isFinite(last) && last > 0 ? last : null;
 }
@@ -94,9 +144,7 @@ function downsample(values: number[], maxPoints = 64): number[] {
 }
 
 export function normalizeShot(raw: RawShot): Shot {
-  const series = raw.data?.data ?? {};
-  const pressureKey = ["espresso_pressure", "pressure", "p"].find((k) => series[k]);
-  const flowKey = ["espresso_flow", "flow", "f"].find((k) => series[k]);
+  const channels = resolveChannels(raw);
 
   const doseFromApi = toOptionalNumber(raw.bean_weight);
   const yieldG = toOptionalNumber(raw.drink_weight) ?? yieldFromWeightCurve(raw);
@@ -124,8 +172,86 @@ export function normalizeShot(raw: RawShot): Shot {
       const e = toOptionalNumber(raw.espresso_enjoyment);
       return e === null ? null : Math.max(0, Math.min(1, e / 100));
     })(),
-    pressure: pressureKey ? downsample(normalize(series[pressureKey], PRESSURE_MAX)) : [],
-    flow: flowKey ? downsample(normalize(series[flowKey], FLOW_MAX)) : [],
+    pressure: downsample(normalize(pickChannel(channels, PRESSURE_KEYS), PRESSURE_MAX)),
+    flow: downsample(normalize(pickChannel(channels, FLOW_KEYS), FLOW_MAX)),
+  };
+}
+
+/**
+ * Raw-valued, index-aligned series for the shot graph card. Channels can differ
+ * in length from each other and from `timeframe`, so every series is resampled
+ * onto a shared grid by fractional position instead of raw index.
+ */
+export type ShotSeries = {
+  timeS: number[];
+  pressure: number[];
+  pressureGoal: number[];
+  flow: number[];
+  flowGoal: number[];
+  tempC: number[];
+  tempGoalC: number[];
+  weightG: number[];
+  maxTimeS: number;
+  points: number;
+};
+
+const SERIES_POINTS = 96;
+
+function resampleTo(values: number[], count: number): number[] {
+  if (values.length === 0) return [];
+  if (values.length === 1) return new Array(count).fill(values[0]);
+  const out: number[] = [];
+  for (let i = 0; i < count; i++) {
+    const pos = (i / (count - 1)) * (values.length - 1);
+    out.push(values[Math.round(pos)] ?? 0);
+  }
+  return out;
+}
+
+export function buildShotSeries(raw: RawShot, points = SERIES_POINTS): ShotSeries {
+  const channels = resolveChannels(raw);
+  const pressureRaw = pickChannel(channels, PRESSURE_KEYS);
+  const flowRaw = pickChannel(channels, FLOW_KEYS);
+  const sampleCount = Math.max(pressureRaw.length, flowRaw.length);
+  const empty: ShotSeries = {
+    timeS: [],
+    pressure: [],
+    pressureGoal: [],
+    flow: [],
+    flowGoal: [],
+    tempC: [],
+    tempGoalC: [],
+    weightG: [],
+    maxTimeS: 0,
+    points: 0,
+  };
+  if (sampleCount === 0) return empty;
+
+  const n = Math.min(points, sampleCount);
+  const timeframe = resolveTimeframe(raw);
+  const durationS = toOptionalNumber(raw.duration);
+
+  // Fall back to an even grid across the shot duration (or 0.1s ticks, the DE1
+  // sample interval) when the payload omits `timeframe`.
+  const timeS =
+    timeframe.length > 0
+      ? resampleTo(timeframe, n)
+      : Array.from(
+          { length: n },
+          (_, i) => ((durationS ?? sampleCount * 0.1) * i) / Math.max(1, n - 1),
+        );
+
+  return {
+    timeS,
+    pressure: resampleTo(pressureRaw, n),
+    pressureGoal: resampleTo(pickChannel(channels, PRESSURE_GOAL_KEYS), n),
+    flow: resampleTo(flowRaw, n),
+    flowGoal: resampleTo(pickChannel(channels, FLOW_GOAL_KEYS), n),
+    tempC: resampleTo(pickChannel(channels, TEMP_KEYS), n),
+    tempGoalC: resampleTo(pickChannel(channels, TEMP_GOAL_KEYS), n),
+    weightG: resampleTo(pickChannel(channels, WEIGHT_KEYS), n),
+    maxTimeS: timeS[timeS.length - 1] ?? durationS ?? 0,
+    points: n,
   };
 }
 

@@ -138,6 +138,8 @@
   --espresso-roast: oklch(0.42 0.1 45); /* mid roast */
   --espresso-pressure: oklch(0.82 0.13 175); /* teal — pressure curve */
   --espresso-flow: oklch(0.82 0.12 235); /* sky — flow curve */
+  --espresso-temp: oklch(0.72 0.19 25); /* red — temperature curve */
+  --espresso-weight: oklch(0.85 0.14 95); /* wheat — weight curve */
   --espresso-good: oklch(0.78 0.16 155); /* on-target green */
   --espresso-warn: oklch(0.78 0.17 55); /* off-target amber */
   --espresso-bad: oklch(0.7 0.2 25); /* bad shot red */
@@ -158,6 +160,8 @@
   --color-espresso-roast: var(--espresso-roast);
   --color-espresso-pressure: var(--espresso-pressure);
   --color-espresso-flow: var(--espresso-flow);
+  --color-espresso-temp: var(--espresso-temp);
+  --color-espresso-weight: var(--espresso-weight);
   --color-espresso-good: var(--espresso-good);
   --color-espresso-warn: var(--espresso-warn);
   --color-espresso-bad: var(--espresso-bad);

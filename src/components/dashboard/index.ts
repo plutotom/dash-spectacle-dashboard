@@ -6,4 +6,5 @@ export { PrayerRequestsWidget } from "./PrayerRequestsWidget";
 export { CalendarWidget } from "./CalendarWidget";
 export { BackgroundSlideshow } from "./BackgroundSlideshow";
 export { EspressoGlassTile } from "./espresso/EspressoGlassTile";
+export { EspressoShotGraphTile } from "./espresso/EspressoShotGraphTile";
 export { EspressoTickerStrip } from "./espresso/EspressoTickerStrip";
