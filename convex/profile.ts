@@ -144,7 +144,7 @@ export const claimAdmin = mutation({
     // Check if any admin exists
     const adminUser = await ctx.db
       .query("users")
-      .filter((q) => q.eq(q.field("role"), "admin"))
+      .withIndex("by_role", (q) => q.eq("role", "admin"))
       .first();
 
     if (adminUser) {

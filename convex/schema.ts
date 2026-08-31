@@ -15,7 +15,9 @@ const schema = defineSchema({
     role: v.optional(v.string()),
     imageCount: v.optional(v.number()),
     maxUploads: v.optional(v.number()),
-  }).index("email", ["email"]),
+  })
+    .index("email", ["email"])
+    .index("by_role", ["role"]),
 
   // User uploaded images
   images: defineTable({
