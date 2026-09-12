@@ -3,7 +3,6 @@
 import {
   DateTimeDisplay,
   CurrentWeather,
-  WeatherForecast,
   MessagesFeed,
   CalendarWidget,
   BackgroundSlideshow,
@@ -36,7 +35,6 @@ export default function DashboardPage() {
               {/* Morning ritual stack: weather + espresso */}
               <div className="w-full md:w-auto flex flex-col gap-2 min-w-[280px] md:max-w-[340px]">
                 <CurrentWeather />
-                <WeatherForecast />
                 <EspressoGlassTile />
                 <EspressoShotGraphTile />
               </div>
