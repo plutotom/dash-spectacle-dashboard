@@ -52,6 +52,7 @@ export const KIOSK_DIAGNOSTICS_SCRIPT = String.raw`
       };
       panel.appendChild(dismiss);
       document.body.appendChild(panel);
+      reload.focus();
     }
     panel.querySelector("[data-kiosk-error-message]").textContent = latestMessage;
     panel.querySelector("[data-kiosk-error-details]").textContent =

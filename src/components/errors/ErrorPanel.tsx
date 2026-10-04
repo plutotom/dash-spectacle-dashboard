@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type DashboardError = Error & { digest?: string };
 
@@ -18,9 +18,11 @@ export function ErrorPanel({
   retryNotice?: string;
 }) {
   const [diagnostics, setDiagnostics] = useState<string | null>(null);
+  const reloadButton = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
+      reloadButton.current?.focus();
       const browser = navigator.userAgent.match(/(?:Chrome|Chromium|Firefox)\/([\d.]+)/);
       setDiagnostics(
         `${new Date().toLocaleString()} · ${browser?.[0] ?? navigator.userAgent} · ${navigator.onLine ? "Network available (services may still be unreachable)" : "Browser reports offline"}`,
@@ -61,14 +63,19 @@ export function ErrorPanel({
       </p>
       {diagnostics ? <p style={{ fontSize: 16, color: "#efd5b9" }}>{diagnostics}</p> : null}
       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 20 }}>
+        <button
+          ref={reloadButton}
+          type="button"
+          onClick={() => window.location.reload()}
+          style={buttonStyle}
+        >
+          Reload dashboard
+        </button>
         {onRetry ? (
           <button type="button" onClick={onRetry} style={buttonStyle}>
             Try again
           </button>
         ) : null}
-        <button type="button" onClick={() => window.location.reload()} style={buttonStyle}>
-          Reload dashboard
-        </button>
       </div>
     </section>
   );

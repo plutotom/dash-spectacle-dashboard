@@ -6,13 +6,17 @@ import { loadTypeScript } from "./load-typescript.mjs";
 const { KIOSK_DIAGNOSTICS_SCRIPT } = await loadTypeScript("../src/lib/kiosk-diagnostics.ts");
 
 function browserFixture() {
-  function element() {
+  function element(tag = "div") {
     return {
+      tagName: tag.toUpperCase(),
       style: {},
       children: [],
       attributes: {},
       textContent: "",
       parentNode: null,
+      focus() {
+        document.activeElement = this;
+      },
       setAttribute(key, value) {
         this.attributes[key] = value;
       },
@@ -77,6 +81,9 @@ test("startup timeout and browser failures render diagnostics without React or S
     document.body.querySelector("[data-kiosk-error-details]").textContent,
     /Chromium\/90/,
   );
+  const buttons = document.body.children[0].children.filter((child) => child.tagName === "BUTTON");
+  assert.equal(buttons[0].textContent, "Reload dashboard");
+  assert.equal(document.activeElement, buttons[0]);
   listeners.error({ message: "Unexpected runtime failure" });
   assert.equal(
     document.body.querySelector("[data-kiosk-error-message]").textContent,
