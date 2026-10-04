@@ -197,3 +197,10 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
+
+/* Glass blur is expensive on the wall display's Pi GPU. Keep the tinted
+   surfaces, but avoid recompositing a full-screen photo behind every card. */
+.kiosk-dashboard [class*="backdrop-blur"] {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}

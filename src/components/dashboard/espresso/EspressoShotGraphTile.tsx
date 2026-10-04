@@ -80,7 +80,7 @@ export function EspressoShotGraphTile() {
   const peakPressure = Math.max(...series.pressure);
   const peakFlow = series.flow.length > 0 ? Math.max(...series.flow) : null;
   const avgTemp = series.tempC.length > 0 ? mean(series.tempC) : null;
-  const finalWeight = series.weightG.at(-1) ?? shot.yieldG;
+  const finalWeight = series.weightG[series.weightG.length - 1] ?? shot.yieldG;
 
   return (
     <Frame>

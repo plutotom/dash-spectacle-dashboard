@@ -1,14 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, RefreshCw, Wifi, WifiOff } from "lucide-react";
+import {
+  cacheWeather,
+  parseWeatherResponse,
+  readCachedWeather,
+  type WeatherSnapshot,
+} from "@/lib/weather";
 
 // Fixed home location (60120 / Elgin, Illinois). No geolocation is needed.
 const LATITUDE = 42.0354;
 const LONGITUDE = -88.2826;
 const REFRESH_INTERVAL_MS = 15 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 10_000;
-const CACHE_KEY = "dash-spectacle-weather-v2";
 
 const WEATHER_URL = new URL("https://api.open-meteo.com/v1/forecast");
 WEATHER_URL.search = new URLSearchParams({
@@ -21,121 +26,67 @@ WEATHER_URL.search = new URLSearchParams({
   timezone: "auto",
 }).toString();
 
-type WeatherSnapshot = {
-  current: number;
-  forecast: Array<{ date: string; high: number; low: number }>;
-  updatedAt: string;
-};
-
-type OpenMeteoResponse = {
-  current?: { temperature_2m?: number };
-  daily?: {
-    time?: string[];
-    temperature_2m_max?: number[];
-    temperature_2m_min?: number[];
-  };
-};
-
-function readCachedWeather(): WeatherSnapshot | null {
-  try {
-    const value = window.localStorage.getItem(CACHE_KEY);
-    if (!value) return null;
-    const parsed = JSON.parse(value) as WeatherSnapshot;
-
-    if (
-      !Number.isFinite(parsed.current) ||
-      !Array.isArray(parsed.forecast) ||
-      parsed.forecast.length < 3 ||
-      parsed.forecast.some(
-        (day) =>
-          typeof day.date !== "string" || !Number.isFinite(day.high) || !Number.isFinite(day.low),
-      ) ||
-      Number.isNaN(Date.parse(parsed.updatedAt))
-    ) {
-      return null;
-    }
-
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-function delay(milliseconds: number) {
-  return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
-}
-
 async function requestWeather(signal: AbortSignal): Promise<WeatherSnapshot> {
   const response = await fetch(WEATHER_URL, { cache: "no-store", signal });
 
   if (!response.ok) throw new Error(`Open-Meteo returned ${response.status}`);
 
-  const data = (await response.json()) as OpenMeteoResponse;
-  const current = data.current?.temperature_2m;
-  const dates = data.daily?.time;
-  const highs = data.daily?.temperature_2m_max;
-  const lows = data.daily?.temperature_2m_min;
-
-  if (
-    !Number.isFinite(current) ||
-    !dates ||
-    !highs ||
-    !lows ||
-    dates.length < 3 ||
-    highs.length < 3 ||
-    lows.length < 3
-  ) {
-    throw new Error("Open-Meteo returned incomplete weather data");
-  }
-
-  return {
-    current: current as number,
-    forecast: dates.slice(0, 3).map((date, index) => ({
-      date,
-      high: highs[index],
-      low: lows[index],
-    })),
-    updatedAt: new Date().toISOString(),
-  };
+  return parseWeatherResponse(await response.json());
 }
 
 export function CurrentWeather() {
   const [weather, setWeather] = useState<WeatherSnapshot | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isOffline, setIsOffline] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [cacheUnavailable, setCacheUnavailable] = useState(false);
+  const activeRequest = useRef<AbortController | null>(null);
 
   const refresh = useCallback(async (manual = false) => {
+    if (activeRequest.current) return;
+    const controller = new AbortController();
+    activeRequest.current = controller;
     if (manual) {
       setIsRefreshing(true);
     } else {
       setIsLoading(true);
     }
 
-    // Three attempts with short exponential backoff: immediately, 1s, then 2s.
-    for (let attempt = 0; attempt < 3; attempt += 1) {
-      const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
-      try {
-        const snapshot = await requestWeather(controller.signal);
-        window.localStorage.setItem(CACHE_KEY, JSON.stringify(snapshot));
-        setWeather(snapshot);
-        setIsOffline(false);
+    // The deadline also bounds retries; cleanup aborts the entire operation.
+    const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS * 3);
+    let lastError = "Weather request failed";
+    try {
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        if (controller.signal.aborted) break;
+        try {
+          const snapshot = await requestWeather(controller.signal);
+          if (activeRequest.current !== controller) return;
+          if (controller.signal.aborted) throw new Error("Weather request timed out");
+          setCacheUnavailable(!cacheWeather(snapshot));
+          setWeather(snapshot);
+          setError(null);
+          return;
+        } catch (cause) {
+          lastError = cause instanceof Error ? cause.message : "Weather request failed";
+        }
+        if (attempt < 2 && !controller.signal.aborted) {
+          await new Promise((resolve) => window.setTimeout(resolve, 2 ** attempt * 1000));
+        }
+      }
+      // An unmounted widget must not update state after cleanup.
+      if (activeRequest.current !== controller) return;
+      setWeather((current) => current ?? readCachedWeather());
+      setError(
+        controller.signal.aborted ? "Weather request timed out after 30 seconds" : lastError,
+      );
+    } finally {
+      window.clearTimeout(timeout);
+      if (activeRequest.current === controller) {
+        activeRequest.current = null;
         setIsLoading(false);
         setIsRefreshing(false);
-        window.clearTimeout(timeout);
-        return;
-      } catch {
-        window.clearTimeout(timeout);
-        if (attempt < 2) await delay(2 ** attempt * 1000);
       }
     }
-
-    setWeather((current) => current ?? readCachedWeather());
-    setIsOffline(true);
-    setIsLoading(false);
-    setIsRefreshing(false);
   }, []);
 
   useEffect(() => {
@@ -152,6 +103,8 @@ export function CurrentWeather() {
     return () => {
       window.clearTimeout(initialLoad);
       window.clearInterval(interval);
+      activeRequest.current?.abort();
+      activeRequest.current = null;
     };
   }, [refresh]);
 
@@ -179,7 +132,11 @@ export function CurrentWeather() {
                 {weather ? Math.round(weather.current) : "--"}°
               </div>
               <div className="mt-1 text-sm text-white/60">
-                {isOffline ? "Saved weather" : "Current temperature"}
+                {error
+                  ? weather
+                    ? "Saved weather"
+                    : "Weather unavailable"
+                  : "Current temperature"}
               </div>
             </div>
           </div>
@@ -194,18 +151,36 @@ export function CurrentWeather() {
             >
               {isRefreshing ? (
                 <RefreshCw className="h-3 w-3 animate-spin" />
-              ) : isOffline ? (
+              ) : error ? (
                 <WifiOff className="h-3 w-3 text-white/30" />
               ) : (
                 <Wifi className="h-3 w-3 text-blue-400/50" />
               )}
             </button>
-            <span className="text-[10px] text-white/35">
-              {updatedLabel ? `Updated ${updatedLabel}` : "Unavailable"}
+            <span className="text-xs text-white/70">
+              {updatedLabel
+                ? `Updated ${new Date(weather!.updatedAt).toLocaleDateString()} ${updatedLabel}`
+                : "Unavailable"}
             </span>
           </div>
         </div>
       </div>
+
+      {error ? (
+        <div
+          role="status"
+          className="rounded-lg border border-amber-300/60 bg-black/80 p-3 text-base text-amber-100"
+        >
+          Weather error: {error}. {weather ? "Showing the last saved reading. " : ""}
+          Retrying every 15 minutes; use the refresh button to retry now.
+        </div>
+      ) : null}
+      {cacheUnavailable ? (
+        <p role="status" className="rounded-lg bg-black/80 p-3 text-base text-amber-100">
+          Live weather is working. Browser storage is unavailable, so it cannot be saved for offline
+          use.
+        </p>
+      ) : null}
 
       <div className="relative rounded-lg border border-white/5 bg-black/20 p-2 pb-5 backdrop-blur-sm transition-all hover:bg-black/30">
         <div className="flex gap-2 overflow-x-auto scrollbar-hide">

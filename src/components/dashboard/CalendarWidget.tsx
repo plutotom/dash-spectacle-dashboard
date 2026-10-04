@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { format, addDays, isSameDay, parseISO } from "date-fns";
 import { useAction } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { ErrorPanel } from "@/components/errors/ErrorPanel";
+import * as Sentry from "@sentry/nextjs";
 
 interface CalendarEvent {
   id: string;
@@ -59,6 +61,7 @@ export function CalendarWidget() {
   const [days, setDays] = useState<DayEvents[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshSeed, setRefreshSeed] = useState(0);
 
   const getEvents = useAction(api.calendar.getEvents);
   const getEventsRef = useRef(getEvents);
@@ -79,6 +82,7 @@ export function CalendarWidget() {
         setError(null);
       } catch (err) {
         if (cancelled) return;
+        Sentry.captureException(err, { tags: { widget: "Calendar" } });
         const errorMessage = (err as { message?: string })?.message || "Failed to load calendar";
         setError(errorMessage);
       } finally {
@@ -102,7 +106,7 @@ export function CalendarWidget() {
       window.clearTimeout(initialTimeout);
       window.clearInterval(interval);
     };
-  }, []);
+  }, [refreshSeed]);
 
   if (loading) {
     return (
@@ -114,13 +118,14 @@ export function CalendarWidget() {
 
   if (error) {
     return (
-      <div className="bg-red-500/20 rounded-lg p-3 border border-red-500/20 flex items-center justify-center h-full min-h-[140px] mt-4">
-        <div className="flex flex-col items-center text-center">
-          <span className="text-red-400 font-medium text-xs uppercase tracking-wider mb-1">
-            Calendar Error
-          </span>
-          <p className="text-red-300/70 text-[10px]">{error}</p>
-        </div>
+      <div className="mt-4">
+        <ErrorPanel
+          title="Calendar unavailable"
+          error={new Error(error)}
+          onRetry={() => setRefreshSeed((seed) => seed + 1)}
+          compact
+          retryNotice="The rest of the dashboard is still running. Calendar retries every 20 minutes."
+        />
       </div>
     );
   }

@@ -206,6 +206,30 @@ just say which and I'll wire it into the dashboard.
 
 # To debug the dashboard Pie on the wall you can do this
 
+Dashboard widgets have independent error panels, so a broken widget does not
+take down the clock and the rest of the display. A failed widget retries up to
+three times at one-minute intervals. Weather and calendar request failures
+retry on their normal refresh intervals (15 and 20 minutes).
+
+Error panels show the message, detection time, browser version, and available
+error reference. Photograph the screen to investigate remotely. The dashboard
+also reports data-service disconnections lasting over 30 seconds, JavaScript
+load failures, unhandled browser errors, and startup exceeding 45 seconds.
+Reporting to Sentry does not need to succeed for an on-screen error to appear.
+Production server errors may hide their original message; use the displayed
+error reference to find the server-side details.
+
+Background photos are resized on the server to static JPEGs no larger than
+1920 × 1080, including the first frame of GIF uploads. Photos must come from
+the existing public Vercel Blob store or Unsplash. Downloads are limited to
+20 MB and 15 seconds; source decoding is limited to 64 million pixels. Failed
+photos show a notice and retry at the next five-minute slideshow interval.
+Dashboard blur effects are disabled to reduce Pi GPU load.
+
+A browser process crash, frozen renderer, or power loss cannot be handled by
+JavaScript inside that browser. Keep the nightly kiosk process restart below
+for those cases. Run `pnpm test` for weather-validation and image-resizing checks.
+
 Fastest path: launch Chrome with remote debugging
 If you can restart the kiosk browser, do this from SSH:
 
