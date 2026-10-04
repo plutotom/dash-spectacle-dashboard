@@ -5,9 +5,21 @@ export const KIOSK_DIAGNOSTICS_SCRIPT = String.raw`
   if (!/^\/dashboard\/?$/.test(window.location.pathname)) return;
   var panel = null;
   var latestMessage = "";
+  var dismissedMessage = null;
+  var dismissTimer = null;
+
+  function dismissPanel() {
+    window.clearTimeout(dismissTimer);
+    dismissedMessage = latestMessage;
+    if (panel && panel.parentNode) panel.parentNode.removeChild(panel);
+    panel = null;
+    dismissTimer = null;
+  }
 
   function show(message) {
-    latestMessage = String(message).slice(0, 1000);
+    var nextMessage = String(message).slice(0, 1000);
+    if (nextMessage === dismissedMessage) return;
+    latestMessage = nextMessage;
     if (!document.body) {
       window.setTimeout(function () {
         show(latestMessage);
@@ -15,6 +27,7 @@ export const KIOSK_DIAGNOSTICS_SCRIPT = String.raw`
       return;
     }
     if (!panel) {
+      dismissedMessage = null;
       panel = document.createElement("section");
       panel.setAttribute("role", "alert");
       panel.setAttribute("data-kiosk-error", "true");
@@ -46,13 +59,11 @@ export const KIOSK_DIAGNOSTICS_SCRIPT = String.raw`
       var dismiss = document.createElement("button");
       dismiss.textContent = "Dismiss message";
       dismiss.style.cssText = reload.style.cssText;
-      dismiss.onclick = function () {
-        if (panel && panel.parentNode) panel.parentNode.removeChild(panel);
-        panel = null;
-      };
+      dismiss.onclick = dismissPanel;
       panel.appendChild(dismiss);
       document.body.appendChild(panel);
       reload.focus();
+      dismissTimer = window.setTimeout(dismissPanel, 120000);
     }
     panel.querySelector("[data-kiosk-error-message]").textContent = latestMessage;
     panel.querySelector("[data-kiosk-error-details]").textContent =

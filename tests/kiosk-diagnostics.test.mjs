@@ -54,7 +54,7 @@ function browserFixture() {
       return timer;
     },
     clearTimeout(timer) {
-      timer.cancelled = true;
+      if (timer) timer.cancelled = true;
     },
     addEventListener(name, callback) {
       listeners[name] = callback;
@@ -111,4 +111,20 @@ test("successful startup cancels the watchdog and error text cannot become HTML"
   const detail = document.body.querySelector("[data-kiosk-error-message]");
   assert.equal(detail.textContent, "<img src=x onerror=alert(1)>");
   assert.equal(detail.children.length, 0);
+});
+
+test("browser notices dismiss after two minutes without repeated errors extending the timer", () => {
+  const { document, timers, listeners } = browserFixture();
+  listeners.error({ message: "First error" });
+  const dismiss = timers.find((timer) => timer.delay === 120000);
+  assert.ok(dismiss);
+  listeners.error({ message: "Repeated error" });
+  assert.equal(timers.filter((timer) => timer.delay === 120000).length, 1);
+  dismiss.callback();
+  assert.equal(document.body.children.length, 0);
+  listeners.error({ message: "Repeated error" });
+  assert.equal(document.body.children.length, 0);
+  listeners.error({ message: "A new error" });
+  assert.equal(document.body.children.length, 1);
+  assert.equal(timers.filter((timer) => timer.delay === 120000).length, 2);
 });

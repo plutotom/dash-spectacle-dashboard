@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, RefreshCw, Wifi, WifiOff } from "lucide-react";
+import { TimedNotice } from "@/components/errors/TimedNotice";
 import {
   cacheWeather,
   parseWeatherResponse,
@@ -167,19 +168,23 @@ export function CurrentWeather() {
       </div>
 
       {error ? (
-        <div
-          role="status"
-          className="rounded-lg border border-amber-300/60 bg-black/80 p-3 text-base text-amber-100"
-        >
-          Weather error: {error}. {weather ? "Showing the last saved reading. " : ""}
-          Retrying every 15 minutes; use the refresh button to retry now.
-        </div>
+        <TimedNotice key={error}>
+          <div
+            role="status"
+            className="rounded-lg border border-amber-300/60 bg-black/80 p-3 text-base text-amber-100"
+          >
+            Weather error: {error}. {weather ? "Showing the last saved reading. " : ""}
+            Retrying every 15 minutes; use the refresh button to retry now.
+          </div>
+        </TimedNotice>
       ) : null}
       {cacheUnavailable ? (
-        <p role="status" className="rounded-lg bg-black/80 p-3 text-base text-amber-100">
-          Live weather is working. Browser storage is unavailable, so it cannot be saved for offline
-          use.
-        </p>
+        <TimedNotice>
+          <p role="status" className="rounded-lg bg-black/80 p-3 text-base text-amber-100">
+            Live weather is working. Browser storage is unavailable, so it cannot be saved for
+            offline use.
+          </p>
+        </TimedNotice>
       ) : null}
 
       <div className="relative rounded-lg border border-white/5 bg-black/20 p-2 pb-5 backdrop-blur-sm transition-all hover:bg-black/30">

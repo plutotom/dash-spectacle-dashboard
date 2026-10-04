@@ -216,6 +216,9 @@ error reference. Photograph the screen to investigate remotely. The dashboard
 also reports data-service disconnections lasting over 30 seconds, JavaScript
 load failures, unhandled browser errors, and startup exceeding 45 seconds.
 Reporting to Sentry does not need to succeed for an on-screen error to appear.
+Error overlays and warning notices dismiss two minutes after appearing; repeated
+updates to a visible notice do not extend that timer. Failed-widget and full-page
+error details collapse after two minutes, keeping a small status and reload controls.
 Production server errors may hide their original message; use the displayed
 error reference to find the server-side details.
 

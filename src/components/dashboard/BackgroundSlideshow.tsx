@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useEffect, useState } from "react";
 import { isAllowedBackgroundUrl } from "@/lib/background-image";
+import { TimedNotice } from "@/components/errors/TimedNotice";
 
 const DEFAULT_BG = "https://images.unsplash.com/photo-1741715421791-c08283c8b7d2?ixlib=rb-4.1.0";
 const INTERVAL_MS = 60 * 5 * 1000; // 5 minutes
@@ -52,14 +53,16 @@ function BackgroundPhoto({ url }: { url: string }) {
       </div>
       <div className="absolute inset-0 z-0 bg-black/40" />
       {!allowed || failed ? (
-        <div
-          role="status"
-          className="absolute bottom-3 right-3 z-20 max-w-lg rounded-lg border border-amber-300 bg-black/90 p-3 text-base text-amber-100"
-        >
-          Background photo unavailable:{" "}
-          {allowed ? "download or resizing failed" : "unsupported photo source"}. Other widgets are
-          still running. The next photo is attempted in five minutes.
-        </div>
+        <TimedNotice>
+          <div
+            role="status"
+            className="absolute bottom-3 right-3 z-20 max-w-lg rounded-lg border border-amber-300 bg-black/90 p-3 text-base text-amber-100"
+          >
+            Background photo unavailable:{" "}
+            {allowed ? "download or resizing failed" : "unsupported photo source"}. Other widgets
+            are still running. The next photo is attempted in five minutes.
+          </div>
+        </TimedNotice>
       ) : null}
     </>
   );
